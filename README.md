@@ -1,13 +1,11 @@
 #  its-ch-cloud
 
-<p align="center">
+<p align="left">
   <img src='https://img.shields.io/badge/license-Apache%202-4EB1BA.svg' alt='License'/>
   <img src="https://img.shields.io/badge/Spring%20Boot-2.1.4.RELEASE-blue" alt="Downloads"/>
   <img src="https://img.shields.io/badge/Spring%20Cloud-Finchley.SR4-blue" alt="Downloads"/>
   <img src="https://img.shields.io/badge/Spring%20Cloud%20Alibaba-2.1.0.RELEASE-blue" alt="Downloads"/>
 </p>
-
-[TOC]
 
 ## 1. 项目介绍
 * 前后端分离的企业级微服务架构
