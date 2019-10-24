@@ -1,0 +1,161 @@
+<div id="ep-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">卡口电警管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">设备编号</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="epQ.deviceId" placeholder="设备编号" htmlEscape="false" />
+					</div>
+					<div class="col-sm-2 control-label">设备名称</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="epQ.deviceName" placeholder="设备名称" htmlEscape="false" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">类型</label>
+				   	<div class="col-sm-4">
+						<select class="form-control" v-model="epQ.type" htmlEscape="false" required="required" >
+							<option value="">所有</option>
+							<option value="DJ">电警</option>
+							<option value="KK">卡口</option>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label">用途</label>
+				   	<div class="col-sm-4">
+						<select class="form-control" v-model="epQ.usedFor" htmlEscape="false" required="required" >
+							<option value="">所有</option>
+							<option v-for="dict in dictList" v-bind:value="dict.value">
+								{{dict.label}}
+							</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show="!showList" class="form-horizontal">
+			<div class="form-group">
+				<label for="deviceId" class="col-sm-2 control-label">设备编码</label>
+			   	<div class="col-sm-4 onelinedis">
+			   	<span class="help-inline"><font color="red">*</font> </span>
+					<input type="text" class="form-control oneline" id="deviceId" name="deviceId" v-model="ep.deviceId" placeholder="设备编码" 
+						htmlEscape="false" required="required" maxlength="30"/>
+				
+				</div>
+				<label for="deviceName" class="col-sm-2 control-label">设备名称</label>
+			   	<div class="col-sm-4 onelinedis">
+			   	<span class="help-inline"><font color="red">*</font> </span>
+					<input type="text" class="form-control oneline" id="deviceName" name="deviceName" v-model="ep.deviceName" placeholder="设备名称"
+						htmlEscape="false" required="required" maxlength="50"/>
+				
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="psfx" class="col-sm-2 control-label">拍摄方向</label>
+			   	<div class="col-sm-4">
+					<select class="form-control" id="psfx" v-model="ep.psfx" htmlEscape="false">
+						<option v-for="dict in fxdmDictList" v-bind:value="dict.value">
+							{{dict.label}}
+						</option>
+					</select>
+				</div>
+				<label for="lkfx" class="col-sm-2 control-label">所在路口方向</label>
+			   	<div class="col-sm-4">
+					<select class="form-control" id="lkfx" v-model="ep.lkfx" htmlEscape="false">
+						<option value="E">东</option>
+						<option value="S">南</option>
+						<option value="W">西</option>
+						<option value="N">北</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="type" class="col-sm-2 control-label">类型</label>
+			   	<div class="col-sm-4 onelinedis">
+			   	    <span class="help-inline"><font color="red">*</font> </span>
+					<select class="form-control oneline" id="type" v-model="ep.type" htmlEscape="false" required="required" >
+						<option value="DJ">电警</option>
+						<option value="KK">卡口</option>
+					</select>
+					
+				</div>
+				<label for="usedFor" class="col-sm-2 control-label">用途</label>
+			   	<div class="col-sm-4 onelinedis">
+			     	<span class="help-inline"><font color="red">*</font> </span>
+					<select class="form-control oneline" id="usedFor" v-model="ep.usedFor" htmlEscape="false" required="required" >
+						<option v-for="dict in dictList" v-bind:value="dict.value">
+							{{dict.label}}
+						</option>
+					</select>
+					
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="crossId" class="col-sm-2 control-label">路口号</label>
+			   	<div class="col-sm-4">
+					<input type="text" class="form-control" id="crossId" name="crossId" v-model="ep.crossId" placeholder="路口号" 
+						htmlEscape="false" maxlength="10"/>
+				</div>
+				<label for="linkId" class="col-sm-2 control-label">路段号</label>
+			   	<div class="col-sm-4">
+					<input type="text" class="form-control" id="linkId" name="linkId" v-model="ep.linkId" placeholder="路段号" 
+						htmlEscape="false" maxlength="20"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="ipAddress" class="col-sm-2 control-label">IP地址</label>
+			   	<div class="col-sm-4">
+					<input type="text" class="form-control" id="ipAddress" name="ipAddress" v-model="ep.ipAddress" placeholder="设备IP地址" 
+						htmlEscape="false" maxlength="20"/>
+				</div>
+				<label for="status" class="col-sm-2 control-label">设备运行状态</label>
+			   	<div class="col-sm-4">
+					<input type="text" class="form-control" id="status" name="status" v-model="ep.status" placeholder="设备运行状态" 
+						htmlEscape="false" maxlength="1"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="installDt" class="col-sm-2 control-label">安装时间</label>
+			   	<div class="col-sm-4">
+					<input type="text" class="form-control form_datetime Wdate" id="installDt" name="installDt" v-model="ep.installDt" 
+						@click="init97DateInstall" 
+						placeholder="安装时间" readonly="readonly" htmlEscape="false"/>
+				</div>
+				<label for="manuId" class="col-sm-2 control-label">生产厂家</label>
+			   	<div class="col-sm-4">
+					<input type="text" class="form-control" id="manuId" name="manuId" v-model="ep.manuId" placeholder="生产厂家" 
+						htmlEscape="false" maxlength="50"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="description" class="col-sm-2 control-label">描述</label>
+			   	<div class="col-sm-4">
+					<textarea class="form-control" id="description" name="description" v-model="ep.description" cols="120" rows="3" placeholder="描述信息"
+						htmlEscape="false" maxlength="200"></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-11 col-sm-offset-1 ">
+					<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+					&nbsp;&nbsp;
+					<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

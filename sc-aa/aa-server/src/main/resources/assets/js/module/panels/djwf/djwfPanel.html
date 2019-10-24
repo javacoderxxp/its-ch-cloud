@@ -1,0 +1,257 @@
+<div id="djwf-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">违法未处理车辆
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList == 0'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-4">
+						<select v-if="currentUser.jjddUser" class="form-control" id="groupIdQ" v-model="djwfQ.groupId">
+                            <option value=''>所有</option>
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select>
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupIdQ" v-model="djwfQ.groupId"/>
+						</template>
+					</div>
+					<label class="col-sm-2 control-label">违法类型</label>
+					<div class="column col-sm-4">
+						<select class="form-control " v-model="djwfQ.wflx">
+							<option value="15GQ">15次违法未处理(逾期未检)</option>
+							<option value="15G">15次违法未处理(无逾期未检)</option>
+							<!-- 
+							<option value="0Q">逾期未年检</option>
+							<option value="5G">5次违法未处理</option>
+							 -->
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">车牌号</label>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="djwfQ.hphm" placeholder="车牌号" htmlEscape="false" />
+					</div>
+					<label class="col-sm-2 control-label">所有人</label>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="djwfQ.syr" placeholder="所有人" htmlEscape="false" />
+					</div>
+				</div>
+			</div>
+             <div class="form-group">
+                  <div class="col-sm-6" style="height: 37px; padding-top: 5px"><strong>已分配责任区&nbsp;&nbsp;</strong>
+                      <label><input type="radio" v-model="djwfQ.gridAssigned" value="1">是</label>
+                      <label><input type="radio" v-model="djwfQ.gridAssigned" value="0">否</label>
+                  </div>
+                <!-- <label class="col-sm-2 control-label">通知状态</label>
+                <div class="column col-sm-4">
+                <select class="form-control " v-model="djwfQ.status">
+                    <option value="">所有</option>
+                    <option value="0">待指定中队</option>
+                    <option value="1">待指定责任区</option>
+                    <option value="3">完成</option>
+                    <option value="5">未通知</option>
+                    <option value="6">已通知</option>
+                </select>
+                </div> -->
+             </div>
+             <div class="form-group">
+                <div class="col-sm-12" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="assignTo" v-show="isZdAdmin"><i class="fa fa-hand-o-right"></i>&nbsp;指派</a>
+				</div>
+                <!-- 
+                <a class="btn btn-sm" @click="sendJwtTask"><i class="fa fa-search"></i>&nbsp;下发任务</a>
+				-->
+				<!-- <a class="btn btn-sm" @click="relevance"><i class="fa fa-link"></i>&nbsp;关联</a> -->
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="assignDiv" v-show='showList == 2'>
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+                    <div class="col-sm-2">
+                        <label>号牌号码</label>
+                    </div>
+                    <div class="col-sm-4">
+                        {{djwf.hphm}}
+                    </div>
+					<div class="col-sm-2">
+						<label>号牌种类</label>
+					</div>
+					<div class="col-sm-4">
+                        <select class="form-control " v-model="djwf.hpzl" disabled="disabled">
+                            <option v-for="dict in plateTypeDicts" v-bind:value="dict.value">
+                                {{dict.label}}
+                            </option>
+                        </select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label>有效期止</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.yxqz}}
+					</div>
+					<div class="col-sm-2">
+						<label>系统分配单位</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.zrdw}}
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label>所有人</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.syr}}
+					</div>
+					<div class="col-sm-2">
+						<label>手机号码</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.sjhm}}
+					</div>
+				</div>
+				<div class="form-group">
+                    <div class="col-sm-2">
+                        <label>住所详细地址</label>
+                    </div>
+                    <div class="col-sm-4">
+                        {{djwf.zsxxdz}}
+                    </div>
+					<div class="col-sm-2">
+						<label>暂住详细地址</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.zzxxdz}}
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label>黄标车</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.hbcbj == '1'?'是':'否'}}
+					</div>
+					<div class="col-sm-2">
+						<label>违法类型</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.zt}}
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="help-inline" style="margin-left:20px"><font color="red">违法类型:A正常B转出G违法未处理O锁定Q逾期未检K查封M达到报废标准</font> </span>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label>初次登记日期</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.ccdjrq}}
+					</div>
+					<div class="col-sm-2">
+						<label>电警次数</label>
+					</div>
+					<div class="col-sm-4">
+						{{djwf.djcs}}
+					</div>
+				</div>
+                <div class="form-group">
+                    <div class="col-sm-2">
+                        <label>写入时间</label>
+                    </div>
+                    <div class="col-sm-4">
+                        {{djwf.xrsj}}
+                    </div>
+                    <div class="col-sm-2">
+                        <label>更新时间</label>
+                    </div>
+                    <div class="col-sm-4">
+                        {{djwf.gxsj}}
+                    </div>
+                </div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label>备注</label>
+					</div>
+					<div class="col-sm-8">
+						{{djwf.bz}}
+					</div>
+				</div>
+				<!-- 
+				<div class="form-group">
+					<label for="njrq" class="col-sm-2 control-label"><font color="red">记录作废？</font></label>
+					<div class="col-sm-4" >
+						{{djwf.zfbj == '1' ? '是':'否'}}
+					</div>
+					<label for="glx" class="col-sm-2 control-label">关联项</label>
+					<div class="col-sm-4">
+						{{djwf.glx}}
+					</div>
+				</div>
+				 -->
+				<div class="form-group">
+					<template v-if="djwf.status == '0'">
+					</template>
+					<div class="col-sm-2" v-show="currentUser.jjddUser">
+						<label>人工指定中队</label>
+					</div>
+					<div class="col-sm-4" v-show="currentUser.jjddUser">
+						<select class="form-control" v-model="djwf.groupId" @change="loadGridsByChangeGroup">
+                            <option value=''>请选择</option>
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select>
+					</div>
+					<template v-if="djwf.status == '1'">
+					</template>
+					<div class="col-sm-2">
+						<label>责任区</label>
+					</div>
+					<div class="col-sm-4">
+						<select name="type" class="form-control" v-model="djwf.gridId">
+						<!-- <select name="type" class="form-control" v-model="djwf.gridId" @change="drawDutyGrid"> -->
+                            <option value=''>请选择</option>
+							<option v-for="dutyGrid in dutyGridList" v-bind:value="dutyGrid.gridId" data-icon="fa fa-sitemap">
+								{{dutyGrid.gridName}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<!-- <div class="form-group">
+					<div class="col-sm-2">
+						<label>通知状态</label>
+					</div>
+					<div class="col-sm-4">
+						<select class="form-control" v-model="djwf.status" htmlEscape="false">
+							<option value="">请选择</option>
+							<option value="6">已通知</option>
+						</select>
+					</div>
+				</div> -->
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<input type="button" class="btn btn-primary btn-sm" @click="assignNow" value="提交" v-show="isZdAdmin">
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

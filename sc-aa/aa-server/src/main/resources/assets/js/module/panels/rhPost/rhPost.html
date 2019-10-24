@@ -1,0 +1,362 @@
+<div id="rhPost-panel" class="panel panel-primary" style="width: 580px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">执勤岗点管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList == 0'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-4">
+						<select v-if="currentUser.jjddUser" name="type" class="form-control selectpicker" id="groupIdQ" v-model="rhPostQ.groupId">
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select>
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupIdQ" v-model="rhPostQ.groupId"/>
+						</template>
+					</div>
+					<label class="col-sm-2 control-label">岗点名称</label>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="rhPostQ.postName" placeholder="岗点名称" htmlEscape="false" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">岗点类型</label>
+					<div class="column col-sm-4">
+						<select name="posttype" class="form-control selectpicker" id="postTypeQ" v-model="rhPostQ.postType">
+							<option value="">所有</option>
+							<option value="ZGF">早高峰</option>
+							<option value="WGF">晚高峰</option>
+							<option value="PF">平峰</option>
+							<option value="LSRW">临时任务</option>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label">是否有效</label>
+					<div class="column col-sm-4">
+						<select name="status" class="form-control selectpicker" id="statusQ" v-model="rhPostQ.status">
+							<option value="0">有效</option>
+							<option value="1">失效</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">GPS数据</div>
+					<div class="column col-sm-4">
+						<label><input type="radio" id="gpsDataRealTime" name="gpsDataRadio" @click="setGpsData" value="0" checked="checked">实时</label>
+						<label><input type="radio" id="gpsDataHistory" name="gpsDataRadio" @click="setGpsData" value="1">历史</label>
+					</div>
+				</div>
+				<div class="form-group hide" id="showHistoryQueryTime">
+					<label for="startTime" class="col-sm-2 control-label">开始时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="startTime" name="startTime"
+								@click="setHistoryStartDate" placeholder="开始时间" readonly="readonly"> 
+					</div>
+					<label for="postType" class="col-sm-2 control-label">结束时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="endTime" name="endTime"
+								@click="setHistoryEndDate" placeholder="结束时间" readonly="readonly"> 
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-times"></i>&nbsp;删除</a>
+				
+				<a class="btn btn-default btn-sm" v-show="isZdAdmin" @click="exportAllTemplate"><i class="fa fa-download">导出模板</i></a>
+				<a class="btn btn-default btn-sm" v-show="isZdAdmin" @click="openFileUploadDialogNew"><i class="fa fa-upload">添加文件</i></a>
+				<a class="btn btn-sm" @click="schedule" v-show="isZdAdmin"><i class="fa fa-calendar"></i>&nbsp;排岗</a>
+			</div>
+            <div class="form-group" v-show="selectedFilePath != ''">
+                <div class="col-sm-12">
+                    <input type="file" id="fileupload" name="multiFiles" class="hide"/>
+                    <button type="button" id="uploadSubmitBtn" class="btn btn-primary btn-xs">上传</button> 
+                    <button type="reset" id="fileCancelBtn" class="btn btn-warning btn-xs">取消</button>
+                    <button type="button" id="fileDelBtn" class="btn btn-danger btn-xs">删除</button>
+                    <label class="control-label" id="uploadFileName">{{selectedFilePath}}</label>
+                </div>
+            </div>
+			<div class="form-group" v-show="selectedFilePath != ''">
+                <div class="col-sm-12">
+                    <div id="progress">
+                        <div class="bar" style="width: 0%;"></div>
+                        <label class="control-label" id="uploadMsg"></label>
+                    </div>
+                </div>
+			</div>
+			<!-- <div class="form-group" v-show="selectedFilePath != ''">
+			   	<div class="col-sm-12">
+					<form class="form-horizontal" role="form" action="qw/rhPostSchedule/upload" enctype="multipart/form-data" method="post">
+						<div class="form-group">
+						   	<div class="col-sm-4">
+						   		<div class="btn-group" role="group">
+				   					<button type="button" id="uploadSubmitBtn" class="btn btn-primary btn-xs">上传</button> 
+					                <button type="reset" id="fileCancelBtn" class="btn btn-warning btn-xs">取消</button>
+					                <button type="button" id="fileDelBtn" class="btn btn-danger btn-xs">删除</button>
+				                </div>
+						   	</div>
+						   	<div class="col-sm-4">
+						   		<div id="progress">
+								    <div class="bar" style="width: 0%;"></div>
+						   		</div>
+						   	</div>
+						   	<div class="col-sm-4" v-show="showUploadBtns">
+						   		<label class="control-label" id="uploadMsg"></label>
+						    </div>
+						</div>
+				    </form>
+				</div>
+			</div> -->
+		    <table id="jqGrid"></table>
+		    <div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='showList == 1'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-6">
+						<select v-if="currentUser.jjddUser" name="type" class="form-control selectpicker" id="groupId" v-model="rhPost.group.groupId" required="required">
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select> 
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupId" v-model="rhPost.group.groupId"/>
+						</template>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="shape" class="col-sm-2 control-label">添加点位</label>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-xs btn-default" @click="addRhPost">添加</button>
+						<button type="button" class="btn btn-xs btn-danger" @click="clearRhPost">清除</button>
+					</div>
+					<div class="col-sm-6 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="shape" name="shape" v-model="rhPost.shape" placeholder="岗点点位" readonly
+							htmlEscape="false" required maxlength="100"/>
+						
+					</div>
+				</div>
+				<div class="form-group">
+					<!-- <label for="postId" class="col-sm-2 control-label">岗点编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="postId" name="postId" v-model="rhPost.postId" placeholder="岗点编号" 
+							htmlEscape="false" maxlength="20"/>
+					</div> -->
+					<label for="postName" class="col-sm-2 control-label">岗点名称</label>
+					<div class="col-sm-10 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="postName" name="postName" v-model="rhPost.postName" placeholder="岗点名称" 
+							htmlEscape="false" required maxlength="50"/>
+						
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">岗点描述</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="description" name="description" v-model="rhPost.description" placeholder="岗点描述" 
+							htmlEscape="false" maxlength="200"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="postType" class="col-sm-2 control-label">岗点类型</label>
+					<div class="col-sm-10">
+						<select name="postType" multiple class="form-control selectpicker" id="postType"  required="required">
+							<option value="ZGF">早高峰</option>
+							<option value="WGF">晚高峰</option>
+							<option value="PF">平峰</option>
+							<option value="LSRW">临时任务</option>
+						</select> 
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="postType" class="col-sm-2 control-label">有效性</label>
+					<div class="col-sm-10" style="margin-top: 10px;">
+					    <div class="col-sm-3">
+					      <input type="radio" id="statusRadioYX" name="customRadio" class="custom-control-input" value="0" checked="">
+					      <label class="custom-control-label" for="statusRadioYX">有效</label>
+					    </div>
+					    <div class="custom-control custom-radio">
+					      <input type="radio" id="statusRadioWX" name="customRadio" class="custom-control-input" value="1">
+					      <label class="custom-control-label" for="statusRadioWX">无效</label>
+					    </div>
+					</div>
+				</div>
+				
+				<!--  
+				<div class="form-group">
+					<label for="postType" class="col-sm-2 control-label">开始时间</label>
+					<div class="col-sm-10 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control form_datetime Wdate oneline" id="startDate" v-model="rhPost.startDate" name="startDate"
+								@click="setPostStartDate" placeholder="" readonly="readonly" required="required"> 
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="postType" class="col-sm-2 control-label">有效期限</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control form_datetime Wdate" id="expiryDate" v-model="rhPost.expiryDate" name="expiryDate"
+								@click="setPostExpiryDate" placeholder="永久" readonly="readonly"> 
+					</div>
+				</div>
+				-->
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="scheduleDiv" v-show='showList == 2'>
+			<div class="form-horizontal" role="form">
+				<div class="form-group">
+					<label for="postId" class="col-sm-1" ><b>编号</b></label>
+					<div class="col-sm-2">
+						{{rhPost.postId}}
+					</div>
+					<label for="postName" class="col-sm-1"><b>名称</b></label>
+					<div class="col-sm-2">
+						{{rhPost.postName}}
+					</div>
+					<label for="description" class="col-sm-1"><b>描述</b></label>
+					<div class="col-sm-5">
+						{{rhPost.description}}
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-5">
+						<input type="button" class="btn btn-default btn-sm" @click="reload" value="返回"/>
+						&nbsp;
+						<!-- 
+						<a class="btn btn-default btn-sm" @click="openFileUploadDialog"><i class="fa fa-upload">添加文件</i></a>
+						<a class="btn btn-default btn-sm" @click="exportTemplate"><i class="fa fa-download">导出模板</i></a>
+						 -->
+						<a class="btn btn-default btn-sm" @click="exportRhPostSchedule"><i class="fa fa-download">导出排班</i></a> 
+                        &nbsp;
+						<a class="btn btn-danger btn-sm" @click="clearRhPostSchedule"><i class="fa fa-trash">清空当月</i></a> 
+					</div>
+                    <div class="col-sm-1">
+                        <button type="button" class="btn btn-sm" @click="findAllRhPostSch"><i class="fa fa-refresh"/></button>
+					</div>
+					<div class="col-sm-6">
+                        <input type="radio" v-model="rhPostSchedule.postType" value="ZGF" ><label style="background-color: #ff6666; border-radius: 5px">早高峰</label>
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="radio" v-model="rhPostSchedule.postType" value="WGF"><label style="background-color: #ffcc33; border-radius: 5px">晚高峰</label>
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="radio" v-model="rhPostSchedule.postType" value="PF"><label style="background-color: #66cc00; border-radius: 5px">平峰</label>
+				   	</div>
+				</div>
+			</div>
+			<hr/>
+			<div class="form-horizontal">
+				<div class="form-group" style="max-height: 410px; overflow-y: auto;margin-bottom: 0px;" >
+				   	<div class="col-sm-6">
+						<div id='calendarPost' style="z-index: 99999"></div>
+					</div>
+                    <div class="col-sm-6">
+						<!-- 
+						<ul style="">
+							<li class="list-group-item">用户信息</li>
+							<li v-for="(user, index) in groupUserList" class="list-group-item" style="padding: 5px 5px;">
+							<span :data-userid="user.userId" class="label label-info userNameDrag" style="cursor: move;">{{user.userName}}</span>
+							</li>
+						</ul>
+						-->
+						<template v-for="(user, index) in groupUserList">
+						<span v-if="user.type =='JF'" :data-userid="user.userId" class="label userNameDrag" style="cursor: move; background-color: #99ccff">{{user.userName}}</span>
+						<span v-if="user.type =='MJ'" :data-userid="user.userId" class="label userNameDrag" style="cursor: move; background-color: #0099cc">{{user.userName}}</span>
+						<br v-if="index % 8==7"/>
+						</template>
+					</div>
+				</div>
+			</div>
+			<div id="groupUserLayer" style="display: none;">
+				<ul id="groupUserTree" class="ztree"></ul>
+			</div>
+		</div>
+		<div id="postDtlFormDiv" v-show='false'>
+			<form class="form-horizontal" role="form">
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+				   	<div class="col-sm-4 control-label">选择人员</div>
+				   	<div class="col-sm-6">
+						<input type="text" class="form-control" placeholder="选择人员" v-model="rhPostSchedule.userName" readonly 
+							style="cursor:pointer;" @click="popupGroupUserTree" htmlEscape="false" required="required"/>
+						<input type="hidden" v-model="rhPostSchedule.userId" style="display: none;"/>
+				    </div>
+				   	<div class="col-sm-1">
+						<span class="help-inline"><font color="red">*</font> </span>
+				   	</div>
+				</div>
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+				   	<div class="col-sm-4 control-label">岗点类型</div>
+				   	<div class="col-sm-6"> 
+						<select class="form-control" v-model="rhPostSchedule.postType">
+							<option value="ZGF">早高峰</option>
+							<option value="WGF">晚高峰</option>
+							<option value="PF">平峰</option>
+							<option value="LSRW">临时任务</option>
+							<!-- 
+							<option value="RCGL">日常管理</option>
+							<option value="QT">其他</option>
+							 -->
+						</select>
+				    </div>
+				   	<div class="col-sm-1">
+						<span class="help-inline"><font color="red">*</font> </span>
+				   	</div>
+				</div>
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+				   	<div class="col-sm-11 col-sm-offset-1">
+						<input type="button" class="btn btn-primary btn-sm" @click="saveOneRhPostSch" value="确定" />
+						<input type="button" class="btn btn-danger btn-sm" @click="delOneRhPostSch" value="删除"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="pgFormDiv" v-show='false'>
+			<form class="form-horizontal" role="form">
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+					<label for="postType" class="col-sm-4 control-label">开始日期</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control form_datetime Wdate" id="startDt" v-model="pg.startDt" name="startDt"
+								@click="setPgStartDt" placeholder="开始日期" readonly="readonly" required="required"> 
+					</div>
+					<div class="col-sm-1">
+						<span class="help-inline"><font color="red">*</font> </span>
+				   	</div>
+				</div>
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+					<label for="postType" class="col-sm-4 control-label">结束日期</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control form_datetime Wdate" id="endDt" v-model="pg.endDt" name="endDt"
+								@click="setPgEndDt" placeholder="结束日期" readonly="readonly" required="required"> 
+					</div>
+					<div class="col-sm-1">
+						<span class="help-inline"><font color="red">*</font> </span>
+				   	</div>
+				</div>
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+				   	<div class="col-sm-11 col-sm-offset-1">
+						<input type="button" class="btn btn-primary btn-sm" @click="confirmPgDt" value="确定" />
+						<input type="button" class="btn btn-danger btn-sm" @click="cancelPgDt" value="取消"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

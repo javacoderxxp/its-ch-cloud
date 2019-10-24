@@ -1,0 +1,24 @@
+<div id="tiejiPanel" class="panel panel-primary" style="width: 300px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			铁骑车辆
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+			<ul class="list-group" style="max-height: 400px;overflow-y: auto;">
+				<li class="list-group-item" v-for="(item,index) in tiejiList ">
+					<span>{{index+1}}</span>
+					<span class="fa fa-motorcycle" aria-hidden="true"></span>
+					<span>{{item.deviceName}}</span>
+					<button type="button" class="btn btn-link btn-sm" @click="openVideoWin(item.tunnel)" style="float: right;">
+ 						<span class="fa fa-play-circle" aria-hidden="true"></span>
+ 						
+					</button>
+				</li>
+			</ul>
+	</div>
+</div>

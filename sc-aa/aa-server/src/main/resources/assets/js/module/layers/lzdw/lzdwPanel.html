@@ -1,0 +1,113 @@
+<div id="lzdw-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">路政单位
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">名称</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="lzdwQ.mc" placeholder="名称" htmlEscape="false" />
+					</div>
+					<div class="grid-btn" style="margin-bottom: 10px">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+						<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+						<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-times"></i>&nbsp;删除</a>
+					</div>
+				</div>
+			</div>
+			
+		    <table id="jqGrid"></table>
+		    <div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="bh" class="col-sm-2 control-label">编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bh" name="bh" v-model="lzdw.bh" placeholder="编号" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="mc" class="col-sm-2 control-label">名称</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font></span>
+						<input type="text" class="form-control oneline" id="mc" name="mc" v-model="lzdw.mc" placeholder="名称" 
+							htmlEscape="false" maxlength="50"  required="required"/>
+							
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="pydm" class="col-sm-2 control-label">拼音代码</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="pydm" name="pydm" v-model="lzdw.pydm" placeholder="拼音代码" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="dz" class="col-sm-2 control-label">地址</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font></span>
+						<input type="text" class="form-control oneline" id="dz" name="dz" v-model="lzdw.dz" placeholder="地址" 
+							htmlEscape="false" maxlength="50"  required="required"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zyfzr" class="col-sm-2 control-label">主要负责人</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zyfzr" name="zyfzr" v-model="lzdw.zyfzr" placeholder="主要负责人" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="lxdh" class="col-sm-2 control-label">联系电话</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="lxdh" name="lxdh" v-model="lzdw.lxdh" placeholder="联系电话" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="dwcz" class="col-sm-2 control-label">单位传真</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="dwcz" name="dwcz" v-model="lzdw.dwcz" placeholder="单位传真" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="zgdw" class="col-sm-2 control-label">主管单位</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zgdw" name="zgdw" v-model="lzdw.zgdw" placeholder="主管单位" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="sjtp" class="col-sm-2 control-label">实景图片</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="sjtp" name="sjtp" v-model="lzdw.sjtp" placeholder="实景图片" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="bz" class="col-sm-2 control-label">备注</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bz" name="bz" v-model="lzdw.bz" placeholder="备注" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zb" class="col-sm-2 control-label">坐标</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zb" name="zb" v-model="lzdw.zb" placeholder="坐标" 
+							htmlEscape="false" maxlength="100"  required="required"/>
+							<span class="help-inline"><font color="red">*</font> </span>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

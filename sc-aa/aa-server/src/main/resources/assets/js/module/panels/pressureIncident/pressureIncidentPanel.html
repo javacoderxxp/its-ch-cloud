@@ -1,0 +1,142 @@
+<div id="pressureIncident-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">事故压降表
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+						<div class="column col-sm-4">
+							<select  v-if="currentUser.jjddUser"  class="form-control selectpicker" id="groupIdQ" name="groupIdQ"
+								v-model="pressureIncidentQ.groupId">
+								<option  value="" data-icon="fa fa-sitemap">所有</option>
+								<option v-for="group in groupListQ" v-bind:value="group.groupId"
+									data-icon="fa fa-sitemap">{{group.groupName}}</option>
+							</select>
+							<template v-if="currentUser.jjzdUser">
+	                            <span>{{currentUser.group.groupName}}</span>
+	                            <input type="hidden" id="groupIdQ" v-model="pressureIncidentQ.groupId"/>
+                       		 </template>
+						</div>	
+				</div>
+				<div class="form-group">
+					<label for="qwStart" class="col-sm-2 control-label">开始日期</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="qwStartQ" name="qwStartQ"
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:$('#qwEndQ').val(),isShowClear:false,readOnly:true})">	
+					</div>
+					<label for="qwEnd" class="col-sm-2 control-label">结束日期</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="qwEndQ" name="qwEndQ"
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:$('#qwStartQ').val(),isShowClear:false,readOnly:true})">	
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" v-show="isDdUsr" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" v-show="isDdUsr" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" v-show="isDdUsr" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+				<a class="btn btn-sm" v-show="isDdUsr" @click="getQwSch"><i class="fa fa-search"></i>&nbsp;勤务查询</a>
+				<a class="btn btn-sm" v-show="isZdAdmin&&!isDdUsr" @click="getQwPath"><i class="fa fa-calendar"></i>&nbsp;排班</a>
+				<!-- <a class="btn btn-sm" v-show="isZdAdmin&&!isZdUsr" @click="getQwPath"><i class="fa fa-search"></i>&nbsp;勤务轨迹</a> -->
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="groupId" class="col-sm-2 control-label">中队</label>
+					<div class="col-sm-4 onelinedis">
+						 <span class="help-inline"><font color="red">*</font> </span>
+						<select  class="form-control oneline" id="groupId" v-model="pressureIncident.groupId" required="required" @change="getDutyListByTeamId">
+							<option value="">请选择</option>
+							<option v-for="group in teamList" v-bind:value="group.groupId">{{group.groupName}}</option>
+						</select>
+					</div>
+					<label for="roadId" class="col-sm-2 control-label">道路</label>
+					<div class="col-sm-4 onelinedis">
+						 <span class="help-inline"><font color="red">*</font> </span>
+						<select  class="form-control oneline" id="roadId" v-model="pressureIncident.roadId" required="required" @change="getGridPolice">
+							<option value="">请选择</option>
+							<option v-for="roaddraw in roaddrawList" v-bind:value="roaddraw.id">{{roaddraw.mc}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="qwTimes" class="col-sm-2 control-label">勤务时段</label>
+					<div class="col-sm-10 onelinedis">
+						 <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="qwTimes" name="qwTimes" v-model="pressureIncident.qwTimes" placeholder="勤务时间段" 
+							htmlEscape="false" maxlength="100" required="required"/>
+						<span >(例子：8时-10时,13时-16时。最多两个)</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="qwStart" class="col-sm-2 control-label">开始日期</label>
+					<div class="col-sm-4 onelinedis">
+						 <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline form_datetime Wdate" id="qwStart" name="qwStart" required="required"
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:$('#qwEnd').val(),isShowClear:false,readOnly:true})">	
+					</div>
+					<label for="qwEnd" class="col-sm-2 control-label">结束日期</label>
+					<div class="col-sm-4 onelinedis">
+						 <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline form_datetime Wdate" id="qwEnd" name="qwEnd"  required="required"
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:$('#qwStart').val(),isShowClear:false,readOnly:true})">	
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="gp" class="col-sm-2 control-label">警员/警辅</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" id="gridPolice" name="gridPolice" v-model="pressureIncident.gridPolice" placeholder="责任区/警员" 
+							htmlEscape="false" maxlength="200" required="required" disabled="disabled" />
+					</div>
+				</div>	
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<div id="SplitStaticDiv" v-show='false'>
+		<div class="form-horizontal" style="width: 350px;">
+			<div class="form-group" >
+				<label for="groupId" class="col-sm-1"></label>
+					<div class="col-sm-4">
+						 <span>{{rd.groupName}}</span>
+					</div>
+				<label for="roadName" class="col-sm-0"></label>
+					<div class="col-sm-6">
+						 <span>{{rd.roadName}}</span>
+					</div>		 
+			</div>
+			<div class="form-group" v-for="(item, index) in ddList">
+				<label for="qwTimes" class="col-sm-4 control-label">{{item.dt}}</label>
+					<div class="col-sm-8 onelinedis">
+						<input type="text" class="form-control" :id="'policeName'+index" :name="'policeName'+index"  placeholder="警员姓名" 
+							htmlEscape="false" maxlength="200"  v-model="item.policename"/>
+					</div>			 
+			</div>
+			<div class="form-group">
+				<div class="col-sm-11 col-sm-offset-1 ">
+					<button class="btn btn-primary btn-sm" @click="saveSe">提交</button>
+					&nbsp;&nbsp;
+				</div>
+			</div>	
+			</div>	
+		</div>
+		
+	</div>
+</div>

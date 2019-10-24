@@ -1,0 +1,5 @@
+com\its\gateway\web\SwaggerResourceController.class
+com\its\gateway\component\MySwaggerResourceProvider.class
+com\its\gateway\GatewayApplication.class
+com\its\gateway\filter\AuthGlobalFilter.class
+com\its\gateway\config\GatewayConfig.class

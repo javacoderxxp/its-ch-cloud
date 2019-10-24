@@ -1,0 +1,165 @@
+<div id="roadFacilities-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">道路设施
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">设施名称</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="roadFacilitiesQ.deviceName" placeholder="" htmlEscape="false" />
+					</div>
+					<div class="col-sm-2 control-label">设施类型</div>
+					<div class="column col-sm-4">
+						<select id="typeQ" name="typeQ" class="form-control oneline" 
+								v-model="roadFacilitiesQ.type" required="required">
+								<option value="">所有</option>
+								<option value="1">信号机</option>
+								<option value="2">标志牌</option>
+								<option value="3">其他</option>
+							</select>
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<!-- <a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a> -->
+				<a class="btn btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="deviceId" class="col-sm-2 control-label">设施编号</label>
+					<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="deviceId" name="deviceId" v-model="roadFacilities.deviceId" placeholder="设施编号" 
+							htmlEscape="false" maxlength="20" required="required"/>
+					</div>
+					<label for="deviceName" class="col-sm-2 control-label">设施名称</label>
+					<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="deviceName" name="deviceName" v-model="roadFacilities.deviceName" placeholder="设施名称" 
+							htmlEscape="false" maxlength="20" required="required"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="type" class="col-sm-2 control-label">设施类型</label>
+					<div class="col-sm-4 onelinedis">
+						 <span class="help-inline"><font color="red">*</font> </span>
+							<select id="type" name="type" class="form-control oneline" 
+								v-model="roadFacilities.type" required="required">
+								<option value="">请选择</option>
+								<option value="1">信号机</option>
+								<option value="2">标志牌</option>
+							</select>
+					</div>
+					<div id="st" style="display: none;">
+						<label for="subtype" class="col-sm-2 control-label">子类型</label>
+						<div class="col-sm-4 onelinedis">
+							 <span class="help-inline"><font color="red">*</font> </span>
+								<select id="subtype" name="subtype" class="form-control oneline" 
+									v-model="roadFacilities.subtype" required="required">
+									<option value="">请选择</option>
+									<option  v-for="bz in lbList" v-bind:value="bz.lb">{{bz.lb}}</option>
+								</select>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="status" class="col-sm-2 control-label">设施状态</label>
+					<div class="col-sm-4 onelinedis">
+						 <span class="help-inline"><font color="red">*</font> </span>
+							<select id="status" name="status" class="form-control oneline" 
+								v-model="roadFacilities.status" required="required">
+								<option value="">请选择</option>
+								<option value="1">正常</option>
+								<option value="2">维护中</option>
+								<option value="3">损坏</option>
+							</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">描述信息</label>
+					<div class="column col-sm-9 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="description" name="description" v-model="roadFacilities.description" placeholder="描述信息" 
+							style="width:420px"  htmlEscape="false" maxlength="200" required="required"/>
+					</div>
+				</div>	
+				<div class="form-group">
+					<label for="shape" class="col-sm-2 control-label">地理位置</label>
+					<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="shape" name="shape" v-model="roadFacilities.shape" placeholder="地理位置" 
+							htmlEscape="false" maxlength="100" readonly="readonly"/>
+					</div>
+					<div class="col-sm-2">
+						<button type="button" class="btn btn-sm pull-right"  @click="relocate"><i class="fa fa-street-view"></i>定位</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="location" class="col-sm-2 control-label">位置描述</label>
+					<div class="column col-sm-9 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="location" name="location" v-model="roadFacilities.location" placeholder="位置描述" 
+							style="width:420px" htmlEscape="false" maxlength="20" required="required"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<!-- <label for="shape" class="col-sm-2 control-label">点位坐标</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="shape" name="shape" v-model="roadFacilities.shape" placeholder="点位坐标" 
+							htmlEscape="false" maxlength="50"/>
+					</div> -->
+					<label for="crossId" class="col-sm-2 control-label">安装路口</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="crossId" name="crossId" v-model="roadFacilities.crossId" placeholder="安装路口" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+					<label for="manuId" class="col-sm-2 control-label">生产厂家</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="manuId" name="manuId" v-model="roadFacilities.manuId" placeholder="生产厂家" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="groupId" class="col-sm-2 control-label">中队</label>
+					<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<select id="groupId" name="groupId" class="form-control oneline" v-model="roadFacilities.groupId"
+						  @change="getDutyListByTeamId" required="required">
+							<option value="">请选择</option>
+							<option v-for="team in teamList" v-bind:value="team.groupId">{{team.groupName}}</option>
+						</select>
+					</div>
+					<label for="gridId" class="col-sm-2 control-label">责任区</label>
+					<div class="col-sm-4 onelinedis">
+						<select id="gridId" name="gridId" class="form-control oneline" 
+							v-model="roadFacilities.gridId" >
+							<option value="">请选择</option>
+							<option v-for="duty in dutyGridList" v-bind:value="duty.gridId">{{duty.gridName}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

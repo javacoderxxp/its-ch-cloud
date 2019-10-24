@@ -1,0 +1,15 @@
+server:
+  port: 8181
+spring:
+  kafka:
+    bootstrap-servers: 192.168.128.12:9092,192.168.128.13:9092,192.168.128.14:9092
+    producer:
+      acks: all
+      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      enable-auto-commit: true
+      auto-commit-interval: 200
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer

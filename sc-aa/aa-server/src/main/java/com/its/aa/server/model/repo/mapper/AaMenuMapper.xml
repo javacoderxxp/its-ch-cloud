@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.its.aa.server.model.repo.AaMenuRepo">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.its.aa.common.model.entity.AaMenu">
+        <id column="ID" property="id" />
+        <result column="CREATE_DT" property="createDt" />
+        <result column="CREATE_BY" property="createBy" />
+        <result column="UPDATE_DT" property="updateDt" />
+        <result column="UPDATE_BY" property="updateBy" />
+        <result column="DEL_FLAG" property="delFlag" />
+        <result column="MENU_ID" property="menuId" />
+        <result column="MENU_NAME" property="menuName" />
+        <result column="PARENT_ID" property="parentId" />
+        <result column="TYPE" property="type" />
+        <result column="HREF" property="href" />
+        <result column="ICON" property="icon" />
+        <result column="SORT" property="sort" />
+        <result column="ACTIVE" property="active" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, CREATE_DT, CREATE_BY, UPDATE_DT, UPDATE_BY, DEL_FLAG, MENU_ID, MENU_NAME, PARENT_ID, TYPE, HREF, ICON, SORT, ACTIVE
+    </sql>
+    <insert id="addRoleMenu" parameterType="com.its.aa.common.model.entity.AaRole">
+        INSERT INTO t_aa_role_menu (ID, ROLE_ID, MENU_ID)
+        <foreach collection="menuList" item="menu" separator=" union all ">
+            SELECT REPLACE(UUID(),'-',''), #{roleId, jdbcType=VARCHAR}, #{menu.menuId, jdbcType=VARCHAR} FROM DUAL
+            <!-- oracle
+            SELECT SYS_GUID(), #{roleId, jdbcType=VARCHAR}, #{menu.menuId, jdbcType=VARCHAR} FROM DUAL
+             -->
+        </foreach>
+    </insert>
+    <delete id="deleteRoleMenu" parameterType="com.its.aa.common.model.entity.AaRole">
+        delete from t_aa_role_menu
+        where 1=1
+          AND ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    </delete>
+    <select id="findRoleMenu" resultMap="BaseResultMap" parameterType="com.its.aa.common.model.entity.AaRole">
+        select
+            T1.ID,T1.CREATE_DT,T1.CREATE_BY,T1.UPDATE_DT,T1.UPDATE_BY,T1.DEL_FLAG,T1.MENU_ID,T1.MENU_NAME,T1.PARENT_ID,T1.TYPE,T1.HREF,T1.ICON,T1.SORT,T1.ACTIVE
+        from t_aa_menu T1, t_aa_role_menu T2
+        where 1=1
+        AND T1.MENU_ID = T2.MENU_ID
+        AND T2.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

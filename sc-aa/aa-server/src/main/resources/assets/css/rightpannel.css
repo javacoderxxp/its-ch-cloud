@@ -1,0 +1,75 @@
+/*//做那个右侧*/
+ul,li{list-style: none;line-height: 2.5;}
+ul li:hover{ background-color: #bfdbf3;}
+a:link,a:visited{text-decoration: none;}
+.list{width: 210px;/*border-bottom:solid 1px #316a91;*/}
+.list ul li{background-color: #fdfdfd;border: solid 1px #dddddd;border-bottom: 0;}
+.list ul li a{padding-left: 10px;color: #fff; font-size:12px; display: block; font-weight:bold; height:36px;line-height: 36px;position: relative;
+}
+.list ul li .inactive{ background:url(../images/off.png) no-repeat 184px center;}
+.list ul li .inactives{background:url(../images/on.png) no-repeat 184px center;} 
+.list ul li ul{display: none;}
+.list ul li ul li { border-left:0; border-right:0;background-color: #eeeeee;
+    border-color: #fefefe; /*height: 35px;*/}
+.list ul li ul li:hover{ background-color: #bfdbf3;}
+.list ul li ul li ul{display: none;}
+.list ul li ul li label{ padding-left:40px; /*line-height: 35px;*/}
+.list ul li ul li ul li { background-color:#d6e6f1; }
+.last{ background-color:#d6e6f1; border-color:#6196bb; }
+.list ul li ul li ul li label{ color:#316a91; padding-left:50px;}
+#box-cl-keleyi-com a:hover {
+    background-color: #bfdbf3;
+    font-weight: bold;
+}
+.fa{
+	/*margin-right: 6px;*/
+}
+.checkboxclass{
+width:8px !important;height: 8px !important;
+border-radius: 4px !important;}
+input[type="checkbox"]:after {
+    content: "";
+    display: block;
+    width: 14px;
+    height: 14px;
+    margin-top: 6px;
+    margin-left: 20px;
+    border: 2px solid #a9a9a9;
+    border-radius: 2px;
+    }
+input[type="checkbox"]:checked:before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    display: table;
+    width: 6px;
+    height: 14px;
+    margin-left: 20px;
+    border: 2px solid #fff;
+    border-top-width: 0;
+    border-left-width: 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+input[type="checkbox"] {
+	float: left;
+    z-index: 100;
+    margin-bottom: -2px;
+}
+/*//地图标尺*/
+
+.imap-control-scale-line {
+    border: 2px solid #2196f3 !important;
+    border-top: none !important;
+    background: rgba(208, 231, 245, 0.7) none repeat scroll 0 0 !important;
+    color: #2196f3 !important;
+    }
+.imap-control-scale-line:not(:first-child) {
+    border-top: 2px solid #2196f3 !important;
+    border-bottom: none !important;
+    margin-top: -2px;
+}
+

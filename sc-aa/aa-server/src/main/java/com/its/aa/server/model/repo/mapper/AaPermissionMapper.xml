@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.its.aa.server.model.repo.AaPermissionRepo">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.its.aa.common.model.entity.AaPermission">
+        <id column="ID" property="id" />
+        <result column="CREATE_DT" property="createDt" />
+        <result column="CREATE_BY" property="createBy" />
+        <result column="UPDATE_DT" property="updateDt" />
+        <result column="UPDATE_BY" property="updateBy" />
+        <result column="DEL_FLAG" property="delFlag" />
+        <result column="PERMISSION_ID" property="permissionId" />
+        <result column="PERMISSION_NAME" property="permissionName" />
+        <result column="TYPE" property="type" />
+        <result column="URL" property="url" />
+        <result column="URL_DESC" property="urlDesc" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, CREATE_DT, CREATE_BY, UPDATE_DT, UPDATE_BY, DEL_FLAG, PERMISSION_ID, PERMISSION_NAME, TYPE, URL, URL_DESC
+    </sql>
+
+    <insert id="addRolePermission" parameterType="com.its.aa.common.model.entity.AaRole">
+        INSERT INTO t_aa_role_permission (ID, ROLE_ID, PERMISSION_ID) values
+        <foreach collection="permissionList" item="permission" separator=",">
+            (SELECT REPLACE(UUID(),'-',''), #{roleId, jdbcType=VARCHAR}, #{permission.permissionId, jdbcType=VARCHAR} FROM DUAL)
+            /*SELECT SYS_GUID(), #{roleId, jdbcType=VARCHAR}, #{permission.permissionId, jdbcType=VARCHAR} FROM DUAL*/
+        </foreach>
+    </insert>
+    <delete id="deleteRolePermission" parameterType="com.its.aa.common.model.entity.AaRole">
+        delete from t_aa_role_permission
+        where 1=1
+          AND ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="findRolePermission" parameterType="com.its.aa.common.model.entity.AaRole" resultMap="BaseResultMap">
+        select
+        T1.ID,T1.CREATE_DT,T1.CREATE_BY,T1.UPDATE_DT,T1.UPDATE_BY,T1.DEL_FLAG,T1.PERMISSION_ID,T1.PERMISSION_NAME,T1.TYPE,T1.URL,T1.URL_DESC
+        from t_aa_permission T1, t_aa_role_permission T2
+        where 1=1
+        AND T1.PERMISSION_ID = T2.PERMISSION_ID
+        AND T2.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

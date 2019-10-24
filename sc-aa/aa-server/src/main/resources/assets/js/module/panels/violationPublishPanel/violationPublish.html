@@ -1,0 +1,179 @@
+<div id="violationPublish-panel" class="panel panel-primary"
+	style="width: 630px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			交通违法处罚
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs"
+					onclick="TUtils.togglePanelBody()">
+					<i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i>
+				</button>
+				<button type="button" class="btn btn-default btn-xs" @click="close">
+					<i class="fa fa-close"></i>
+				</button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="myTab" class="nav nav-tabs">
+			<li id="liQuery" class="active"><a href="#publishQuery" data-toggle="tab">查询</a></li>
+			<li id="liDetail"  v-show="showDetail" ><a href="#publishDetail" data-toggle="tab">登记</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="publishQuery">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<!--
+						<div class="col-sm-2 control-label">记录类型</div>
+						<div class="column col-sm-4">
+							<select style="width:100px" id="recordType" name="recordType"  htmlEscape="false" v-model="publishQuery.recordType">
+								<option value="">所有</option>
+								<option value="0">简易程序</option>
+								<option value="1">一般程序</option>
+							</select>
+						</div>
+						-->
+						<label class="col-sm-2 control-label">处罚类型</label>
+						<div class="column col-sm-4">
+							<select style="width:100px" id="type" name="type"  htmlEscape="false" v-model="publishQuery.type">
+								<option value="">所有</option>
+								<option value="0">简易程序</option>
+								<option value="1">强制措施</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">处罚中队</label>
+						<div class="column col-sm-4">
+							<select name="groupId" class="form-control selectpicker" id="groupIdQ" v-model="groupId">
+								<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+									{{group.groupName}}
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+                		<label for="startDt" class="col-sm-2 control-label">开始时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="startTime" v-model="queryObj.startTime" name="startTime"
+							@click="setDateStart" placeholder="开始时间" readonly="readonly" required="required">
+						</div>
+                		<label for="endDt" class="col-sm-2 control-label">结束时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="endTime" v-model="queryObj.endTime" name="endTime"
+							@click="setDateEnd" placeholder="结束时间" readonly="readonly" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<!--
+							<a class="btn btn-sm" @click="add"><i class="fa fa-search"></i>&nbsp;新增</a>
+							<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+							-->
+						</div>
+					</div>
+					
+				</div>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade" v-show="showDetail" id="publishDetail" style="height:450px; overflow-y:auto; overflow-x:hidden;">
+				<form class="form-horizontal" id="publishdetailForm" role="form">
+					<div class="form-group" style="margin-top: 10px;">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-sm btn-default"
+								@click="addPosition">选择违法位置</button>
+						</div>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="posShape"
+								placeholder="违法位置坐标"
+								readonly="readonly" required="required">
+								
+						</div>
+						<label class="col-sm-2 control-label">查获地点</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="violatedPlace" v-model="punish.violatedPlace"
+								name="violatedPlace" placeholder="地点描述" required="required">
+								
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">被罚者</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="violatedName"
+								name="violatedName" v-model="punish.violatedName"
+								placeholder="被罚者" required="required" maxlength="20">
+								
+						</div>
+						<label class="col-sm-2 control-label">有效证号</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="idCardNo"
+								name="idCardNo" v-model="punish.idCardNo"
+								placeholder="身份证/驾驶证号" maxlength="20">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">车辆号牌</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="carNo"
+								name="carNo" v-model="punish.carNo"
+								placeholder="车辆号牌" maxlength="10">
+						</div>
+						<label class="col-sm-2 control-label">违法行为</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="violatedDesc"
+								name="violatedDesc" v-model="punish.violatedDesc"
+								placeholder="违法行为描述" maxlength="20">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">处罚类型</label>
+						<div class="col-sm-4">
+							<select name="type" id="punish-type" htmlEscape="false">
+								<option value="0" selected>一般处罚</option>
+								<option value="1">强制处罚</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">事故等级</label>
+						<div class="col-sm-4">
+							<select id="violatedLevel" name="violatedLevel" htmlEscape="false">
+								<option value="0" selected>无</option>
+								<option value="1">死亡事故</option>
+								<option value="2">伤人事故</option>
+								<option value="3">财产损失</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">处罚民警</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="punisherNo"
+								name="punisherNo" v-model="punish.punisherNo" required="required"
+								placeholder="警员编号" maxlength="10" digits="true">
+								
+						</div>
+						<label class="col-sm-2 control-label">查获时间</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="violatedDt"
+								name="violatedDt" placeholder="查获时间" required="required"
+								readonly="readonly">
+								
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="subButton" class="btn btn-sm btn-primary" @click="submitPunish">提交</button>
+							&nbsp;&nbsp;
+							<input id="editB" type="button" class="btn btn-warning btn-sm pull-right" style="display: none" value="返回" />
+						</div>
+					</div>
+				</form>
+				
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,25 @@
+server:
+  port: 10041
+
+
+spring:
+  application:
+    name: aa
+
+  profiles:
+    active: dev
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml
+        timeout: 30000
+        shared-dataids: all-service-common.yaml
+    sentinel:
+      log:
+        dir: ./logs/csp/
+      transport:
+        dashboard: localhost:10009

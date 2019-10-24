@@ -1,0 +1,100 @@
+<div id="policeControl-panel" class="panel panel-primary" style="width: 500px;">
+	<div class="panel-heading">
+		<h3 class="panel-title" style="font-size:16px;">
+			警力信息一览
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="panel panel-default">
+			<div class="form-horizontal" style="width: auto;">
+				<div class="form-group" style="margin-top: 5px">
+					<div class="col-sm-5 control-label" style="text-align:left;font-size:12px;">&nbsp;&nbsp;&nbsp;警员姓名/警车号牌/电台名称</div>
+					<div class="column col-sm-6"  style="text-align:left;">
+						<input type="text" class="form-control" id="nameSearch" style="font-size:12px;" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div v-show="isJWT">
+			<div  id="overone" style="height:460px; overflow-y: scroll;-ms-overflow-y:scroll; margin-bottom: 0px">
+				<table width="100%" class="table table-striped">
+					<thead>
+						<tr>
+                            <th width="30%">警员姓名</th>
+							<th width="25%">警员编号</th>
+							<th width="25%">所属中队</th>
+							<th width="20%">状态</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="policeControlTb">
+						<tr v-for="item in allGpsDevList" v-show="item.isShow" :style="{'color': item.status==0?'#66cc00':'','cursor':'pointer'}"
+						  @click="locateCurrentPos(item.status, item.longitude, item.latitude)">
+							<td><b>{{item.policeName}}</b></td>
+							<td>{{item.policeNo}}</td>
+							<td>{{item.teamName}}</td>
+							<td>{{item.status=='0'?'在线':'离线'}}</td>
+							<td>
+								<button class='btn btn-xs btn-primary pull-right' :name='item.policeNo' @click='showTrackSearchJwt(item.policeNo,item.policeName)'>轨迹查询</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div v-show="isCar">
+			<div id="overtwo" style="height:460px; overflow-y: scroll;-ms-overflow-y：scroll; margin-bottom: 0px">
+				<table width="100%" class="table table-striped">
+					<thead>
+						<tr>
+							<th width="30%">警车号牌</th>
+							<th width="50%">所属中队</th>
+							<th width="20%">状态</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="policeControlTb">
+						<tr v-for="item in allGpsDevList" v-show="item.isShow" :style="{'color': item.status==0?'#66cc00':'','cursor':'pointer'}" 
+                          @click="locateCurrentPos(item.status, item.longitude, item.latitude)">
+							<td><b>{{item.plateNo}}</b></td>
+							<td>{{item.deptName}}</td>
+							<td>{{item.status=='0'?'在线':'离线'}}</td>
+							<td>
+								<button class='btn btn-xs btn-primary pull-right' :name='item.gpsId' @click='showTrackSearch(item.gpsId,item.plateNo)'>轨迹查询</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div v-show="isRadio">
+			<div id="overthree"  style="height:460px; overflow-y: scroll;-ms-overflow-y：scroll; margin-bottom: 0px">
+				<table width="100%" class="table table-striped">
+					<thead>
+						<tr>
+							<th width="50%">电台名称</th>
+							<th width="30%">GPS ID</th>
+							<th width="20%">状态</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="policeControlTb">
+						<tr v-for="item in allGpsDevList" v-show="item.isShow" :style="{'color': item.status==0?'#66cc00':'','cursor':'pointer'}" 
+                          @click="locateCurrentPos(item.status, item.longitude, item.latitude)">
+							<td><b>{{item.radioName}}</b></td>
+							<td>{{item.gpsId}}</td>
+							<td>{{item.status=='0'?'在线':'离线'}}</td>
+							<td>
+								<button class='btn btn-xs btn-primary pull-right' :name='item.gpsId' @click='showTrackSearch(item.gpsId,item.radioName)'>轨迹查询</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

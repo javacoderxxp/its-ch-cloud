@@ -1,0 +1,190 @@
+<div id="zdqyCl-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">重点企业车辆
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+                    <div class="col-sm-2 control-label">所属中队</div>
+                    <div class="column col-sm-4">
+                        <select v-if="currentUser.jjddUser" class="form-control" v-model="zdqyClQ.groupId" htmlEscape="false">
+                            <option value="">所有</option>
+                            <option v-for="group in groupList" v-bind:value="group.groupId">
+                                {{group.groupName}}
+                            </option>
+                        </select>
+                        <template v-if="currentUser.jjzdUser">
+                            <span>{{currentUser.group.groupName}}</span>
+                            <input type="hidden" id="groupIdQ" v-model="zdqyClQ.groupId"/>
+                        </template>
+                    </div>
+					<div class="col-sm-2 control-label">企业名称</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="zdqyClQ.dwmc" placeholder="" htmlEscape="false" />
+					</div>
+				</div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">车牌号码</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control" v-model="zdqyClQ.hphm" placeholder="" htmlEscape="false" />
+                    </div>
+                    <div class="col-sm-2 control-label">驾驶员</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control" v-model="zdqyClQ.jsr" placeholder="" htmlEscape="false" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12" style="height: 37px; padding-top: 5px"><strong>已分配责任区&nbsp;&nbsp;</strong>
+                        <label><input type="radio" v-model="zdqyClQ.gridAssigned" value="1">是</label>
+                        <label><input type="radio" v-model="zdqyClQ.gridAssigned" value="0">否</label>
+                    </div>
+                </div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a class="btn btn-sm" v-show="isCgsAdmin" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit"><i class="fa fa-hand-o-right"></i>&nbsp;指派</a>
+				<!-- 
+				<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a> 
+				-->
+                <a class="btn btn-sm" @click="exportExcel"><i class="fa fa-file"></i>&nbsp;导出</a>
+                <a class="btn btn-sm" @click="downloadExcel" v-if="fileName !=''"><i class="fa fa-download"></i>&nbsp;下载</a> 
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+                    <label for="hphm" class="col-sm-2 control-label">号牌号码</label>
+                    <div class="col-sm-4 onelinedis">
+                        <span class="help-inline"><font color="red">*</font> </span>
+                        <input type="text" class="form-control oneline" id="hphm" name="hphm" v-model="zdqyCl.hphm" placeholder="号牌号码" 
+                            htmlEscape="false" maxlength="20" required="required"/>
+                    </div>
+					<label for="hpzl" class="col-sm-2 control-label">号牌种类</label>
+					<div class="col-sm-4 onelinedis">
+                        <span class="help-inline"><font color="red">*</font> </span>
+                        <select class="form-control oneline" v-model="zdqyCl.hpzl" required="required">
+                            <option v-for="dict in plateTypeDicts" v-bind:value="dict.value">
+                                {{dict.label}}
+                            </option>
+                        </select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="syxz" class="col-sm-2 control-label">使用性质</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="syxz" name="syxz" v-model="zdqyCl.syxz" placeholder="使用性质" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="sjhm" class="col-sm-2 control-label">手机号码</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="sjhm" name="sjhm" v-model="zdqyCl.sjhm" placeholder="手机号码" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+                </div>
+                <div class="form-group">
+					<label for="yxqz" class="col-sm-2 control-label">有效期止</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="yxqz" name="yxqz" v-model="zdqyCl.yxqz" placeholder="有效期止" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="jszh" class="col-sm-2 control-label">驾驶证号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="jszh" name="jszh" v-model="zdqyCl.jszh" placeholder="驾驶证号" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="jsr" class="col-sm-2 control-label">驾驶人</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="jsr" name="jsr" v-model="zdqyCl.jsr" placeholder="驾驶人" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+                <div class="form-group">
+                    <label for="zzxxdz" class="col-sm-2 control-label">住所详细地址</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="zsxxdz" name="zsxxdz" v-model="zdqyCl.zsxxdz" placeholder="住所详细地址" 
+                            htmlEscape="false" maxlength="500" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="zzxxdz" class="col-sm-2 control-label">暂住详细地址</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="zzxxdz" name="zzxxdz" v-model="zdqyCl.zzxxdz" placeholder="暂住详细地址" 
+                            htmlEscape="false" maxlength="500" readonly="readonly"/>
+                    </div>
+                </div>
+				<hr style="color: black;background-color: black; height: 1px;"/>
+				<div class="form-group">
+                    <label for="dwmc" class="col-sm-2 control-label">企业名称</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="dwmc" name="dwmc" v-model="zdqyCl.dwmc" placeholder="单位名称" 
+                            htmlEscape="false" maxlength="200"/>
+                    </div>
+					<label for="dwxz" class="col-sm-2 control-label">企业性质</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="dwxz" name="dwxz" v-model="zdqyCl.dwxz" placeholder="单位性质" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<!-- <label for="groupId" class="col-sm-2 control-label">中队</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="groupId" name="groupName" v-model="zdqyCl.groupName" placeholder="中队" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="gridId" class="col-sm-2 control-label">责任区</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="gridName" name="gridName" v-model="zdqyCl.gridName" placeholder="责任区" 
+							htmlEscape="false" maxlength="32"/>
+					</div> -->
+					
+                    <label for="groupId" class="col-sm-2 control-label" v-show="currentUser.jjddUser">中队</label>
+                    <div class="col-sm-4" v-show="currentUser.jjddUser">
+                        <select class="form-control" v-model="zdqyCl.groupId" @change="loadGridsByChangeGroup">
+                            <option value="">请选择</option>
+                            <option v-for="group in groupList" v-bind:value="group.groupId">
+                                {{group.groupName}}
+                            </option>
+                        </select>
+                    </div>
+                    <label for="gridId" class="col-sm-2 control-label">责任区</label>
+                    <div class="col-sm-4">
+                        <select name="type" class="form-control" v-model="zdqyCl.gridId">
+                            <option value="">请选择</option>
+                            <option v-for="dutyGrid in dutyGridList" v-bind:value="dutyGrid.gridId">
+                                {{dutyGrid.gridName}}
+                            </option>
+                        </select>
+                    </div>
+				</div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <span><font color="red">若中队或责任区为空,请确认所属企业是否存在!</font></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-sm" @click="checkQy"><i class="fa fa-search"></i>&nbsp;检查企业</a>
+                    </div>
+                </div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+                        <button type="submit" class="btn btn-primary btn-sm" v-show="isCgsAdmin" @click="save">保存</button>
+                        &nbsp;&nbsp;
+                        <button type="button" class="btn btn-primary btn-sm" v-show="isZdAdmin" @click="saveGroupGrid">更新中队/责任区</button>
+                        &nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

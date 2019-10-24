@@ -1,0 +1,251 @@
+<div id="teamManage-panel" class="panel panel-primary" style="width: 750px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">勤务值班管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList == -1'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-6">
+						<select v-if="currentUser.jjddUser" class="form-control selectpicker" id="groupIdQ" v-model="teamQ.groupId">
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select>
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupIdQ" v-model="teamQ.groupId" />
+						</template>
+					</div>
+					<div class="col-sm-4">
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-times"></i>&nbsp;删除</a>
+				<a class="btn btn-sm" @click="arrange" v-show="isZdAdmin" ><i class="fa fa-calendar-plus-o"></i>&nbsp;开始排班</a>
+				<a class="btn btn-sm" @click="showCalendar" v-show="isZdAdmin"><i class="fa fa-calendar-plus-o"></i>&nbsp;查看排班</a>
+				<a class="btn btn-sm" @click="todayDuty"><i class="fa fa-calendar-plus-o"></i>&nbsp;今日值班</a>
+			</div>
+			</div>
+		    <table id="jqGrid"></table>
+		    <div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='showList == 0'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label  class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-8">
+						<select v-if="currentUser.jjddUser" class="form-control selectpicker" name="groupId" id="groupId" v-model="team.groupId" required="required">
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select> 
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupId" name="groupId" v-model="team.groupId"/>
+						</template>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="userIds" class="col-sm-2 control-label">社区民警</label>
+					<div class="col-sm-8">
+						<select class="form-control selectpickerU" id="userIds" name="userIds" required="required" multiple>
+							<option v-for="(user,index) in groupUserList"  v-bind:value="user.userId" data-icon="fa fa-user">
+							{{user.userName}} ({{(user.type == 'MJ')?'民警':'警辅'}})</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label  class="col-sm-2 control-label">班组编号</label>
+					<div class="col-sm-4">
+						<!-- <input type="text" class="form-control" id="teamId" name="teamId" v-model="team.teamId" placeholder="班组编号" 
+							htmlEscape="false" maxlength="20"  required="required" />
+							<span class="help-inline"><font color="red">*</font> </span> -->
+							{{team.teamId}}
+					</div>
+					<label  class="col-sm-2 control-label">班组名称</label>
+					<div class="col-sm-4 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="teamName" name="teamName" v-model="team.teamName" placeholder="班组名称" 
+							htmlEscape="false" maxlength="20"  required="required" />
+							
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">描述</label>
+					<div class="col-sm-10">
+						<textarea rows="3" cols="" class="form-control" id="description" name="description" v-model="team.description" placeholder="描述"
+							maxlength="200"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" class="btn btn-sm btn-primary" @click="save" v-show="isZdAdmin">提交</button>
+						<button type="button" class="btn btn-sm btn-warning" @click="reload">返回</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="pbDiv" v-show='showList == 1'>
+			<div class="panel panel-default" id="scheduleConfigPanel">
+				<div class="panel-heading">
+					<ul class="nav nav-pills nav-justified step step-round">
+						<li class="active"><a>步骤1</a></li>
+						<li><a>步骤2</a></li>
+						<li><a>步骤3</a></li>
+					</ul>
+				</div>
+				<div class="panel-body">
+					<div class="container-fluid">
+						<div class="carousel slide" data-ride="carousel" data-interval="false" data-wrap="false">
+							<div class="carousel-inner" role="listbox" style="overflow: auto;">
+								<div class="item active">
+									<h4>基本配置</h4>
+									<div class="row">
+										<label  class="col-sm-2 control-label">中队</label>
+										<div class="column col-sm-4">
+											<select v-if="currentUser.jjddUser" class="form-control" id="groupIdA" v-model="teamArrange.groupId" required="required">
+												<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+													{{group.groupName}}
+												</option>
+											</select> 
+											<template v-if="currentUser.jjzdUser">
+												<span>{{currentUser.group.groupName}}</span>
+												<input type="hidden" id="groupIdA" v-model="teamArrange.groupId"/>
+											</template>
+										</div>
+										<div class="col-sm-2 control-label">月份</div>
+										<div class="column col-sm-4">
+											<input type="text" class="form-control form_month" id="startYearMonth" v-model='teamArrange.startYearMonth' placeholder="月份" readonly>
+										</div>
+									</div>
+								</div>
+								<div class="item">
+									<h4>班组配置</h4>
+									<div style="height: 350px; overflow-y: scroll !important;-ms-overflow-y: scroll;overflow: scroll;">
+										<table id="bzTable" class="table table-striped">
+										    <thead>
+										    <tr>
+										        <th>序号</th>
+										        <th>班组名称</th>
+										        <th>警员-警号</th>
+										    </tr>
+										    </thead>
+										    <tbody>
+										    <tr :data-index="index" v-for="(team, index) in teamList">
+										    	<td>{{index+1}}</td>
+										    	<td>{{team.teamName}}</td>
+										    	<td>{{team.userNames}}</td>
+										    	<td>
+										    		<a v-if="team.joinArrange" href="javascript:;" class="btn btn-sm btn-success" @click="setTeamJoin(team, false)">已参与</a>
+										    		<a v-if="!team.joinArrange" href="javascript:;" class="btn btn-sm btn-danger" @click="setTeamJoin(team, true)">未参与</a>
+										    	</td>
+										    </tr>
+										    </tbody>
+										</table>
+									</div>
+								</div>
+								<div id="dragContainMent" class="item">
+									<h4>预览</h4>
+									<div class="list-group" style="width:100%;float: left;overflow-y: auto;max-height: 410px;margin-bottom: 0px;" >
+									  <div id='calendarPreview' style="float: left;width:450px;">
+									  </div>
+									  <ul style="margin-left:6px">
+									   <li class="list-group-item">班组信息</li>
+									   <li  v-for="(team, index) in teamList" class="list-group-item" style="padding: 5px 5px;">
+									  		<span :data-teamId="team.teamId" class="label label-info teanNameDrag" style="cursor: move;">{{team.teamName}}</span>
+									  		<br>{{team.userNames}}
+									   </li>
+									  </ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<div class="form-group">
+					   	<div class="col-sm-2 col-sm-offset-10">
+						</div>
+					</div>
+				</div>
+			</div>
+		   	<div class="pull-right">
+				<button type="button" v-show="currStep > 1" class="btn btn-primary btn-sm" @click="goStep('P')">前一步</button>
+				<button type="button" v-show="currStep < 2" class="btn btn-primary btn-sm" @click="goStep('N')">下一步</button>
+				<button type="button" v-show="currStep == 2" class="btn btn-primary btn-sm" @click="generate" v-show="isZdAdmin">生成</button>
+				<button type="button" v-show="currStep == 3" class="btn btn-primary btn-sm" @click="finish" v-show="isZdAdmin">完成</button>
+				<button type="button" class="btn btn-sm btn-warning" @click="reload">返回</button>
+			</div>
+		</div>
+		<div id="calendarDiv" v-show='showList == 2'>
+			<div class="form-group">
+				<label  class="col-sm-2 control-label">所属中队</label>
+				<div class="column col-sm-4">
+					<select v-if="currentUser.jjddUser" class="form-control selectpicker" id="groupIdQuery" v-model="teamQuery.groupId">
+						<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+							{{group.groupName}}
+						</option>
+					</select> 
+					<template v-if="currentUser.jjzdUser">
+						<span>{{currentUser.group.groupName}}</span>
+						<input type="hidden" id="groupIdQuery" v-model="teamQuery.groupId"/>
+					</template>
+				</div>
+			
+				<div class="col-sm-2 control-label">月份</div>
+				<div class="column col-sm-2">
+					<input type="text" class="form-control form_month" id="startYearMonthQ" v-model="teamQuery.startYearMonth" placeholder="月份" readonly>
+				</div>
+				<button type="button" class="btn btn-sm btn-warning" @click="teamQueryConfirm">确定</button>
+			</div>
+			
+			<h4 v-show="queryZbb" style="font-weight: bold;padding: 10px;" class="col-sm-12">值班表</h4>
+			<div id='calendarFinal' style="float: left;width:450px;"></div>
+			<ul v-show="queryZbb" class="list-group" style="float: left;margin-left: 10px;overflow-y: auto;max-height: 400px;" >
+			  <li class="list-group-item">班组信息</li>
+			  <li v-for="(team, index) in queryteamList" class="list-group-item" style="padding: 5px 5px;">
+			  	<span class="label label-info">{{team.teamName}}</span><br>{{team.userNames}}
+			  </li>
+			</ul>
+			<div v-show="queryZbb" class="col-sm-12" style="margin-top: 5px">
+				<button type="button" class="btn btn-sm btn-warning pull-right" @click="reload">返回</button>
+				<button type="button" class="btn btn-sm btn-danger pull-right" @click="teamScheduleDelete" style="margin-right: 50px;" v-show="isZdAdmin">删除值班表</button>
+			</div>
+		</div>
+		<div id="teamtodayDiv" v-show='showList == 3'>
+			<div class="panel panel-default">
+				<div class="form-horizontal">
+					<table class="table table-striped">
+					    <thead>
+					    <tr>
+					        <th style="text-align: center;"><i class="fa fa-sitemap"></i></th>
+					        <th style="text-align: center;"><i class="fa fa-group"></i></th>
+					        <th style="text-align: center;"><i class="fa fa-user"></i></th>
+					    </tr>
+					    </thead>
+					    <tbody>
+					    <tr style="text-align: center;" v-for="(team, index) in todayScheduleList">
+					    	<td><span class="label label-primary">{{team.groupName}}</span></td>
+					    	<td><span class="label label-primary">{{team.teamName}}</span></td>
+					    	<td><span class="label label-success">{{team.userNames}}</span></td>
+					    </tr>
+					    </tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-sm-12" style="margin-top: 5px">
+				<button type="button" class="btn btn-sm btn-warning pull-right" @click="reload">返回</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,40 @@
+<div id="crossFlowApp-panel" class="panel panel-primary" style="width: 700px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">路口流量分析
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="form-horizontal" id="crossFlowQueryForm">
+			<div class="form-group">
+				<div class="col-sm-2 control-label">开始时间</div>
+				<div class="column col-sm-4">
+					<input type="text" class="form-control form_datetime Wdate" id="crossFlowStartTime" name="startTime" 
+						@click="init97DateStart"
+						required="required" readonly>
+				</div>
+				<div class="col-sm-2 control-label">结束时间</div>
+				<div class="column col-sm-4">
+					<input type="text" class="form-control form_datetime Wdate" id="crossFlowEndTime" name="endTime" 
+						@click="init97DateEnd"
+						required="required" readonly>
+				</div>
+			</div>
+			<div class="form-group">
+				<div for="testQ" class="col-sm-2 control-label">路口</div>
+				<div class="column col-sm-5">
+					<select id="crossFlowSelect" >
+						<option v-for="(item,index) in crossList"  v-bind:value="item.bh" >{{item.bh+" "+item.mc}}</option>
+					</select>
+				</div>
+				<div class="col-sm-4">
+					<a class="btn btn-sm pull-right" type="submit" @click="query"><i class="fa fa-search"></i>&nbsp;&nbsp;查询&nbsp;&nbsp;</a>
+				</div>
+			</div>
+		</div>
+		<div id="crossFlowChart1" v-show="showChart" style="width: 690px; height: 480px; padding: 0px; margin: 0px;"></div>
+	</div>
+</div>

@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/wxdc?serverTimeZone=Asia/Shanghai&characterEncoding=utf-8&userSSL=false&allowMultiQueries=true&useUnicode=true
+    username: admin
+    password: 123456
+
+## tx-manager 配置
+tx-lcn:
+  ribbon:
+    loadbalancer:
+      dtx:
+        enabled: true
+  client:
+    manager-address: 127.0.0.1:9119
+
+  logger:
+    enabled: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/tx-manager?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+    username: admin
+    password: 123456

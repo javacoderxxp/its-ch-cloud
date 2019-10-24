@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.its.aa.server.model.repo.AaRoleRepo">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.its.aa.common.model.entity.AaRole">
+        <id column="ID" property="id" />
+        <result column="CREATE_DT" property="createDt" />
+        <result column="CREATE_BY" property="createBy" />
+        <result column="UPDATE_DT" property="updateDt" />
+        <result column="UPDATE_BY" property="updateBy" />
+        <result column="DEL_FLAG" property="delFlag" />
+        <result column="ROLE_ID" property="roleId" />
+        <result column="ROLE_NAME" property="roleName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, CREATE_DT, CREATE_BY, UPDATE_DT, UPDATE_BY, DEL_FLAG, ROLE_ID, ROLE_NAME
+    </sql>
+
+    <!-- 插入用户和角色关联表数据 -->
+    <insert id="addUserRole" parameterType="com.its.aa.common.model.entity.AaUser">
+        INSERT INTO t_aa_user_role (ID, USER_ID, ROLE_ID)
+        VALUES
+        <foreach collection="roleList" item="role" separator=",">
+            (
+            (SELECT REPLACE(UUID(),'-','') as id2) , #{userId, jdbcType=VARCHAR}, #{role.roleId, jdbcType=VARCHAR}
+             )
+        </foreach>
+    </insert>
+
+    <!-- 删除用户和角色关联表数据 -->
+    <delete id="deleteUserRole" parameterType="com.its.aa.common.model.entity.AaUser">
+        delete from t_aa_user_role
+        where 1=1
+          AND USER_ID = #{userId,jdbcType=VARCHAR}
+    </delete>
+
+    <!-- 查找用户和角色关联表数据 -->
+    <select id="findUserRole" resultType="com.its.aa.common.model.entity.AaRole" parameterType="com.its.aa.common.model.entity.AaUser">
+        select
+            T1.ID as id, T1.CREATE_DT as createDt, T1.CREATE_BY as createBy, T1.UPDATE_DT as updateaDt, T1.UPDATE_BY as updateBy, T1.DEL_FLAG as delFlag, T1.ROLE_ID as roleId, T1.ROLE_NAME as roleName
+        from t_aa_role T1, t_aa_user_role T2
+        where 1=1
+        AND T1.ROLE_ID = T2.ROLE_ID
+        AND T2.USER_ID = #{userId,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

@@ -1,0 +1,75 @@
+<div id="pure-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">通知
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="btn-group" role="group" aria-label="...">
+			<button type="button" id="notifyBtnNew" class="btn btn-xs" @click="loadMsgs('1')">新消息 <span class="badge">{{newNotifyList.length}}</span></button>
+			<button type="button" id="notifyBtnRead" class="btn btn-xs" @click="loadMsgs('2')">已读未处理 <span class="badge">{{unProcessNotifyList.length}}</span></button>
+			<button type="button" id="notifyBtnFinish" class="btn btn-xs" @click="loadMsgs('3')">已处理 <span class="badge">{{processedNotifyList.length}}</span></button>
+		</div>
+		<br/>
+		<br/>
+		<div class="panel-group" id="accordion1" v-show="showNotifyType == '1'" style="height: 250px; overflow-y: scroll; margin-bottom: 0px">
+			<div class="panel panel-default" v-for="notify in newNotifyList">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion1"  v-bind:href="'#'+notify.notifyId" @click="readOrProcess(notify.notifyId, 2)">
+							<span v-if="notify.lvl == '1'" class="text-primary">{{ notify.title }}</span>
+							<span v-else-if="notify.lvl == '2'" class="text-warning">{{ notify.title }}</span>
+							<span v-else class="text-danger">{{ notify.title }}</span>
+						</a>
+						<button class="btn btn-info btn-xs pull-right" @click="readOrProcess(notify.notifyId, 3)">标记为已处理</button>
+					</h4>
+				</div>
+				<div :id=notify.notifyId class="panel-collapse collapse">
+					<div class="panel-body">
+						{{ notify.content }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-group" id="accordion2" v-show="showNotifyType == '2'" style="height: 250px; overflow-y: scroll; margin-bottom: 0px">
+			<div class="panel panel-default" v-for="notify in unProcessNotifyList" >
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion2"  v-bind:href="'#'+notify.notifyId">
+							<span v-if="notify.lvl == '1'" class="text-primary">{{ notify.title }}</span>
+							<span v-else-if="notify.lvl == '2'" class="text-warning">{{ notify.title }}</span>
+							<span v-else class="text-danger">{{ notify.title }}</span>
+						</a>
+						<button class="btn btn-info btn-xs pull-right" @click="readOrProcess(notify.notifyId, 3)">标记为已处理</button>
+					</h4>
+				</div>
+				<div :id=notify.notifyId class="panel-collapse collapse">
+					<div class="panel-body">
+						{{ notify.content }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-group" id="accordion3" v-show="showNotifyType == '3'" style="height: 250px; overflow-y: scroll; margin-bottom: 0px">
+			<div class="panel panel-default" v-for="notify in processedNotifyList">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion3"  v-bind:href="'#'+notify.notifyId">
+							<span v-if="notify.lvl == '1'" class="text-primary">{{ notify.title }}</span>
+							<span v-else-if="notify.lvl == '2'" class="text-warning">{{ notify.title }}</span>
+							<span v-else class="text-danger">{{ notify.title }}</span>
+						</a>
+					</h4>
+				</div>
+				<div :id=notify.notifyId class="panel-collapse collapse">
+					<div class="panel-body">
+						{{ notify.content }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

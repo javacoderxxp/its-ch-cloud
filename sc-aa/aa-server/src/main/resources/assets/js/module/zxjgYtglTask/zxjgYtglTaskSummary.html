@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="图表" />
+<meta name="keywords" content="图表" />
+<link rel="stylesheet" href="../../../css/app.css" />
+<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootswatch.css" />
+<link rel="stylesheet" href="../../../plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+<link rel="stylesheet" href="../../../css/account.css" />
+<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+<style type="text/css"> 
+	.error {
+		color: red;
+    }
+    .nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 25px;}
+    .tablescrollbar{
+    	height: 500px;
+    	overflow-y: scroll;
+    }
+    .imgsize{
+    	width:60px;
+    	height:60px;
+    	    margin-left: 15%;
+    }	
+     .imgsizeon{
+    	width:60px;
+    	height:60px;
+    }
+    .layui-layer-tab div {
+	    -webkit-box-sizing: content-box;
+	    -moz-box-sizing: content-box;
+	    box-sizing: content-box;
+	}	
+</style>
+
+<script type="text/javascript" src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<script src="../../../plugins/echarts/echarts.min.js"></script>
+<script src="../../../plugins/echarts/theme/walden.js"></script>
+<title>现场任务汇总(重点车辆/源头管理)</title>
+</head>
+<body>
+<header>
+	<div class="headerfont">
+		<div class="backgroundimg onerow"></div>
+		<div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+			<p>太仓市公安局交通警察大队</p>
+			<p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+		</div>
+		<div style="clear: both;"></div>
+	</div>
+</header>
+<div id="vue-app" class="content-wrapper" style="margin-left: 0px;margin-top: 50px;background-color: #fff;height:100%;overflow:auto;">
+<!-- Main content -->
+<div class="panel panel-primary" style="width: 100%; margin-bottom: 0px">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			现场任务汇总(重点车辆/源头管理)
+		</h3>
+	</div>
+	<div class="panel-body" >
+		<div class="panel panel-default">
+			<div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+	                    <div class="col-md-2" style="min-width: 220px"><div id="cxzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                        <div class="col-md-2" style="min-width: 220px"><div id="gqzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                        <div class="col-md-2" style="min-width: 220px"><div id="hjzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                        <div class="col-md-2" style="min-width: 220px"><div id="kfqzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-2" style="min-width: 220px"><div id="lhzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                        <div class="col-md-2" style="min-width: 220px"><div id="njzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                        <div class="col-md-2" style="min-width: 220px"><div id="sxzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                        <div class="col-md-2" style="min-width: 220px"><div id="sfzdEchartDiv" style="width: 250px;height:150px;"></div></div>
+                    </div>
+                </div>
+			</div>
+		</div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">任务追溯</h3>
+            </div>
+            <div class="panel-body">
+	            <div class="form-horizontal" style="width: auto;">
+	                <div class="form-group">
+	                    <div class="col-sm-1 control-label">所属中队</div>
+	                    <div class="column col-sm-2">
+	                        <select class="form-control" id="groupIdQ" v-model="zxjgTaskQ.groupId" @change="loadGridsByChangeGroup">
+	                            <option value="">所有</option>
+	                            <option v-for="group in groupList" v-bind:value="group.groupId">
+	                                {{group.groupName}}
+	                            </option>
+	                        </select>
+	                    </div>
+	                    <div class="col-sm-1 control-label">责任区</div>
+	                    <div class="column col-sm-2">
+	                        <select name="type" class="form-control" v-model="zxjgTaskQ.gridId">
+	                              <option value="">所有</option>
+	                            <option v-for="dutyGrid in dutyGridList" v-bind:value="dutyGrid.gridId" data-icon="fa fa-sitemap">
+	                                {{dutyGrid.gridName}}
+	                            </option>
+	                        </select>
+	                    </div>
+	                    <div class="col-sm-1 control-label">完成状态</div>
+	                    <div class="column col-sm-2">
+	                        <select class="form-control " v-model="zxjgTaskQ.completeStatus">
+	                            <option value="">所有</option>
+	                            <option value="0">未完成</option>
+	                            <option value="1">已完成</option>
+	                        </select>
+	                    </div>
+					</div>
+	                <div class="form-group">
+	                    <div class="col-sm-1 control-label" style="margin-top: 8px;">车辆号牌</div>
+	                    <div class="column col-sm-2">
+	                        <input type="text" class="form-control" style="font-size:12px;" v-model="zxjgTaskQ.plateNo"/>
+	                    </div>
+	                    <div class="col-sm-1 control-label" style="margin-top: 8px;">开始时间</div>
+	                    <div class="column col-sm-2">
+	                        <input type="text" class="form-control form_datetime Wdate" id="startDtQ"  v-model="zxjgTaskQ.startDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+	                    </div>
+	                    <div class="col-sm-1 control-label" style="margin-top: 8px;">结束时间</div>
+	                    <div class="column col-sm-2">
+	                        <input type="text" class="form-control form_datetime Wdate" id="endDtQ"  v-model="zxjgTaskQ.endDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+	                    </div>
+	                    <div class="col-sm-8" style="width:140px; padding-top:5px;" >
+	                        <a class="btn btn-success btn-sm" @click="query()"><i class="fa fa-search"></i>&nbsp;查询</a>
+	                    </div>
+	                </div>
+	            </div>
+                <div class="row">
+                <div class="col-md-6">
+		            <div style="height: 520px; overflow-y: scroll !important ;-ms-overflow-y: scroll; overflow: scroll;">
+		                <table class="table table-striped">
+		                    <thead>
+		                    <tr>
+		                        <th></th>
+		                        <th>车辆号牌</th>
+		                        <th>号牌种类</th>
+		                        <th>任务数量</th>
+		                    </tr>
+		                    </thead>
+		                    <tbody>
+		                    <tr v-for="(zxjgTask,index) in zxjgTaskSummaryList">
+		                        <td>{{index+1}}</td>
+		                        <td>{{zxjgTask.plateNo}}</td>
+		                        <td>{{zxjgTask.plateType}}</td>
+		                        <td>
+		                            <a hreflang="javascript:;" target="blank" class="btn btn-xs btn-primary" @click="queryDetail(zxjgTask.plateNo)">{{zxjgTask.taskCount}}</a>
+		                        </td>
+		                    </tr>
+		                    </tbody>
+		                </table>
+		            </div>
+	            </div>
+                <div class="col-md-6">
+                    <div style="height: 520px; overflow-y: scroll !important ;-ms-overflow-y: scroll; overflow: scroll;">
+                        <div class="well well-sm">任务历史</div>
+                        <ul class="timeline">
+                            <template v-for="(zxjgTask,index) in zxjgTaskList">
+						    <li class="time-label">
+						        <span class="bg-red">
+						              {{zxjgTask.startDt}}
+						        </span>
+						    </li>
+						    <li>
+						        <i v-if="zxjgTask.checkPolice == null" class="fa fa-clock-o"></i>
+                                <i v-else class="fa fa-check"></i>
+						        <div class="timeline-item">
+						            <h3 class="timeline-header">{{zxjgTask.plateNo}}</h3>
+						            <div class="timeline-body">
+	                                                                                          车牌: {{zxjgTask.plateNo}}, 号牌类型:{{zxjgTask.plateType}}, 任务标题:{{zxjgTask.taskTitle}}<br/>
+	                                                                                          开始日期:{{zxjgTask.startDt}}, 截止日期:{{zxjgTask.endDt}}<br/>
+	                                                                                          责任中队:{{zxjgTask.groupName}}, 责任区:{{zxjgTask.gridName}}<br/>
+	                                                                                          详情: {{zxjgTask.additionInfo}}  <br/>  
+	                                                                                           照片数量: <a @click=gotoCheckPic(zxjgTask.id,zxjgTask.source) style='color:red;cursor: pointer;' v-if="zxjgTask.taskPicCount != 0">
+	                                   {{zxjgTask.taskPicCount}}</a>
+	                                   <span v-if="zxjgTask.taskPicCount == 0"> 
+	                                   {{zxjgTask.taskPicCount}}</span>
+	                                   <br/>                                                                                                      
+						            </div>
+						            <div class="timeline-footer">
+                                        <span v-if="zxjgTask.checkPolice == null">检查未完成</span>
+                                        <span v-else>
+	                                                                                               检查警员: {{zxjgTask.checkPolice}}, 检查时间:{{zxjgTask.checkDt}}<br/>
+	                                                                                               检查备注:{{zxjgTask.checkDesc}}
+			                        </div>
+						        </div>
+						    </li>
+						    </template>
+						</ul>
+                    </div>
+	            </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="../../../js/module/zxjgYtglTask/zxjgYtglTaskSummary.js"></script>
+</html>

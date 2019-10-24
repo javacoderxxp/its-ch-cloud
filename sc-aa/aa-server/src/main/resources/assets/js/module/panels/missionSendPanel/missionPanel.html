@@ -1,0 +1,134 @@
+<div id="pure-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">中队任务
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="btn-group" role="group" aria-label="..." style="margin-bottom: 10px;">
+			<button type="button" class="btn btn-xs btn-default" @click="loadMsgs('0')">未签收 <span class="badge">{{unsignList.length}}</span></button>
+			<button type="button" class="btn btn-xs btn-default" @click="loadMsgs('1')">未完成 <span class="badge">{{uncompletedList.length}}</span></button>
+			<button type="button" class="btn btn-xs btn-default" @click="loadMsgs('2')">已完成 <span class="badge">{{completedList.length}}</span></button>
+		</div>
+		<div class="panel-group" id="accordion1" v-show="showMissionType == '0'" style="height: 350px; overflow-y: auto; margin-bottom: 0px">
+			<div class="panel panel-danger" v-for="item in unsignList">
+				<div class="panel-heading" style="background-color: #ffffff;">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion1"  v-bind:href="'#'+item.id">
+							<span class="text-danger" style="font-weight: bold;">{{item.title}}</span>
+						</a>
+						<span class="text-warning pull-right">{{item.publishDt}}</span>
+					</h4>
+				</div>
+				<div :id=item.id class="panel-collapse collapse">
+					<div class="panel-body">
+						<span style="font-weight: bold;">{{item.content}}</span>
+						<div class="form-group" v-if="null != item.finishDt">
+							<div class="col-sm-2 col-sm-offset-6 control-label" style="margin-top: 5px;">指派警员</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.designatedPn}}</span>
+							</div>
+						</div> 
+						<div class="form-group">
+							<button class="btn btn-success btn-xs pull-right" style="margin-right: 30px;margin-top: 10px;" @click="signAndProcess(item)">签收并处理</button>
+							<button type="button" class="btn btn-default btn-xs pull-right" @click="locateMission(item)" style="margin-right: 40px;margin-top: 10px;">
+								<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>定位
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel-group" id="accordion2" v-show="showMissionType == '1'" style="height: 350px; overflow-y: auto; margin-bottom: 0px">
+			<div class="panel panel-warning" v-for="item in uncompletedList">
+				<div class="panel-heading" style="background-color: #ffffff;">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion2"  v-bind:href="'#'+item.id">
+							<span class="text-warning" style="font-weight: bold;">{{item.title}}</span>
+						</a>
+						<span class="text-warning pull-right">{{item.publishDt}}</span>
+					</h4>
+				</div>
+				<div :id=item.id class="panel-collapse collapse">
+					<div class="panel-body">
+						<span style="font-weight: bold;">{{item.content}}</span>
+						<div class="form-group" v-if="null != item.finishDt">
+							<div class="col-sm-2 col-sm-offset-6 control-label" style="margin-top: 5px;">指派警员</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.designatedPn}}</span>
+							</div>
+						</div> 
+						<div class="form-group" v-if="null != item.signDt">
+							<div class="col-sm-2 col-sm-offset-6 control-label" style="margin-top: 5px;">签收时间</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.signDt}}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							
+							<button class="btn btn-success btn-xs pull-right" style="margin-right: 30px;margin-top: 10px;" @click="feedback(item)">已完成</button>
+							<!-- <button class="btn btn-danger btn-xs pull-right" style="margin-right: 30px;margin-top: 10px;" @click="feedback(item)">反馈</button> -->
+							<button type="button" class="btn btn-default btn-xs pull-right" @click="locateMission(item)" style="margin-right: 40px;margin-top: 10px;">
+								<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>定位
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel-group" id="accordion3" v-show="showMissionType == '2'" style="height: 350px; overflow-y: auto; margin-bottom: 0px">
+			<div class="panel panel-default" v-for="item in completedList">
+				<div class="panel-heading" style="background-color: #ffffff;">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion3"  v-bind:href="'#'+item.id">
+							<span class="text-warning" style="font-weight: bold;">{{item.title}}</span>
+						</a>
+						<span class="text-warning pull-right">{{item.publishDt}}</span>
+					</h4>
+				</div>
+				<div :id=item.id class="panel-collapse collapse">
+					<div class="panel-body">
+						<span style="font-weight: bold;">{{item.content}}</span>
+						<div class="form-group" v-if="null != item.finishDt">
+							<div class="col-sm-2 col-sm-offset-6 control-label" style="margin-top: 5px;">指派警员</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.designatedPn}}</span>
+							</div>
+						</div> 
+						<div class="form-group" v-if="null != item.finishDt">
+							<div class="col-sm-2 col-sm-offset-6 control-label" style="margin-top: 5px;">完成时间</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.finishDt}}</span>
+							</div>
+						</div> 
+						<div class="form-group">
+							<button class="btn btn-success btn-xs pull-right" style="margin-right: 30px;margin-top: 10px;" @click="feedback(item)">反馈修改</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 反馈操作DIV start -->
+		<div id="postAlarmTaskDiv" v-show='false'>
+			<form class="form-horizontal" role="form">
+				<div class="form-group" style="margin-left: -330px; margin-right: 250px;margin-top:5px;">
+					<div class="col-sm-1 col-sm-offset-9">
+					<textarea id="descText" class="form-control" style=" border: 1px solid #bbbbbb;width:280px" rows="4" 
+					htmlEscape="false" required="required"></textarea>
+					</div>
+				</div>
+				<div class="form-group" style="margin-left: -150px; margin-right: 150px;">
+				   	<div class="col-sm-1 col-sm-offset-9">
+						<input type="button" class="btn btn-primary btn-sm" @click="finishMission" value="确定"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 反馈操作DIV end -->
+	</div>
+</div>

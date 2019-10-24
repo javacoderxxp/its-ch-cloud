@@ -1,0 +1,83 @@
+<div id="historyJam-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">拥堵路段分析
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="form-horizontal">
+		 	<!-- <span class="help-inline" style="margin-left:20px"><font color="red">拥堵路段排名只限一周</font> </span> -->
+          <div class="form-group">
+                <div class="col-sm-2 control-label">开始日期</div>
+                <div class="column col-sm-4">
+                    <input type="text" class="form-control form_datetime Wdate" id="startDtQ" v-model="roaddrawQ.startDt" 
+                        @click="init97DateStart"  
+                        placeholder="开始时间" readonly="readonly" required="required">
+                </div>
+                <div class="col-sm-2 control-label">结束日期</div>
+                <div class="column col-sm-4">
+                    <input type="text" class="form-control form_datetime Wdate" id="endDtQ" v-model="roaddrawQ.endDt" 
+                        @click="init97DateEnd" 
+                        placeholder="结束时间" readonly="readonly" required="required">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">路段类型</div>
+                <div class="column col-sm-4">
+                    <select style="width: 100px" v-model="roaddrawQ.vLdlx" 
+                        class="form-control" htmlEscape="false">
+                        <option value="">所有</option>
+                        <option value="1">国省道</option>
+                        <option value="2">城镇道路</option>
+                        <option value="3">县道路</option>
+                    </select>
+                </div>
+                <div class="column col-sm-4">
+                    <a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                </div>
+            </div>
+			<div class="col-md-12">
+				<div id="historyJamChart" style="width: 520px;height:280px;"></div>
+				<table class="table table-bordered table-striped table-condensed" style="margin-top: 5px;margin-bottom: 0px">
+				<tr>
+				<th class="text-center">路段</th>
+				<th class="text-center">次数</th>
+				</tr>
+				 <tr v-for="array in richiValueArray" @click="applyDataToMap(array)">
+				   <td class="text-center">{{array.name}}</td>
+				   <td  style="text-align:center;cursor: pointer;" title="点击查看详情"><button type="button" class="btn btn-xs btn-primary" @click="showDetails(array)">{{array.value}}</button></td>
+				</tr>
+				</table>
+			</div>
+		</div>
+		<div id="linkJamDetail" v-show='false'>
+				<div  class="tablescrollbar" style="font-size:10px;height:360px; overflow-y: auto;-ms-overflow-y:auto; margin-bottom: 0px">
+					<table class="table table-hover" style="table-layout: fixed;border:0px;margin: 0px;">
+						<thead>
+							<tr>
+								<th style="width:1%;">#</th>
+								<th style="width:4%; text-align:center">路名</th>
+								<th style="width:10%;text-align:center">起点</th>
+								<th style="width:10%; text-align:center">终点</th>
+								<th style="width:7%;text-align:center">发生时间</th>
+								<th style="width:4%; text-align:center">持续时间</th>
+							</tr>
+						</thead>
+						<tbody id="linkJamDetailTb">
+							<tr v-for="(item, index) in linkJamDetailList" @click="showOneLinkJam(item)">
+								<td>{{index+1}}</td>
+								<td style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+								 white-space: nowrap;text-align: left" :title="item.carNo">{{item.roadName}}</td>
+								<td style="text-align:center">{{item.startAddr}}</td>
+								<td style="text-align:center">{{item.endAddr}}</td>
+								<td style="text-align:center">{{item.pubTime}}</td>
+								<td style="text-align:center" style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; white-space: nowrap;text-align: left" :title="item.violatedPlace">{{item.longTime}}分钟</td>
+						</tbody>
+					</table>
+				</div>
+			</div>
+	</div>
+</div>

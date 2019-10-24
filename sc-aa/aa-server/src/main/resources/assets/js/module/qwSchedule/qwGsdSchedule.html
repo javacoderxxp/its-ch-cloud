@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../css/app.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+	<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+	<link rel="stylesheet" href="../../../css/account.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap-duallistbox/bootstrap-duallistbox.min.css" />
+	<link rel="stylesheet" href="../../../plugins/contextjs/context.standalone.css" />
+<style type="text/css"> 
+	table{border-collapse:collapse;border-spacing:0}
+		td{
+			border:1px solid #ababab;
+			height: 30px;
+			text-align: center;
+		}
+		td input{
+			border:none;
+			width:100%;
+			height:100%;
+		}
+		.lasttr{
+			border:0px;
+			text-align: left;
+		}
+</style>
+
+<!-- <script type="text/javascript">
+var itsEnv = window.itsEnv = 'sit'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script> -->
+
+<script type="text/javascript" src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<script type="text/javascript" src='../../../plugins/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js'></script>
+<script type="text/javascript" src='../../../plugins/contextjs/context.js'></script>
+<title>太仓大队国省道执勤排班表</title>
+</head>
+
+<body>
+	<header>
+		<div class="headerfont">
+			<div class="backgroundimg onerow"></div>
+			<div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+				<p>太仓市公安局交通警察大队</p>
+				<p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</header>
+		
+<div id="vue-app" class="content-wrapper" style="margin-left: 0px;margin-top: 50px;background-color: #fff;overflow:auto;height:100%;">
+	
+	<!-- Main content -->
+	<div class="panel panel-primary" style="width: 100%; margin-bottom: 0px">
+		<div class="panel-heading" style="text-align:center;cursor:pointer">
+			<h3 class="panel-title" >
+				&nbsp;&nbsp;&nbsp;太仓大队国省道执勤排班表{{gName}}
+			</h3>
+		</div>
+		<div class="panel-body" >
+				<table width="100%">
+				    <thead>
+                        <tr>
+                          <td class="lasttr" colspan="2"></td>
+                          <td class="lasttr" colspan="3" style="text-align:right;">
+                                
+	                                <a class="btn btn-sm" @click="nextWeek(-1)">&nbsp;上一周</a>
+                                     &nbsp;&nbsp;
+	                                <a class="btn btn-sm" @click="thisWeek(0)">&nbsp;今天</a>
+                                     &nbsp;&nbsp;
+	                                <a class="btn btn-sm" @click="lastWeek(1)">&nbsp;下一周</a>
+                            </td>
+                             <td class="lasttr" colspan="3" style="text-align:right;">
+                                <template v-if="currentUser.jjzdUser" >
+	                                <a id="frButton" class="btn btn-sm" v-show="isZdAdmin" @click="save">提交</a>
+	                                 &nbsp;&nbsp;&nbsp;&nbsp;
+	                                <!-- <a class="btn btn-sm" v-show="isZdAdmin" @click="cloneLastMonth"><i class="fa fa-copy"></i>&nbsp;复制上周</a>
+	                                &nbsp; -->
+	                                <a class="btn btn-sm btn-danger" v-show="isZdAdmin" @click="clearCurMonth"><i class="fa fa-times"></i>&nbsp;清空本周</a>
+                                </template>
+                            </td>
+                           <!--  <td class="lasttr" colspan="3" style="text-align:center;">
+                            	<a class="btn btn-sm" @click="qwGroup">&nbsp;中队勤务</a>
+                                &nbsp;&nbsp;
+                                <a class="btn btn-sm" @click="exportExcel"><i class="fa fa-file"></i>&nbsp;导出</a>
+                                &nbsp;&nbsp;
+                                <a class="btn btn-sm" @click="downloadExcel" v-if="fileName !=''"><i class="fa fa-download"></i>&nbsp;下载</a>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <td width="9%">日期</td>
+                            <td width="13%">执勤时间</td>
+                            <td width="13%">南郊中队</td>
+                            <td width="13%">双凤中队</td>
+                            <td width="13%">沙溪中队</td>
+                            <td width="13%">浏河中队</td>
+                            <td width="13%">港区中队</td>
+                            <td width="13%">璜泾中队</td>
+                        </tr>
+				    </thead>
+					<tbody id="qwScheduleTable">
+						<tr v-for="(item, index) in gsdScheduleList" >
+							<td v-show="2 == 1"><input type=text v-model="item.px"></td>
+							<td width="9%" rowspan='8' v-show="(index+8)%8 == 0 && index <= 39">{{item.scheduleDt}}</td>
+							<td width="9%" rowspan='6' v-show="(index-34)%6 == 0 && index > 39">{{item.scheduleDt}}</td>
+							<td width="13%" v-show="(index+2)%2 == 0" rowspan='2'>{{item.scheduleTime}}</td>
+							<!-- 奇数行 -->
+							<td width="13%" v-if="(index+2)%2 == 0"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'njzd'" :id="'njzd'+index" maxlength="200" v-model="item.njzd" @mousedown="trclick('location')"></td>
+							<td width="13%" v-if="(index+2)%2 == 0"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'sfzd'" :id="'sfzd'+index" maxlength="200" v-model="item.sfzd" @mousedown="trclick('location')"></td>
+							<td width="13%" v-if="(index+2)%2 == 0"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'sxzd'" :id="'sxzd'+index" maxlength="200" v-model="item.sxzd" @mousedown="trclick('location')"></td>
+							<td width="13%" v-if="(index+2)%2 == 0"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'lhzd'" :id="'lhzd'+index" maxlength="200" v-model="item.lhzd" @mousedown="trclick('location')"></td>
+							<td width="13%" v-if="(index+2)%2 == 0"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'gqzd'" :id="'gqzd'+index" maxlength="200" v-model="item.gqzd" @mousedown="trclick('location')"></td>
+							<td width="13%" v-if="(index+2)%2 == 0"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'hjzd'" :id="'hjzd'+index" maxlength="200" v-model="item.hjzd" @mousedown="trclick('location')"></td>
+							<!-- 偶数行 -->
+							<td width="13%" v-if="(index+2)%2 == 1"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'njzd'" @dblclick="relation(index,'njzd')" @mousedown="trclick('njzd',item.scheduleDt)" :id="'njzd'+index" maxlength="200" v-model="item.njzd"></td>
+							<td width="13%" v-if="(index+2)%2 == 1"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'sfzd'" @dblclick="relation(index,'sfzd')" @mousedown="trclick('sfzd',item.scheduleDt)" :id="'sfzd'+index" maxlength="200" v-model="item.sfzd"></td>
+							<td width="13%" v-if="(index+2)%2 == 1"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'sxzd'" @dblclick="relation(index,'sxzd')" @mousedown="trclick('sxzd',item.scheduleDt)" :id="'sxzd'+index" maxlength="200" v-model="item.sxzd"></td>
+							<td width="13%" v-if="(index+2)%2 == 1"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'lhzd'" @dblclick="relation(index,'lhzd')" @mousedown="trclick('lhzd',item.scheduleDt)" :id="'lhzd'+index" maxlength="200" v-model="item.lhzd"></td>
+							<td width="13%" v-if="(index+2)%2 == 1"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'gqzd'" @dblclick="relation(index,'gqzd')" @mousedown="trclick('gqzd',item.scheduleDt)" :id="'gqzd'+index" maxlength="200" v-model="item.gqzd"></td>
+							<td width="13%" v-if="(index+2)%2 == 1"><input type=text v-show="currentUser.jjddUser || currentUser.group.groupId == 'hjzd'" @dblclick="relation(index,'hjzd')" @mousedown="trclick('hjzd',item.scheduleDt)" :id="'hjzd'+index" maxlength="200" v-model="item.hjzd"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="shebeiRelation" style="display: none;width: 520px;">
+				<div class="form-group">
+					<label for="groupUsers" class="col-sm-4 control-label">警员列表</label>
+				   	<div class="col-sm-1">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="groupUsers" class="col-sm-1 control-label"></label>
+				   	<div class="col-sm-10" id="groupUserListCol" style="width: 480px;">
+					</div>
+				</div>	
+				<div class="form-group">	
+					<div class="col-sm-10" style="margin-top:25px;">
+						<button id="frButton" type="submit" class="btn btn-sm btn-primary pull-right"  @click="relationSave">确定</button>
+					</div>
+				</div>
+			</div>	
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../../js/module/qwSchedule/qwGsdSchedule.js"></script>
+</html>

@@ -1,0 +1,111 @@
+<style>
+	.guapingkaiguanimg1{
+	    position: absolute;
+	    top:2px;
+    	left: 47%;
+		width: 22px;
+   		height: 10px;
+		background: url(./assets/images/slider-up.png) no-repeat scroll 0 0;
+	}
+</style>
+<div id="mapToolContent" style="font-size: 12px">
+	<div id="mapToolBtns">
+   		<div class="btn-group">
+  			<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" @click="getDeviceShowMenu">
+   			 圈选类型<span class="caret"></span>
+  			</button>
+  			<ul class="dropdown-menu quanxuan">
+   				<li>
+					<input type="checkbox" name="deviceCheckbox" value="signal" @click="updateDevCheck" id="signalShowCheckBox"/>
+					<span>信号机</span>
+				</li>
+				<li role="separator" class="divider"></li>
+				<li>
+					<input type="checkbox" name="deviceCheckbox" value="ep" @click="updateDevCheck" id="epShowCheckBox"/>
+					<span>卡口电警</span>
+				</li>
+				<li role="separator" class="divider"></li>
+				<li>
+					<input type="checkbox" name="deviceCheckbox" value="vms" @click="updateDevCheck" id="vmsShowCheckBox"/>
+					<span>诱导屏</span>
+				</li>
+				<li role="separator" class="divider"></li>
+				<li>
+					<input type="checkbox" name="deviceCheckbox" value="video" @click="updateDevCheck" id="videoShowCheckBox"/>
+					<span>监控设备</span>
+				</li>
+				<li role="separator" class="divider"></li>
+				<li>
+					<input type="checkbox" name="deviceCheckbox" value="police" @click="updateDevCheck" id="policeShowCheckBox"/>
+					<span>警力资源</span>
+				</li>
+				<li role="separator" class="divider"></li>
+				<li>
+					<input type="checkbox" name="deviceCheckbox" value="bz" @click="updateDevCheck" id="bzShowCheckBox"/><span>交通标志</span>
+				</li>
+  			</ul>
+		</div>
+		<!-- 
+		<span style="margin-left:20px;"><b>&nbsp;标注工具</b></span>
+
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="点标注" @click="toggleDrawMarker"><i class="fa fa-dot-circle-o">&nbsp;点</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="折线标注" @click="toggleDrawPolyline"><i class="fa fa-xing">&nbsp;折线</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="多边形标注" @click="toggleDrawPolygon"><i class="fa fa-star-o">&nbsp;多边形</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="圆标注" @click="toggleDrawCircle"><i class="fa fa-circle-o">&nbsp;圆形</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="矩形标注" @click="toggleDrawRect"><i class="fa fa-square-o">&nbsp;矩形</i></button>
+		 -->
+		<!-- 
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="停止标注" @click="toggleDrawClose"><i class="fa fa-eraser">&nbsp;停止标注</i></button>
+		 -->
+		<!-- 
+		<input type="radio" @click="toggleDrawMarker">
+		<span><i class="fa fa-retweet">&nbsp;点</i></span>
+		<input type="radio" @click="toggleDrawPolyline">
+		<span><i class="fa fa-retweet">&nbsp;折线</i></span>
+		<input type="radio" @click="toggleDrawPolygon">
+		<span ><i class="fa fa-hand-lizard-o">&nbsp;多边形</i></span>
+		<input  type="radio" @click="toggleDrawRect">
+		<input type="radio" @click="toggleDrawCircle">
+		<span><i class="fa fa-circle-o">&nbsp;圆形</i></span>
+		<input  type="radio" @click="toggleDrawClose">
+		<span ><i class="fa fa-square-o">&nbsp;矩形</i></span>
+		<span><i class="fa fa-eraser">&nbsp;停止标注</i></span>
+		 -->
+		<span  style="margin-left:10px;"><b>&nbsp;工具</b></span>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="测距" @click="toggleDistance"><i class="fa fa-arrows-h">&nbsp;测距</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="测面" @click="toggleArea"><i class="fa fa-object-ungroup">&nbsp;测面</i></button>
+	
+		<input id="poi_search_txt" type="text" v-model="address" style="margin-left:10px;width: 250px; height: 26px; border: 1px; font-size: 15px; background-color: black; color: white; margin-top: 2px"/>
+		<button v-if="matchLnglats" class="btn btn-xs btn-primary" data-toggle="tooltip" title="遍历" @click="nextMarker"><i class="fa fa-fast-forward"></i></button>
+		<button class="btn btn-xs btn-danger" data-toggle="tooltip" title="地址检索" @click="poiSearch"><i class="fa fa-flag">&nbsp;地址检索</i></button>
+		<!-- <button class="btn btn-xs btn-primary" data-toggle="tooltip" title="地址定位" @click="toGeocoder"><i class="fa fa-paper-plane">&nbsp;地址定位</i></button> -->
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="坐标定位" @click="fromGeocoder"><i class="fa fa-flag-o">&nbsp;坐标定位</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="图标定位" @click="locateMarker"><i class="fa fa-bullseye">&nbsp;标记定位</i></button>
+		<span><b>&nbsp;图层</b></span>
+		<!-- 
+		 -->
+		<button class="btn btn-xs" data-toggle="tooltip" title="影像图" @click="toggleGoogleLayer"><i class="fa fa-globe">&nbsp;卫星图</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="路况" @click="toggleTrafficStatus"><i class="fa fa-car">&nbsp;路况</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="高精地图" @click="toggleCHDT"><i class="fa fa-road">&nbsp;高精地图</i></button>
+		<button class="btn btn-xs" data-toggle="tooltip" title="信令拥堵" @click="toggleSJXL"><i class="fa fa-mobile">&nbsp;信令拥堵</i></button>
+		<button class="btn btn-xs hide" data-toggle="tooltip" title="加工范围" @click="toggleJGFW"><i class="fa fa-map-o">&nbsp;加工范围</i></button>
+		<!-- <button class="btn btn-xs btn-danger" data-toggle="tooltip" title="导航" @click="carDriving"><i class="fa fa-paper-plane">&nbsp;导航</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="复位" @click="resetLocation"><i class="fa fa-recycle">&nbsp;复位</i></button> -->
+		<button class="btn btn-xs btn-warning" data-toggle="tooltip" title="清空" @click="clearAllOverlays"><i class="fa fa-trash">&nbsp;清空</i></button>
+		<button class="btn btn-xs btn-primary" data-toggle="tooltip" title="线选视频" @click="lineSearchVideo"><i class="fa fa-pencil">&nbsp;线选视频</i></button>
+	</div>
+	
+	<div  style="text-align: center; position: relative; cursor: pointer;">
+		<div id="mapToolHideBtnimg" class="guapingkaiguanimg1" id="sideBarTableft" @click="hideToolBar"></div>
+		
+		<!--<button class="btn btn-xs btn-default" data-toggle="tooltip" title="收起/展开工具栏" @click="hideToolBar" 
+			style="background-color: #ddd; width: 180px;height:30px;color: #2196f3;opacity: 0;">
+			<i  style="color:#2196f3;" id="mapToolHideBtn" class="fa fa-chevron-up"></i>
+		</button>-->
+		<!--<i  style="color:#2196f3;position: absolute;left: 49%;" id="mapToolHideBtn" class="fa fa-chevron-up"></i>-->
+		<!--<div style="position: absolute;top:0;width:20px;height: 20px;">
+			<i  style="color:#2196f3;" id="mapToolHideBtn" class="fa fa-chevron-up"></i>
+		</div>-->
+	</div>
+	<div class="clearfelx"></div>
+</div>

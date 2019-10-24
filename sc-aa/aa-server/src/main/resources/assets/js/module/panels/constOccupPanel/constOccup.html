@@ -1,0 +1,322 @@
+<div id="constOccup-panel" class="panel panel-primary"
+	style="width: 650px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">施工占道管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs"
+					onclick="TUtils.togglePanelBody()">
+					<i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i>
+				</button>
+				<button type="button" class="btn btn-default btn-xs" @click="close">
+					<i class="fa fa-close"></i>
+				</button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="myTab" class="nav nav-tabs">
+			<li id="liQuery" class="active"><a href="#constOccupQuery"
+				data-toggle="tab" @click="clearOtherDutyGrids">查询</a></li>
+			<li id="liDetail"><a href="#constOccupDetail" data-toggle="tab" v-show="isZdAdmin&&!isZdUsr" @click="initAddControls">登记</a></li>
+			<li id="liEdit" style="display: none"><a
+				href="#constOccupDetail" data-toggle="tab">修改</a></li>
+			<!-- <li id="liAssign" style="display: none"><a
+				href="#assignDiv" data-toggle="tab">指派</a></li> -->
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="constOccupQuery">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">施工类型</div>
+						<div class="column col-sm-4 onelinedis">
+							<select  style="width:100px" id="typeId" name="typeId"  htmlEscape="false">
+								<option value="">所有</option>
+								<option v-for="dict in dictList" v-bind:value="dict.value">{{dict.label}}</option>
+							</select>
+						</div>
+						<div class="col-sm-2 control-label">状态</div>
+						<div class="column col-sm-4 onelinedis">
+							<select  style="width:100px" id="status" name="status"  htmlEscape="false">
+								<option value="">所有</option>
+								<option value="0">待确认</option>
+								<option value="1">已确认</option>
+								<option value="2">部分确认</option>
+								<!-- <option v-for="dict in dutyStatus" v-bind:value="dict.value">{{dict.label}}</option> -->
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">开始时间</div>
+						<div class="column col-sm-4 onelinedis">
+							<input type="text" class="form-control form_datetime Wdate"
+								id="startTime" name="startTime" readonly="readonly" @click="init97DateStart">
+						</div>
+						<div class="col-sm-2 control-label">结束时间</div>
+						<div class="column col-sm-4 onelinedis">
+							<input type="text" class="form-control form_datetime Wdate" @click="init97DateStart"
+								id="endTime" name="endTime" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin&&!isZdUsr"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a> 
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin&&isZdUsr"><i class="fa fa-pencil-square-o"></i>&nbsp;确认</a> 
+							<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-times"></i>&nbsp;删除</a>
+							<!-- <a class="btn btn-sm" @click="assignTo" v-show="isZdAdmin"><i class="fa fa-hand-o-right"></i>&nbsp;指派</a>
+							<a class="btn btn-sm" @click="relevance" v-show="isZdAdmin"><i class="fa fa-link"></i>&nbsp;关联</a> -->
+							&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="isOverdues" id="isOverdues">已过期</label>
+						</div>
+					</div>
+				</div>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+			<!-- 编辑 开始 -->
+			<div class="tab-pane fade" id="constOccupDetail" style="height:450px; overflow-y:scroll; overflow-x:hidden;">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group" style="margin-top: 10px;">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-sm btn-primary"
+								@click="addGrid">添加施工区域</button>
+						</div>
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-sm btn-warning"
+								@click="clearGrid">重置施工区域</button>
+						</div>
+						<div class="col-sm-6 onelinedis">
+							<span class="help-inline"><font color="red">*</font></span>
+							<input type="text" class="form-control oneline" id="region"
+								v-model="constOccup.region" placeholder="施工区域点位"
+								readonly="readonly" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">受理时间</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control form_datetime Wdate oneline" id="applyDt" @click="init97DateStart" 
+								name="applyDt" placeholder="受理时间" required="required"
+								readonly="readonly">
+						</div>
+						<label class="col-sm-2 control-label">施工类型</label>
+						<div class="column col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<select id="worktype" name="type" class="form-control oneline"
+								v-model="constOccup.type" required="required">
+								<option value="">请选择</option>
+								<option v-for="dict in dictList" v-bind:value="dict.value">
+									{{dict.label}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">施工地点</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="applyPlace"
+								name="applyPlace" v-model="constOccup.applyPlace"
+								placeholder="施工地点" required="required" maxlength="20">
+						</div>
+						<label class="col-sm-2 control-label">联合审批<br/>(主管部门)</label>
+						<div class="col-sm-4">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<select id="unionDept" name="unionDept" class="form-control selectpickerU"
+								required="required" multiple>
+								<option v-for="dept in unionDeptList"  v-bind:value="dept.value" data-icon="fa fa-building">
+									{{dept.label}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始时间</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control form_datetime Wdate oneline" id="startDt" @click="init97DateStart" 
+								name="startDt" placeholder="施工开始时间" required="required"
+								readonly="readonly">
+						</div>
+						<label class="col-sm-2 control-label">结束时间</label>
+						<div class="column col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control form_datetime Wdate oneline" id="endDt" @click="init97DateStart" 
+								name="endDt" placeholder="施工结束时间" required="required"
+								readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">申请单位/个人</label>
+						<div class="column col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="constructionUnit"
+								name="constructionUnit" v-model="constOccup.constructionUnit"
+								placeholder="申请单位/个人" required="required" maxlength="20">
+						</div>
+						<label class="col-sm-2 control-label">申请人</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="constructionLeader"
+								name="constructionLeader" v-model="constOccup.constructionLeader"
+								placeholder="申请人" required="required" maxlength="20">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">申请人电话</label>
+						<div class="column col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="constructionTel"
+								name="constructionTel" v-model="constOccup.constructionTel"
+								placeholder="申请人电话" required="required" maxlength="20">
+						</div>
+						<label class="col-sm-2 control-label">施工单位/个人</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="implementUnit"
+								name="implementUnit" v-model="constOccup.implementUnit"
+								placeholder="施工单位/个人" maxlength="20">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">施工负责人</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="implementLeader"
+								name="implementLeader" v-model="constOccup.implementLeader"
+								placeholder="施工负责人" maxlength="20">
+						</div>
+						<label class="col-sm-2 control-label">施工负责人电话</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="implementTel"
+								name="implementTel" v-model="constOccup.implementTel"
+								placeholder="施工负责人电话" maxlength="20">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">许可内容描述</label>
+						<div class="col-sm-4">
+							<textarea id="content" name="content" placeholder="许可内容描述"
+								v-model="constOccup.content" style="width: 155px;"
+								class="layui-textarea" maxlength="200" ></textarea>
+						</div>
+						<label class="col-sm-2 control-label">申请材料</label>
+						<div class="col-sm-4">
+							<textarea id="applyDocDesc" name="applyDocDesc"
+								placeholder="申请材料" v-model="constOccup.applyDocDesc"
+								style="width: 155px;" class="layui-textarea" maxlength="1000"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">拟办意见</label>
+						<div class="col-sm-4">
+							<textarea id="suggestion" name="suggestion" placeholder="拟办意见"
+								v-model="constOccup.suggestion" style="width: 155px;"
+								class="layui-textarea" maxlength="100" ></textarea>
+						</div>
+						<label class="col-sm-2 control-label">许可结果</label>
+						<div class="col-sm-4">
+							<textarea id="applyRst" name="applyRst"
+								placeholder="许可结果" v-model="constOccup.applyRst"
+								style="width: 155px;" class="layui-textarea" maxlength="20"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">许可时间</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="approveDt" @click="init97DateStart" 
+								name="approveDt" placeholder="许可时间" 
+								readonly="readonly">
+						</div>
+						<label class="col-sm-2 control-label">许可编号</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="approveId"
+								name="approveId" v-model="constOccup.approveId"
+								placeholder="许可编号" maxlength="32">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">长度</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="length" 
+								name="length" placeholder="长度" 
+								maxlength="32">
+						</div>
+						<label class="col-sm-2 control-label">面积</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="square"
+								name="square" placeholder="面积" maxlength="32">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-10">
+							<textarea id="comments" name="comments"
+								placeholder="备注" v-model="constOccup.comments"
+								style="width: 155px;" class="layui-textarea" maxlength="1000"></textarea>
+						</div>
+						<input type="hidden" name="constStatus" v-model="constOccup.constStatus"/>
+					</div>
+					<!-- start 做一个动态的行 -->
+					<div class="form-group" v-show="isZdAdmin">
+					<hr/>
+						<div class="col-sm-12" style="text-align:center;">
+							<a class="btn btn-sm" @click="addRow"><i class="fa fa-search"></i>&nbsp;添加</a>
+							<a class="btn btn-sm" @click="delRow"><i class="fa fa-pencil-square-o"></i>&nbsp;删除</a> 
+						</div>
+					</div>
+					<div id="dynTeamRow" v-for="(item,index) in dynTeamList">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">所属中队</label>
+							<div class="column col-sm-4 onelinedis">
+								<span class="help-inline"><font color="red">*</font> </span>
+								<select :id="'groupId'+index" name="team" class="form-control oneline"
+									v-model="item.selectedTeam" @change="getDutyListByTeamId($event)">
+									<option value="">请选择</option>
+									<option v-for="team in item.teamList" v-bind:value="team.groupId">
+										{{team.groupName}}</option>
+								</select>
+							</div>
+							<label class="col-sm-2 control-label"><b>责任区</b></label>
+							<div class="col-sm-4 onelinedis">
+								<select :id="'dutyGrid'+index" name="aor" class="form-control oneline" v-model="item.selectedAor" >
+									<option value="">请选择</option>
+									<option v-for="duty in item.dutyGridList" v-bind:value="duty.gridId">
+										{{duty.gridName}}</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- end 做一个动态的行 -->
+					<!-- <div class="form-group">
+						<label class="col-sm-2 control-label">所属中队</label>
+						<div class="column col-sm-4">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<select id="selectedTeam" name="type" class="form-control"
+								v-model="constOccupNew.team"  @change="getDutyListByTeamId">
+								<option value="">请选择</option>
+								<option v-for="team in teamList" v-bind:value="team.groupId">
+									{{team.groupName}}</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label"><b>责任区</b></label>
+						<div class="col-sm-4">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<select id="selectedAor" name="aor" class="form-control"
+								v-model="constOccupNew.aor">
+								<option value="">请选择</option>
+								<option v-for="duty in dutyGridList" v-bind:value="duty.gridId">
+									{{duty.gridName}}</option>
+							</select>
+						</div>
+					</div> -->
+					
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="sButton" type="submit" class="btn btn-sm btn-primary" @click="save" v-show="isZdAdmin">提交</button>
+							&nbsp;&nbsp;
+							<input id="editB" type="button" class="btn btn-warning btn-sm pull-right" style="display: none" @click="reload" value="返回" />
+						</div>
+					</div>
+				</form>
+			</div>
+			<!-- 编辑 结束 -->
+		</div>
+	</div>
+</div>

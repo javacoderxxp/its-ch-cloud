@@ -1,0 +1,173 @@
+<div id="driverCard-panel" class="panel panel-primary" style="width: 570px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">驾驶证信息管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+            <div class="form-horizontal">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">所属中队</label>
+				<div class="column col-sm-4">
+					<select v-if="currentUser.jjddUser" class="form-control" id="groupIdQ" v-model="driverCardQ.zdId">
+                        <option value="">所有</option>
+						<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+							{{group.groupName}}
+						</option>
+					</select>
+                    <template v-if="currentUser.jjzdUser">
+                        <span>{{currentUser.group.groupName}}</span>
+                        <input type="hidden" id="groupIdQ" v-model="driverCardQ.zdId"/>
+                    </template>
+				</div>
+				<label class="col-sm-2 control-label">驾驶证状态</label>
+				<div class="column col-sm-4">
+					<select class="form-control" id="ztQ" v-model="driverCardQ.zt">
+						<option value="B">超分</option>
+						<option value="D">暂扣</option>
+						<option value="F">吊销</option>
+						<option value="SD">涉毒</option>
+					</select>
+				</div>
+			</div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">姓名</label>
+                <div class="column col-sm-4">
+                    <input type="text" class="form-control" id="xmQ" name="xmQ" v-model="driverCardQ.xm" htmlEscape="false"/>
+                </div>
+                <label class="col-sm-2 control-label">车辆与轨迹</label>
+                <div class="column col-sm-4">
+					<select class="form-control" id="vehicleCnt" v-model="driverCardQ.vehicleCnt">
+						<option value="3">所有</option>
+						<option value="1">名下有车</option>
+						<option value="0">名下无车</option>
+						<option value="2">一周内有行驶轨迹</option>
+					</select>
+				</div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6" style="height: 37px; padding-top: 5px"><strong>已分配责任区&nbsp;&nbsp;</strong>
+                    <label><input type="radio" v-model="driverCardQ.gridAssigned" value="1">是</label>
+                    <label><input type="radio" v-model="driverCardQ.gridAssigned" value="0">否</label>
+                </div>
+                <!-- <div class="col-sm-2 control-label">名下车辆</div>
+                <div class="column col-sm-4" style="padding-top: 5px">
+                    <label><input type="radio" id="vehicleCnt1" name="vehicleCnt" v-model="driverCardQ.vehicleCnt" value="1" @click="chkRadio('1')">有</label>
+                    <label><input type="radio" id="vehicleCnt2" name="vehicleCnt" v-model="driverCardQ.vehicleCnt" value="0" @click="chkRadio('0')">无</label>
+                </div> -->
+            </div>
+            <!-- <div class="form-group" v-if="driverCardQ.vehicleCnt == 1">
+            	<label class="col-sm-3 control-label" style="text-align: left;">近一周行驶轨迹</label>
+            	<div style="padding-top:5px;">
+            		<input type="checkbox" id="hasTraceQ" name="hasTraceQ" v-model="driverCardQ.hasTrace" value="1" /><label for="hasTraceQ"></label>
+            	</div>
+            </div> -->
+            <div class="form-group" style="margin-bottom: 10px">
+                <div class="column col-sm-12">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-hand-o-right"></i>&nbsp;指派</a>
+				<a class="btn btn-sm" @click="trajectory"><i class="fa fa-search"></i>&nbsp;轨迹查询</a>
+				<a class="btn btn-sm" v-show="showDownload" @click="download"><i class="fa fa-download"></i>&nbsp;导出</a>
+			    </div>
+            </div>
+            </div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+        <div id="detailDiv" v-show='!showList'>
+            <form class="form-horizontal" id="detailForm" role="form">
+                <div class="form-group">
+                    <label for="xm" class="col-sm-2 control-label">姓名</label>
+                    <div class="col-sm-4" style="padding-top: 5px">
+                        {{driverCard.xm}}
+                    </div>
+                    <label for="xb" class="col-sm-2 control-label">性别</label>
+                    <div class="col-sm-4" style="padding-top: 5px">
+                        {{driverCard.xb == '1'?'男':'女'}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="sfzmhm" class="col-sm-2 control-label">驾驶证</label>
+                    <div class="col-sm-4" style="padding-top: 5px">
+                        {{driverCard.sfzmhm}}
+                    </div>
+                    <label for="yxqz" class="col-sm-2 control-label">有效期止</label>
+                    <div class="col-sm-4" style="padding-top: 5px">
+                        {{driverCard.syyxqz}}
+                    </div>
+                </div>
+                <template v-if="driverCard.zt !='SD'" >
+                <div class="form-group" style="padding-top: 5px">
+                    <label for="ljjf" class="col-sm-2 control-label">积分</label>
+                    <div class="col-sm-4" style="padding-top: 5px">
+                        {{driverCard.ljjf}}
+                    </div>
+                    <label for="zt" class="col-sm-2 control-label">状态</label>
+                    <div class="column col-sm-4" style="padding-top: 5px">
+                        {{driverCard.zt}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="zt" class="col-sm-12  control-label">
+                    <font color="#2196f3">状态类型:A正常B超分C转出D暂扣E撤销F吊销G注销H违法未处理K扣押M逾期未换证R注销可恢复J停止使用U扣留S逾期未审验I事故未处理</font> 
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="sjhm" class="col-sm-2 control-label">手机号码</label>
+                    <div class="col-sm-4" style="padding-top: 5px">
+                        {{driverCard.sjhm}}
+                    </div>
+                    <label for="lxzsyzbm" class="col-sm-2 control-label">邮政编码</label>
+                    <div class="col-sm-4" style="padding-top: 5px">
+                        {{driverCard.lxzsyzbm}}
+                    </div>
+                </div>
+                </template>
+                <div class="form-group">
+                    <label for="djzsxxdz" class="col-sm-2 control-label">地址</label>
+                    <div class="col-sm-10" style="padding-top: 5px">
+                        {{driverCard.djzsxxdz}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="zdId" class="col-sm-2 control-label" v-show="currentUser.jjddUser">所属中队</label>
+                    <div class="column col-sm-4 onelinedis" v-show="currentUser.jjddUser">
+                        <select id="zdId" name="zdId" class="form-control oneline" v-model="driverCard.zdId"  @change="getDutyListByTeamId">
+                            <option value="">请选择</option>
+                            <option v-for="group in groupList" v-bind:value="group.groupId">{{group.groupName}}</option>
+                        </select>
+                    </div>
+                    <label for="gridId" class="col-sm-2 control-label">责任区</label>
+                    <div id="ze_ren_qu" class="col-sm-4 onelinedis">
+                        <select id="gridId" name="gridId" class="form-control oneline" v-model="driverCard.gridId" @change="selectOneGrid">
+                            <option value="">请选择</option>
+                            <option v-for="duty in dutyGridList" v-bind:value="duty.gridId">{{duty.gridName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="shape" class="col-sm-2 control-label">地理位置</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="shape" name="shape" v-model="driverCard.shape" placeholder="地理位置" 
+                            htmlEscape="false" maxlength="100" readonly="readonly"/>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-sm pull-right"  @click="relocate"><i class="fa fa-street-view"></i>定位</button>
+                    </div>
+                </div>
+                    
+                <div class="form-group">
+                    <div class="col-sm-11 col-sm-offset-1 ">
+                        <button type="submit" class="btn btn-primary btn-sm" v-show="isZdAdmin" @click="save">提交</button>
+                        &nbsp;&nbsp;
+                        <input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+</div>

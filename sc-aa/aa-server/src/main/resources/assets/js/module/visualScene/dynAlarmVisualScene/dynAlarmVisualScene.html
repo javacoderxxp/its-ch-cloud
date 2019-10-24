@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../../css/app.css" />
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../../css/sceneStyle.css">
+	<link rel="stylesheet" href="../../../../css/jindustyle.css">
+	<link rel="stylesheet" href="../../../../plugins/font-awesome/css/font-awesome.min.css">
+	
+	
+<script type="text/javascript">
+var itsEnv = window.itsEnv = 'prod'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script>
+<!-- SIT 
+<script src="http://114.215.146.210:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=a38637152661536811426544710c5a2c"></script>
+-->
+<script src="http://192.168.15.4:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=96afef81bcb8de97f2687b41d6f4d07a"></script>
+<!-- PROD 
+-->
+
+
+
+<!--[if lt IE 9]> 
+	<script type="text/javascript" src="../../../../plugins/loadMap.js"/> 
+<![endif]-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/theme/walden.js"></script>
+<script type="text/javascript" src="../../../../js/module/signal/js/loadMap.js"></script>
+<!--//进度条左2-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jindujquery.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/index.js"></script>
+<!--//数字动画-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.waypoints.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.countup.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/animateBackground-plugin.js"></script>
+<title>警情动态可视化场景</title>
+<style type="text/css">
+        #total1 {
+            /* width: 500px; */
+            height: 35px;
+            line-height: 35px;
+           /*  margin: 80px auto 20px auto;
+            font-size: 20px; */
+        }
+         #total2 {
+            /* width: 500px; */
+            height: 35px;
+            line-height: 35px;
+           /*  margin: 80px auto 20px auto;
+            font-size: 20px; */
+        }
+         #total3 {
+            /* width: 500px; */
+            height: 35px;
+            line-height: 35px;
+           /*  margin: 80px auto 20px auto;
+            font-size: 20px; */
+        }
+         #total4 {
+            /* width: 500px; */
+            height: 35px;
+            line-height: 35px;
+           /*  margin: 80px auto 20px auto;
+            font-size: 20px; */
+        }
+
+        #total1 .t_num {
+            display: inline-block;
+            line-height: 13px;
+            margin: 2px 4px 0 4px;
+        }
+
+        #total1 .t_num i {
+            width: 15px;
+            height: 23px;
+            display: inline-block;
+            background: url(../../../../images/number.png) no-repeat;
+            background-position: 0 0;
+            text-indent: -999em;
+        }
+        #total2 .t_num {
+            display: inline-block;
+            line-height: 13px;
+            margin: 2px 4px 0 4px;
+        }
+
+        #total2 .t_num i {
+            width: 15px;
+            height: 23px;
+            display: inline-block;
+            background: url(../../../../images/number.png) no-repeat;
+            background-position: 0 0;
+            text-indent: -999em;
+        }
+        #total3 .t_num {
+            display: inline-block;
+            line-height: 13px;
+            margin: 2px 4px 0 4px;
+        }
+
+        #total3 .t_num i {
+            width: 15px;
+            height: 23px;
+            display: inline-block;
+            background: url(../../../../images/number.png) no-repeat;
+            background-position: 0 0;
+            text-indent: -999em;
+        }
+        #total4 .t_num {
+            display: inline-block;
+            line-height: 13px;
+            margin: 2px 4px 0 4px;
+        }
+
+        #total4 .t_num i {
+            width: 15px;
+            height: 23px;
+            display: inline-block;
+            background: url(../../../../images/number.png) no-repeat;
+            background-position: 0 0;
+            text-indent: -999em;
+        }
+    </style>
+</head>
+
+<body style="background: #133f58;">
+	<div id="mapContainer2"></div>
+	<!--//上面4个小块-->
+	<!--//1-->
+	<div class="leader1">
+		<div class="topleadertitle">今日拥堵</div>
+		<table class="topleadertable">
+			<tr>
+				<td class="topleadernumber" colspan="4">
+					 <div id="total1">
+				        <span id="todayJamVal" class="t_num" style="color: #133f58;"></span>
+				        <span class="topleadernumber">起</span>
+					</div>
+					<!-- <label  style="color: #133f58;width: 0%;"></label> -->
+				</td>
+				<!-- <td class="topleadernumber" colspan="2"><span style="font-size:16px">起</span>
+				</td> -->
+			</tr>
+			<tr>
+				<td class="topleadertext">日环比</td>
+				<td class="topleadernumbersmall" id="yesterdayJamVal"></td>
+				<td class="topleadertext">周同比</td>
+				<td class="topleadernumbersmall" id="lastWeekJamVal"></td>
+			</tr>
+		</table>
+	</div>
+	<!--//2-->
+	<div class="leader2">
+		<div class="topleadertitle">今日警情</div>
+		<table class="topleadertable">
+			<tr>
+				<td class="topleadernumber" colspan="4">
+					 <div id="total2">
+				        <span id="todayAlarmVal" class="t_num" style="color: #133f58;"></span>
+				        <span class="topleadernumber">起</span>
+					</div>
+				</td>
+				<!-- <td class="topleadernumber" colspan="2"><span style="font-size:16px">起</span>
+				</td> -->
+			</tr>
+			<tr>
+				<td class="topleadertext">日环比</td>
+				<td class="topleadernumbersmall" id="yesterdayAlarmVal"></td>
+				<td class="topleadertext">周同比</td>
+				<td class="topleadernumbersmall" id="lastWeekAlarmVal"></td>
+			</tr>
+		</table>
+	</div>
+	<!--//3-->
+	<div class="leader3">
+		<div class="topleadertitle">今日违法</div>
+		<table class="topleadertable">
+			<tr>
+				<td class="topleadernumber" colspan="4">
+					 <div id="total3">
+				        <span id="todayViolateVal" class="t_num" style="color: #133f58;"></span>
+				         <span class="topleadernumber">起</span>
+					</div>
+				</td>
+				<!-- <td class="topleadernumber" colspan="2"><span style="font-size:16px">起</span>
+				</td> -->
+			</tr>
+			<tr>
+				<td class="topleadertext">日环比</td>
+				<td class="topleadernumbersmall" id="yesterdayViolateVal"</td>
+				<td class="topleadertext">周同比</td>
+				<td class="topleadernumbersmall" id="lastWeekViolateVal"></td>
+			</tr>
+		</table>
+	</div>
+	<!--//4-->
+	<div class="leader4" style="display: none">
+		<div class="topleadertitle">今日事故</div>
+		<table class="topleadertable">
+			<tr>
+				<td class="topleadernumber" colspan="4">
+					 <div id="total4">
+				        <span id="todayAccidentVal" class="t_num" style="color: #133f58;"></span>
+				         <span class="topleadernumber">起</span>
+					</div>
+				</td>
+				<!-- <td class="topleadernumber" colspan="2"><span style="font-size:16px">起</span>
+				</td> -->
+			</tr>
+			<tr>
+				<td class="topleadertext">日环比</td>
+				<td class="topleadernumbersmall" id="yesterdayAccidentVal"></td>
+				<td class="topleadertext">周同比</td>
+				<td class="topleadernumbersmall" id="lastWeekAccidentVal"></td>
+			</tr>
+		</table>
+	</div>
+	<!--//中间地图块-->
+	<div class="centermap">
+    	<div style="width:100%;height:100%;position: relative;">
+    		<div class="lefttop"></div>
+	        <div class="righttop"></div>
+	        <div class="leftbot"></div>
+	        <div class="rightbot"></div>
+	        <div class="contitle">
+				<h6 style="color:#cae5fb;letter-spacing:4px">太仓市公安局交通警察大队</h6>
+			</div>
+	        <div class="conmain"  style="padding:4px;width:100%;height:100%;">
+	        	<div style="width:100%;height:100%;" id="mapContainer"></div>
+			</div>
+			
+			<!-- 天气预报开始 -->
+			<div class="centermapleft" id="weatherDiv">
+				<img id="weatherImg" src="../../../../images/weather/999.png" style="display: inline-block;width: 40%;height: 90%;vertical-align: middle;"/>
+				<div id="weatherRpt" style="display: inline;
+				    text-align: center;
+				    font-size: 16px;
+				    font-family: sans-serif;
+				    width: 100%;
+				    color: #1b525f;"></div>
+			    <div class = "weatherTitle" id="weatherTitle"  style="text-align: left;display:none"></div>
+			</div>
+			<!-- 天气预报结束 -->
+			
+			<div class="centermapbot">
+				<table class="conmaptable">
+				<tr>
+					<td rowspan="2" class="conmaptext">今日活跃过车
+					</td>
+					<td rowspan="2" class="conmapmunber"><label class="countup" id="vehPassTotal"></label></td>
+					<td rowspan="2" class="conmaptext">电警
+					</td>
+					<td class="conmapmunber"><span>今日：</span></td>
+					<td class="conmapmunber"><label class="countup" id="vehPassSY"></label></td>
+					<td rowspan="2"  class="conmaptext">高清卡口
+					</td>
+					<td class="conmapmunber"><span>今日：</span></td>
+					<td class="conmapmunber"><label class="countup" id="vehPassDH"></label></td>
+					<td rowspan="2" class="conmaptext">今日布控告警
+					</td>
+					<td rowspan="2" class="conmapmunber"><label class="countup" id="alertVeh"></label></td>
+				</tr>
+				<tr>
+					<td class="conmapmunber"><span>历史：</span></td>
+					<td class="conmapmunber"><label class="countup" id="vehPassWeekAvgSY"></label></td>
+					<td class="conmapmunber"><span>历史：</span></td>
+					<td class="conmapmunber"><label class="countup" id="vehPassWeekAvgDH"></label></td>
+				</tr>
+				</table>
+			</div>
+	    </div>
+	</div>
+	<!--//下面1条重点消息-->
+	<div class="mapbottom">
+		<div style="width:100%;height:100%;position: relative;">
+    		<div class="lefttop"></div>
+	        <div class="righttop"></div>
+	        <div class="leftbot"></div>
+	        <div class="rightbot"></div>
+	        <div class="equipfont">
+				<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">警力部署</span>
+			</div>
+			<div id="jlDevOnlineDiv" style="width:85%;min-height:180px; float: left;" class="equipfont"></div>
+            <div id="gpsOnlineDiv" style="width:15%;min-height:150px; float: left;" class="equipfont"></div>
+            <!-- <div id="arrangeDiv" style="width:15%;min-height:150px;float: left;" class="equipfont"></div> -->
+	    </div>
+	</div>
+	<div class="mapnews">
+		<div class="equipfont alarminfo">
+			<marquee><i style="color:#ff342f" class="fa fa-calendar"></i><span  le="font-weight: bold;" id="curSysTimeSpan"></span></marquee>
+			<span  le="font-weight: bold;" id="weatherSpan"></span>
+		</div>
+	</div>
+	
+	<div id="imptDiv" >
+		<div id="leftpannel" class="left">
+			<!--警情开始-->
+		    <div id="alarmpennel" class="alarmpennel">
+		    	<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">实时警情</span>
+					</div>
+					<div class="imporalarm" id="timealarm">
+						<ul class="scroll-box" id="realTimeAlarmTB">333</ul>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<!--警情结束-->
+
+			<!--start part3-->
+			<div id="countpannel" class="countpannel">
+		    	<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">设备状态 (在线数/总数)</span>
+					</div>
+					<div style="width:90%;height:90%;margin:8px;position: relative;">
+						<!--<div class="skillbar-col" style="font-size:12px;color: #2196F3;">信号机数:</div>-->
+						<div class="skillbar-title"><span>信号机数:</span></div>
+						<div class="progress progress-striped active" style="margin-top: 17px;margin-right: 5px;margin-left:80px;height:14px;width:180px;">
+							<div class="progress-bar progress-bar-success" role="progressbar"
+								 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+								 v-bind:style="'width:' + devOnlineRate.signal" style="background-color:#3FB1E3;position:relative">
+								<span class="font-position">{{devOnlineRate.signal}}</span>
+							</div>
+						</div>
+						<div class="skillbar-title"><span>卡口数:</span></div>
+						<div class="progress progress-striped active" style="margin-top: 17px;margin-right: 5px;margin-left:80px;height:14px;width:180px;">
+							<div class="progress-bar progress-bar-success" role="progressbar"
+								 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+								 v-bind:style="'width:' + devOnlineRate.ep" style="position:relative">
+								<span class="font-position">{{devOnlineRate.ep}}</span>
+							</div>
+						</div>
+						<div class="skillbar-title"><span>监控数:</span></div>
+						<div class="progress progress-striped active" style="margin-top: 17px;margin-right: 5px;margin-left:80px;height:14px;width:180px;">
+							<div class="progress-bar progress-bar-success" role="progressbar"
+								 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+								 v-bind:style="'width:' + devOnlineRate.cam"  style="background-color:#828bda;position:relative">
+								<span class="font-position">{{devOnlineRate.cam}}</span>
+							</div>
+						</div>
+						<div class="skillbar-title"><span>诱导屏数:</span></div>
+						<div class="progress progress-striped active" style="margin-top: 17px;margin-right: 5px;margin-left:80px;height:14px;width:180px;">
+							<div class="progress-bar progress-bar-success" role="progressbar"
+								 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+								 v-bind:style="'width:' + devOnlineRate.vms" style="background-color:#11a5f9;position:relative">
+								<span class="font-position">{{devOnlineRate.vms}}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			
+			<!--start part2-->
+			<div id="equipmentpannel" class="equipmentpannel">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span>今日警情分配</span></div>
+					<div id="jqTodayDiv" style="width:100%;height:90%;min-height:220px; max-width: 300px" class="equipfont"></div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<!--end part3-->
+		<!--start right-->
+		<div id="rightpannel" class="right">
+			<!--part1-->
+			<div class="WorkstatisCarpannel">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+			        <div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span>当月拥堵路段</span></div>
+					<div style="width:100%;height:100%;">
+						<div id="shiGuDiv"  style="width:100%;height:90%;min-height:160px;" class="equipfont"></div>
+					</div>
+			  	</div>
+			</div>
+			<div id="myTabContent1" class="policestatisCarpannel">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+			        <div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span>当月违法处罚</span></div>
+					<div>
+						<div id="weifaDiv" style="width:100%;height:90%;min-height:160px;" class="equipfont"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="countpanne1">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span>当月违法类型</span>
+					</div>
+					<div id="weifaTypeDiv" style="width:100%;height:40%;min-height:160px;" class="equipfont">
+					</div>
+					<div class="equipfont"><i style="color:#2196F3" class="fa fa-bar-chart"></i><span>今日警情工作量</span>
+					</div>
+					<div id="byPeopleDiv" style="width:100%;height:40%;min-height:160px;" class="equipfont"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<!--end right-->
+	<!-- 
+	<div id="lnglatWidgetPanel">
+		<input id="mapLevel" type="text" class="rightcoordinate" style="border-radius: 3px;"/>
+		<input id="mapLngLat" type="text" class="coordinate" style="border-radius: 3px;"/>
+	</div> -->
+	<!-- <div id="posindaPanel">
+		<a href="http://www.posinda.com"><img alt="ponsinda" src="../../../../images/posinda.png" width="60px" height="15px">
+		&nbsp;江苏普信达智能交通有限公司&nbsp;</a>
+	</div> -->
+	
+	<script type="text/javascript" src="dynAlarmVisualScene.js"></script>
+	<!--//滚动条-->
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.min_1.js"></script>
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.jquery.min_1.js"></script>
+	<link rel="stylesheet" href="../../../../plugins/jQuery/perfect-scrollbar.min_1.css" />
+	<script>
+//		$('.tabfont').perfectScrollbar();
+//		$('.equipmentpannel').perfectScrollbar();
+		$('#timealarm').perfectScrollbar();
+		$('#imporalarm').perfectScrollbar();
+		/* $('.countup').countUp(); */
+		
+			
+	</script>
+	<!--实时警情滚动效果 -->
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<div id="vehicleFlowReport-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">历史流量研判
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">卡口名</div>
+					<div class="column col-sm-6">
+						<select name="type" class="form-control selectpicker" id="deviceIdQ" v-model="vehiclePassQ.deviceId">
+							<option v-for="ep in epList" v-bind:value="ep.deviceId" data-icon="fa fa-camera-retro">
+								{{ep.deviceName}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">基准日期</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="startDtQ" v-model="vehiclePassQ.startDt" 
+							@click="init97DateStart"
+							placeholder="基准日期" readonly="readonly" required="required">
+					</div>
+					<div class="col-sm-2 control-label">时间单位</div>
+					<div class="column col-sm-4">
+						<select class="form-control" id="typeId" v-model="vehiclePassQ.timeUnit" htmlEscape="false" >
+							<option value="DAY">日</option>
+							<option value="WEEK">周</option>
+							<!-- <option value="MONTH">月</option> -->
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2"></div>
+					<div class="column col-sm-10">
+						<span class="help-inline"><font color="red">{{remindeMsg}}</font></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-6">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+					</div>
+				</div>
+			</div>
+		    <div style="height: 300px; width: 520px; " v-show='showList' id="echarts-div">
+		    </div>
+		</div>
+	</div>
+</div>

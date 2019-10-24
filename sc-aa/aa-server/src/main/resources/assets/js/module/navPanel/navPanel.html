@@ -1,0 +1,85 @@
+<nav id="ctrlPanelContent" class="navbar navbar-default" style="background-color:#fff">
+	<div class="container-fluid navfirst">
+		<div class="navbar-header" style="">
+				<img alt="" src="./assets/images/logo.png" style="float:left; margin-top: 8px;" width="50px" height="50px">&nbsp;
+				<div style="dispaly:inline-block;float:left;font-weight:bold;margin-left: 5px;color:#fff;font-size:18px;">
+				    <p>纵横</p><p style="margin:-5px 0;">工程</p>
+				</div>
+				<div class="navbar-brand" style="color:#fff;margin-left:0px !important ;font-size: 16px;float:left; padding-left: 5px !important; padding-right: 5px !important;">
+					<p>太仓市公安局交通警察大队</p>
+					<p style="color:#fff;margin-left: 25px;font-size: 14px">智能交通服务管理平台</p>
+				</div>
+				<div style="clear: both;"></div>
+				<!--<div style="color:#fff;margin-left: 100px;vertical-align: center;" >交通服务管理平台</div>-->
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li v-for="menu in currentUser.menuList" class="dropdown">
+					<a v-if="!menu.parent && menu.active=='1'" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<!-- <i :class="menu.icon"></i> &nbsp; --> {{menu.menuName}}<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+					<template v-for="(menuSub, index) in currentUser.menuList" v-if="menuSub.parent && menuSub.active=='1' && menuSub.parent.menuId == menu.menuId">
+						<li>
+							<a href="javascript:;" @click="clickMenu(menuSub.href)"><i :class="menuSub.icon"></i>&nbsp; {{menuSub.menuName}}</a>
+						</li>
+						<!-- <li v-if="index < currentUser.menuList.length" role="separator" class="divider"></li> -->
+					</template>
+					</ul>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<!--<li v-if="hasRole('zdadmin')">
+					<a href="#" @click="checkMissons">任务<span id ='missonBadge' class="badge" style="background-color:#FF3030;">{{unCompletedTaskCnt}}</span></a>
+				</li>-->
+				<!--<li>
+					<a href="#" @click="notify">通知<span id ='notifyBadge' class="badge">{{unReadNotifyCnt}}</span></a>
+				</li>-->
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">admin<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<<!--template v-if="showMenu('menu_xtgl')">-->
+						<li>
+							<a href="admin">系统管理</a>
+						</li>
+						<li role="separator" class="divider"></li>
+						<!--</template>-->
+						<li>
+							<a href="#" @click="updatePassword">修改密码</a>
+						</li>
+						<li role="separator" class="divider"></li>
+						<li>
+							<a href="#" @click="exit">退出</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<!-- /.navbar-collapse -->
+	</div>
+	<!-- /.container-fluid -->
+</nav>
+
+<!-- 修改密码 -->
+<div id="passwordLayer" style="display: none; z-index: 9999">
+	<form class="form-horizontal">
+		<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+		   	<div class="col-sm-4 control-label">原密码</div>
+		   	<div class="col-sm-8">
+		      <input type="password" class="form-control" id="oldPassword" placeholder="原密码"/>
+		    </div>
+		</div>
+		<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+		   	<div class="col-sm-4 control-label">新密码</div>
+		   	<div class="col-sm-8"> 
+		      <input type="password" class="form-control" id="newPassword" placeholder="新密码"/>
+		    </div>
+		</div>
+		<div class="form-group" style="margin-left: 0px; margin-right: 0px">
+		   	<div class="col-sm-4 control-label">再次输入新密码</div>
+		   	<div class="col-sm-8"> 
+		      <input type="password" class="form-control" id="newPassword2" placeholder="新密码"/>
+		    </div>
+		</div>
+	</form>
+</div>

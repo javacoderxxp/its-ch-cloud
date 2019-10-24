@@ -1,0 +1,143 @@
+<div id="clgl-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">路段绘制管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+						<label class="col-sm-2 control-label">所属中队</label>
+						<div class="column col-sm-4">
+							<select v-if="currentUser.jjddUser"
+								class="form-control selectpicker" id="groupIdQ" name="groupIdQ"
+								v-model="roadDrawQ.groupId">
+								<option  value="" data-icon="fa fa-sitemap">所有</option>
+								<option v-for="group in groupList" v-bind:value="group.groupId"
+									data-icon="fa fa-sitemap">{{group.groupName}}</option>
+							</select>
+							<template v-if="currentUser.jjzdUser"> <span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupIdQ" v-model="roadDrawQ.groupId" />
+							</template>
+						</div>
+
+						<div class="col-sm-2 control-label">路段类型</div>
+						<div class="column col-sm-4">
+							<select style="width: 100px" id="vLdlxQ" name="vLdlxQ" v-model="roadDrawQ.vLdlx" 
+								class="form-control" htmlEscape="false">
+								<option value="">所有</option>
+								<option value="1">国省道</option>
+								<option value="2">城镇道路</option>
+								<option value="3">县道路</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">路段名称</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control oneline" id="mcQ" name="mcQ"
+							v-model="roadDrawQ.mc" placeholder="请输入路段名称" required="required"
+							maxlength="50">
+						</div>
+					</div>	
+					<div class="grid-btn" style="margin-bottom: 10px">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="add"  v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"> <i class="fa fa-pencil-square-o"></i>&nbsp;修改</a> 
+							<a class="btn btn-sm" v-show="isZdAdmin" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+					</div>
+            </div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group" style="margin-top: 10px;">
+					<div class="col-sm-2">
+						<button type="button" class="btn btn-sm btn-default"
+							@click="addGrid">添加路段</button>
+					</div>
+					<div class="col-sm-9 onelinedis" style="margin-left: 20px;">
+						<span class="help-inline"><font color="red">*</font> </span> <input
+							type="text" class="form-control oneline" id="region" maxlength="2000"
+							v-model="roadDraw.region" placeholder="路段点位" readonly="readonly"
+							required="required">
+
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">路段名称</label>
+					<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span> <input
+							type="text" class="form-control oneline" id="mc" name="mc"
+							v-model="roadDraw.mc" placeholder="请输入路段名称" required="required"
+							maxlength="50">
+					</div>
+					
+					<label class="col-sm-2 control-label">路段类型</label>
+					<div class="column col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span> 
+						<select name="vLdlx" id="vLdlx" class="form-control oneline"
+							v-model="roadDraw.vLdlx" required="required">
+							<option value="">请选择</option>
+							<option value="1">国省道</option>
+							<option value="2">城镇道路</option>
+							<option value="3">县道路</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-4">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<select class="form-control  oneline" id="groupId" name="groupId" v-model="roadDraw.groupId" required="required"  @change="getDutyListByTeamId">
+							<option  value="" data-icon="fa fa-sitemap">请选择</option>
+							<option v-for="group in groupList" v-bind:value="group.groupId"
+								data-icon="fa fa-sitemap">{{group.groupName}}</option>
+						</select>
+					</div>
+					<label  class="col-sm-2 control-label">责任区</label>
+					<div class="column col-sm-4">
+						<select id="gridId" name="gridId" class="form-control selectpicker" v-model="roadDraw.gridId" >
+							<option value="">请选择</option>
+							<option v-for="duty in dutyGridList" v-bind:value="duty.gridId">{{duty.gridName}}</option>
+						</select>	
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">常值</label>
+					<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span> <input
+							type="text" class="form-control oneline" id="constant" name="constant"
+							v-model="roadDraw.constant" placeholder="请输入常值" required="required"
+							maxlength="5">
+					</div>
+				</div>
+				<div class="form-group" >
+					<label class="col-sm-2 control-label">描述</label>
+					<div class="col-sm-9 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<textarea id="description" name="description"
+							placeholder="描述" v-model="roadDraw.description"
+							style="width: 420px;" class="layui-textarea" maxlength="200"
+							required="required">
+						</textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button id="sButton" type="submit" class="btn btn-sm btn-primary"
+							@click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp; <input id="editB" type="button"
+							class="btn btn-warning btn-sm " 
+							@click="reload" value="返回" />
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

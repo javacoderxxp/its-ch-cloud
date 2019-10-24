@@ -1,0 +1,195 @@
+
+<!--<link rel="stylesheet" href="${rc.contextPath}/assets/css/wallhanging.css">-->
+<style>
+/*.ui-widget.ui-widget-content {
+    overflow: hidden !important;
+}
+.ui-widget-content {
+    border: 1px solid #fffefe !important;
+ }
+ .ui-jqgrid tr.jqgrow {
+    height: 35px !important;
+ }*/
+ .panel-default > .panel-headinga {
+	    color: #212121;
+	    background-color: #FFFFFF;
+	    border-color: #ffffff;
+	    color: #ffffff;
+    }
+    .panel-headinga {
+    	 -webkit-box-shadow: 0 1px 2px rgba(179, 179, 179, 0.3);
+    	 box-shadow: 0 1px 2px rgba(179, 179, 179, 0.3);
+    }
+.panel-body1 {
+	padding: 10px;
+	background: #ffffff;
+}
+.text-warning {
+    color: #6b6b6a;
+}
+.panela {
+    border: none;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    /* padding-top: 2px; */
+    padding-bottom: 0px;
+    margin-top: 3px;
+   }
+.firstrowcolor{
+	color:#2196f3;
+	background-color: #fff6af !important;
+	position: absolute;
+	left: -999px;
+}
+.firstrowcolorspan{
+	color:#2196f3;
+}
+/*//1111111*/	
+#realtimeAlarmTb td{
+	
+    color: #6b6b6;
+     border-bottom: 1px solid #dddddd; 
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    /* margin-top: 2px; */
+    padding: 6px;
+    border-left: 1px solid #ffffff;
+}
+.guapingkaiguan{
+	text-align: left;
+    position: fixed;
+    width: auto;
+    height: auto;
+    top: 100px;
+    left:0px; 
+    
+	/*width:600px;
+    height: 30px;
+    position: fixed;
+    top:100px;
+    left:0;  */
+    z-index: 9998;
+}
+.guapingkaiguanimg{
+	cursor:pointer;
+	float:right;
+	width: 10px;
+    height: 24px;
+	background: url(./assets/images/slide-sou.png) no-repeat scroll 0 0;
+}
+
+</style>
+<div class="guapingkaiguan">
+	<div class="guapingkaiguanimg" id="sideBarTableft"></div>
+	<div id="realtimeAlarm-panel" class="panela panel-primary" style="width: 560px;float:left;">
+		<div class="panel-heading panel-headinga">
+			<h3 class="panel-title" style="font-size:16px;">
+				实时动态信息
+				<div class="btn-group pull-right">
+					<!--<button type="button" class="btn btn-default btn-xs" onclick="togglePanelBody()"><i id="realtime_alarm_panel_ud" class="fa fa-chevron-up"></i></button>--> 
+					<!-- <button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button> -->
+				</div>
+			</h3>
+		</div>
+		<div class="panel-body1 alarm-panel-body">
+			<ul id="myTab" class="nav nav-tabs">
+				<li class="active">
+					<a href="#realtimeAlarm" data-toggle="tab" style="font-size:14px;">
+						实时警情信息<span class="badge" style="background-color:#f57474" id="newlyAlarmCntSpan"></span>
+					</a>
+				</li>
+				<li>
+					<a href="#realtimeJam" data-toggle="tab" style="font-size:14px;">
+						实时拥堵信息<span class="badge" style="background-color:#f57474" id="newlyJamCntSpan"></span>
+					</a>
+				</li>
+				<li>
+					<a href="#bkAlert" data-toggle="tab" style="font-size:14px;">
+						布控报警<span class="badge" style="background-color:#f57474" id="newBkAlertSpan">{{newBkAlertCnt}}</span>
+					</a>
+				</li>
+			</ul>
+			<div id="myTabContent" class="tab-content">
+				<div class="tab-pane fade in active" id="realtimeAlarm" v-show="alarmList.length>0">
+					<div style="height:360px; overflow-y: scroll; -ms-overflow-y: scroll;margin-bottom: 0px">
+						<table>
+							<thead>
+								<tr>
+									<th>警情详情</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="realtimeAlarmTb">
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="tab-pane fade" id="realtimeJam">
+					<div class="panel-group" id="accordionDiv" style="height: 360px; overflow-y: scroll; margin-bottom: 0px" v-show="jamList.length>0"></div>
+				</div>
+				<div class="tab-pane fade" id="bkAlert">
+					<div class="panel-group" id="bkAlertDiv" style="height: 360px; overflow-y: scroll; margin-bottom: 0px">
+						<div class="panel panela panel-danger" v-for="item in bkAlertList">
+							<div class="panel-heading panel-headinga" style="background-color: #ffffff;">
+								<h4 class="panel-title">
+									<a data-toggle="collapse" data-parent="#bkAlertDiv"  v-bind:href="'#'+item.id">
+										<span class="text-danger" v-show="item.isNew" style="font-weight: bold;">{{item.title}}</span>
+										<span class="text-primary" v-show="!item.isNew" style="font-weight: bold;">{{item.title}}</span>
+									</a>
+									<span class="label label-default pull-right" title="抓拍时间" style="cursor:pointer;">{{item.captureDt}}</span>
+								</h4>
+							</div>
+							<div :id=item.id class="panel-collapse collapse">
+								<div class="panel-body">
+									<span style="font-weight: bold;">{{item.cont}}</span>
+									<div class="form-group">
+										<button type="button" class="btn btn-default btn-xs pull-right" @click="locateBk(item)" style="margin-right: 40px;margin-top: 10px;">
+											<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>定位
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 警情操作DIV start -->
+		<div id="postAlarmTaskDiv" v-show='false'>
+			<form class="form-horizontal" role="form">
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px;margin-top:5px;">
+				   	<div class="col-sm-3 control-label">处理详情</div>
+				   	<div class="col-sm-6">
+						<select class="form-control" id="processContent" name="processContent" v-model="alarmTask.processContent" htmlEscape="false" >
+							<option value="">请选择</option>
+							<option value="派员处理">派员处理</option>
+							<option value="网上快处">网上快处</option>
+							<option value="私了">私了</option>
+							<option value="误报">误报</option>
+							<option value="重复警情">重复警情</option>
+							<option value="其他">其他</option>
+						</select>
+				    </div>
+				   	<div class="col-sm-1">
+						<span class="help-inline"><font color="red">*</font> </span>
+				   	</div>
+				</div>
+				<div class="form-group" style="margin-left: -330px; margin-right: 250px;margin-top:5px;">
+					<div class="col-sm-1 col-sm-offset-9">
+					<textarea id="descText" class="form-control" style=" border: 1px solid #bbbbbb;display: none; width:280px" rows="2" 
+					htmlEscape="false" required="required"></textarea>
+					</div>
+				</div>
+				<div class="form-group" style="margin-left: -150px; margin-right: 150px;">
+				   	<div class="col-sm-1 col-sm-offset-9">
+						<input type="button" class="btn btn-primary btn-sm" @click="saveAlarmBtn" value="确定"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 警情操作DIV end -->
+	</div>
+	<div style="clear:both"></div>
+</div>

@@ -1,0 +1,167 @@
+<div id="pure-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">停车场管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="myTab" class="nav nav-tabs">
+			<li id="liQuery" class="active"><a href="#parkingLotQuery"
+				data-toggle="tab">查询</a></li>
+			<li id="liDetail"><a href="#parkingLotDetail" data-toggle="tab">登记</a></li>
+			<li id="liEdit" style="display: none"><a
+				href="#parkingLotDetail" data-toggle="tab">修改</a></li>
+			<li id="liAssign" style="display: none"><a
+				href="#assignDiv" data-toggle="tab">指派</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="parkingLotQuery">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">停车场名</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="parkNameQ" name="parkNameQ" v-model="parkingLotQ.parkName" placeholder="停车场">
+						</div>
+						<div class="col-sm-2 control-label">接入系统</div>
+						<div class="column col-sm-4">
+							<select class="form-control" id="jrtcxtQ" name="jrtcxtQ" v-model="parkingLotQ.jrtcxt" htmlEscape="false">
+								<option value="">所有</option>
+								<option value="1">接入</option>
+								<option value="0">未接入</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a> 
+							<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+							<!-- <a class="btn btn-sm" @click="assignTo"><i class="fa fa-hand-o-right"></i>&nbsp;指派</a>
+							<a class="btn btn-sm" @click="relevance"><i class="fa fa-link"></i>&nbsp;关联</a> -->
+						</div>
+					</div>
+					<div class="form-group">
+						<span class="help-inline" style="margin-left:20px"><font color="red">*接入停车系统的停车场不可修改删除</font> </span>
+					</div>
+				</div>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade" id="parkingLotDetail" style="height:450px; overflow-y:scroll; overflow-x:hidden;">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group" style="margin-top: 10px;">
+						<label for="shape" class="col-sm-2 control-label">添加点位</label>
+						<div class="col-sm-4">
+							<button type="button" class="btn btn-xs btn-default" @click="addParkPoint">添加</button>
+							<button type="button" class="btn btn-xs btn-danger" @click="clearParkPoint">清除</button>
+						</div>
+						<div class="col-sm-4 onelinedis" >
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="parkPoint"
+								v-model="parkingLot.zb" placeholder="添加停车场" 
+								readonly="readonly" required="required">
+								
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">停车场名</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" v-model="parkingLot.parkName" id="parkName" name="parkName" placeholder="停车场名" required="required">
+							
+						</div>
+						<label class="col-sm-2 control-label">停车场编号</label>
+						<div class="column col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="parkCode" v-model="parkingLot.parkCode"  name="parkCode" placeholder="停车场编号" required="required" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">总泊位</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" v-model="parkingLot.parkCapacity" id="parkCapacity" name="parkCapacity"
+								placeholder="总泊位" required="required" digits="true" min=1>
+								
+						</div>
+						<label class="col-sm-2 control-label">是否收费</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<select  class="form-control oneline" id="sfsf" name="sfsf"
+								v-model="parkingLot.sfsf" required="required">
+								<option value="">请选择</option>
+								<option value="0">不收费</option>
+								<option value="1">收费</option>
+							</select>
+								
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">面积</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline oneline"><font color="red">*</font> </span>
+							<input type="text" class="form-control" v-model="parkingLot.mj" id="mj" name="mj" placeholder="面积大小" required="required" digits="true" min=1>
+								
+						</div>
+						<label class="col-sm-2 control-label">管理单位</label>
+						<div class="column col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" v-model="parkingLot.gldw" id="gldw" name="gldw" placeholder="管理单位" required="required" maxlength="20">
+								
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">接入停车系统</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<select  class="form-control oneline" id="jrtcxt" name="jrtcxt"
+								v-model="parkingLot.jrtcxt" required="required">
+								<option value="">请选择</option>
+								<option value="0">未接入</option>
+								<option value="1">已接入</option>
+							</select>
+								
+						</div>
+						<label class="col-sm-2 control-label">采集时间</label>
+						<div class="column col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="cjsj" name="cjsj" v-model="parkingLot.cjsj"
+								placeholder="采集时间" required="required" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所在道路</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="szdl" name="szdl" v-model="parkingLot.szdl"
+								placeholder="所在道路">
+						</div>
+						<label class="col-sm-2 control-label">类型</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="lx" name="lx" v-model="parkingLot.lx"
+								placeholder="类型">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" v-model="parkingLot.bz" id="bz" name="bz"
+								placeholder="备注" maxlength="500">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="sButton" type="submit" class="btn btn-sm btn-primary"
+								@click="save">提交</button>
+							<input id="editB" type="button"
+								class="btn btn-warning btn-sm" style="display: none"
+								@click="reload" value="返回" />
+						</div>
+					</div>
+				</form>
+			</div>
+			</div>
+	</div>
+</div>

@@ -1,0 +1,74 @@
+<div id="pure-panel" class="panel panel-primary" style="width: 420px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通视频控制<!-- 视频可视域管理 -->
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="form-inline" style="margin-left:100px;margin-bottom:20px">
+		</div>	
+		<input type="hidden" id="hiddenSelectedId" />
+		<div class="form-horizontal">
+			<div class="form-group">
+				<div for="camera" class="col-sm-4 control-label">监控设备</div>
+				<div v-show='!fromMap' class="column col-sm-8">
+					<select  style="width:200px" id="camSelectedId">
+						<option v-for="(item,index) in camList"  v-bind:value="item.deviceId" >{{ item.deviceName }}</option>
+					</select>
+				</div>
+				<div v-show='fromMap' class="col-sm-8 control-label" style="text-align: left">
+					{{ fromMapCam.deviceName }}
+				</div>
+				
+			</div>
+			<div class="form-group" style="margin-top:20px">
+			<div class="column col-sm-4">
+			</div>
+			<div class="column col-sm-8" v-show='!fromMap'>
+				<a href="#" style="margin-left:10px" @click="searchRange" class="btn btn-sm"><i class="fa fa-search"></i>&nbsp;查看可视域</a>
+				<a href="#" class="btn btn-sm" v-on:click="searchAllRanges()" v-if="showAllViews">地图所有可视域</a>
+				<a href="#" class="btn btn-sm" v-on:click="hideRangesWithMap()" v-if="hideAllViews">隐藏所有可视域</a>
+			</div>
+			<div class="column col-sm-4" v-show='fromMap' style="float:right;margin:right:20px">
+				<a href="#" class="btn btn-sm" v-on:click="searchAllRanges()" v-if="showAllViews">地图所有可视域</a>
+				<a href="#" class="btn btn-sm" v-on:click="hideRangesWithMap()" v-if="hideAllViews">隐藏所有可视域</a>
+			</div>
+		</div>
+		<div class="drawControl" style="margin-top:30px;border-top:1px solid #000" v-if="drawControl">
+			 <div class="form-inline" style="margin-top:20px">
+                <label class="form-control" for="time">监控设备:</label>
+                	<input type="hidden" v-bind:value="chosenCamId" />
+                	{{chosenCamName}}
+                	<!-- <input type="text" class="form-control" style="font-size:8px" v-bind:value="chosenCamName" disabled></input> -->
+			</div> 
+			<div class="form-group" v-for="(item,index) in rangeList">
+				<a href="#" class="col-sm-offset-2 column col-sm-3" v-on:click="focusRange(item.id)"><font size="2">可视域-{{item.prePosition}}:</font></a>
+				<div for="typeQ" class="col-sm-2 control-label">{{item.prePosition}}</div>
+				<div class="column col-sm-3">
+					<button type="button" v-show="isZdAdmin" class="btn btn-danger btn-sm" v-on:click="deleteRange(item.id)">删除</button>	
+				</div>
+			</div>
+				<div class="form-group">
+					<button type="button" v-show="isZdAdmin" class="col-sm-offset-2 btn btn-success btn-sm" @click="addVideoRange">+ 添加一个可视域</button>
+                	<span class="glyphicon glyphicon-ok" aria-hidden="true" v-if="finshedDraw"></span>
+                </div>
+                <div class="form-group" v-if="finshedDraw">
+                	<div for="prePosition" class="col-sm-4 control-label">预置位号</div>
+					<div class="column col-sm-3">
+						<input type="text" class="form-control" id="prePosition" name="prePosition" v-model="prePosition" placeholder="预置位号" htmlEscape="false"/>
+					</div>
+					<span class="help-inline"><font color="red">* 建议自定义预置号从21开始</font> </span>
+				</div>
+                <div class="form-inline" style="margin-top:50px">
+                	<div class="box-footer pull-right" v-if="finshedDraw">
+                		<button type="button" v-show="isZdAdmin" class="btn btn-primary btn-sm" @click="saveVideoRange">提交</button>
+                		<button type="button" class="btn btn-default btn-sm" @click="cancelAdd">取消</button>
+                	</div>	
+                </div>
+		</div>
+		
+	</div>
+</div>

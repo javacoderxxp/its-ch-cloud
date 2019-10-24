@@ -1,0 +1,54 @@
+<div id="trackSearch-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			轨迹查询
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	
+	<div class="panel-body">
+		<div class="form-horizontal">
+		  <div class="form-group">
+		    <label for="startDt" class="col-sm-2 control-label">时间范围</label>
+		    <div class="col-sm-4">
+		      <input type="text" class="form-control form_datetime Wdate" id="startDt" placeholder=""  @click="init97DateStart" readonly />
+		    </div>
+            <label for="startDt" class="col-sm-1 control-label">至</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control form_datetime Wdate" id="endDt" placeholder=""  @click="init97DateEnd" readonly />
+            </div>
+		    
+		  </div>
+		  <div class="form-group">
+		  		<label for="startDt" class="col-sm-2 control-label">  </label>
+				<div class="col-sm-1">
+					<img id="bf" src="./assets/images/zanting.png" title='暂停' @click="togglePauseMove" style="display: none;">
+					<img id="zt" src="./assets/images/bofang.png" title='播放' @click="jixuMove" style="display: none;">
+				</div>
+				<div class="col-sm-1">
+					<!-- <img id="tz" src="./assets/images/tingzhi.png" title='停止' @click="toggleStopMove"> -->
+					
+				</div>
+				<label for="sd" class="col-sm-2 control-label">速度</label>
+				<div class="col-sm-2">
+					<select class="form-control" id="sd" v-model="sd" @change="variableSpeed">
+						<option value="-3" > -3X </option>
+						<option value="-2" > -2X </option>
+						<option value="-1" > -1X </option>
+						<option value="" > 正常 </option>
+						<option value="1" > 1X </option>
+						<option value="2" > 2X </option>
+						<option value="3" > 3X </option>
+					</select>
+				</div>
+                <div class="col-sm-4">
+                    <a class="btn btn-success btn-sm" @click="query">查询</a>
+					<a class="btn btn-warning btn-sm" @click="backToList">返回</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,77 @@
+<div id="pure-panel" class="panel panel-primary" style="width: 600px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			快速警卫
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()">
+					<i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i>
+				</button>
+				<button type="button" class="btn btn-default btn-xs" @click="close">
+					<i class="fa fa-close"></i>
+				</button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<form class="form-horizontal" id="sceneForm" role="form">
+			<div class="form-group">
+				<label for="sceneName" class="col-sm-2 control-label">绘制路线</label>
+				<div class="col-sm-4">
+					<button type="button" class="btn btn-sm btn-success"  @click="addShape"><i class="fa fa-pencil"></i>绘制</button>
+					<button type="button" class="btn btn-sm btn-danger"  @click="clearShape"><i class="fa fa-eraser"></i>清除</button>
+				</div>
+				<div class="col-sm-5">
+					<label><input type="radio" v-model="isGuardUsed" value="1" >警卫监控 
+					&nbsp;&nbsp;<button type="button" id="showJam" class="btn btn-xs btn-primary" @click="showJam">显示</button>
+					<button type="button" id ="hiddenJam" class="btn btn-xs btn-primary" @click="closeJam" style="display:none">隐藏</button>
+					</label>
+					<label><input type="radio" v-model="isGuardUsed" value="0">交警、科信、高空监控</label>
+					
+				</div>
+				
+			</div>
+			<div class="form-group">
+				<div v-show="searchingDev" class="col-sm-12" style="line-height: 60px;">
+					<div class="col-sm-6">
+						<label class="pull-right">设备搜索中...</label>
+					</div>
+					<img src="./assets/images/dev-searching.gif">
+				</div>
+				<div class="col-sm-12">
+					<span class="col-sm-6" style="font-size: 18px; font-family: 微软雅黑; font-weight: bold;">信号机列表</span> <span
+						class="col-sm-6" style="font-size: 18px; font-family: 微软雅黑; font-weight: bold;">视频监控列表</span>
+				</div>
+				<div class="col-sm-6">
+					<ul class="list-group" style="max-height: 300px; overflow-y: auto;">
+						<li class="list-group-item" style="height:50px;" v-for="(item,index) in relatedSignals " @mouseenter="deventer(item.signal)"
+							@mouseleave="devleave(item.signal)"><span style="float:left;">{{index+1}}</span> <div :title="item.signal.deviceName" style="overflow: hidden;display: block;text-overflow: ellipsis;white-space: nowrap;float: left;">{{item.signal.deviceName}}</div>
+							<button type="button" class="btn btn-link btn-sm" @click="removeFromSignalList(index)" style="float: right;">
+								<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+							</button></li>
+					</ul>
+				</div>
+				<div class="col-sm-6">
+					<ul class="list-group" style="max-height: 300px; overflow-y: auto;">
+						<li class="list-group-item" style="height:50px;" v-for="(item,index) in relatedVideos " @mouseenter="deventer(item.video)"
+							@mouseleave="devleave(item.video)"><span style="float:left;">{{index+1}}</span> <span :title="item.video.deviceName" style="overflow: hidden;display: block;text-overflow: ellipsis;white-space: nowrap;float: left;">{{item.video.deviceShortName}}</span>
+							<button type="button" class="btn btn-link btn-sm" @click="removeFromVideoList(index)" style="float: right;">
+								<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+							</button>
+							<button type='button' class='btn btn-link btn-sm' style="float: right;"
+								@click="openOneVideo(index,item)">
+								<span class='glyphicon glyphicon-play' aria-hidden='true'></span>
+							</button></li>
+					</ul>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="button" class="btn btn-sm btn-primary" v-if="relatedSignals.length>0 || relatedVideos.length>0" @click="openGuardPage">打开警卫页面</button>
+					<!-- -->
+					<button type="button" class="btn btn-sm btn-primary" v-if="relatedSignals.length>0" @click="openRelatedSignals">打开信控页面</button>
+					<button type="button" class="btn btn-sm btn-primary" v-if="relatedVideos.length>0" @click="openRelatedVideos">打开视频监控</button> 
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

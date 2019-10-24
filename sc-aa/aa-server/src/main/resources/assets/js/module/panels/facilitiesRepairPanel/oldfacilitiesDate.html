@@ -1,0 +1,48 @@
+<div id="facilitiesSta-panel" class="panel panel-primary" style="width: 600px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">维修单位时效统计
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+	<div class="form-horizontal">
+		<div class="form-group">
+			<div class="col-sm-2 control-label">基准日期</div>
+			<div class="column col-sm-4">
+				<input type="text" class="form-control form_datetime Wdate" id="startDt" @click="init97DateStart"
+				v-model="facilitiesRepairQ.startDt" placeholder="开始时间" readonly="readonly">
+			</div>
+			<div class="col-sm-2 control-label">时间单位</div>
+			<div class="column col-sm-4">
+				<select class="form-control" id="timeUnit" v-model="facilitiesRepairQ.timeUnit" htmlEscape="false" >
+					<option value="DAY">日</option>
+					<option value="MONTH">月</option> 
+					<option value="YEAR">年</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-sm-2"></div>
+			<div class="column col-sm-10">
+				<span class="help-inline"><font color="red">{{remindeMsg}}</font></span>
+			</div>
+		<div class="form-group">
+			<div class="col-sm-2 control-label">维修单位</div>
+			<div class="column col-sm-4">
+				<select id="repairUnitId" name="repairUnitId" class="form-control">
+					<option value="">请选择</option>
+					<option v-for="dict in unitNames" v-bind:value="dict.id">
+								{{dict.unitName}}</option>
+				</select>
+			</div>
+			<div class="col-sm-2" style="text-align: right;">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+			</div>
+		</div>
+	</div>
+	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="height:400px;"></div> 
+    </div>
+</div>

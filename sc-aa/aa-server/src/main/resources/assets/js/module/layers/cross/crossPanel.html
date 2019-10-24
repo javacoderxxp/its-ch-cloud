@@ -1,0 +1,152 @@
+<div id="pure-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通路口
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">编号</div>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" placeholder="编号" v-model="crossQ.bh" required="required">
+					</div>
+					<div class="col-sm-2 control-label">名称</div>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" placeholder="名称" v-model="crossQ.mc" required="required">
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</div>
+		    <table id="jqGrid"></table>
+		    <div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="bh" class="col-sm-2 control-label">编号</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="bh" name="bh" v-model="cross.bh" placeholder="编号" 
+							htmlEscape="false" required="required" maxlength="50"/>
+						
+					</div>
+					<label for="mc" class="col-sm-2 control-label">名称</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="mc" name="mc" v-model="cross.mc" placeholder="名称" 
+							htmlEscape="false" required="required" maxlength="255"/>
+						
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="lkmcQ" class="col-sm-2 control-label">路口全称</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="lkmcQ" name="lkmcQ" v-model="cross.lkmcQ" placeholder="路口名称_全称" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="zb" class="col-sm-2 control-label">坐标</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zb" name="zb" v-model="cross.zb" placeholder="坐标" 
+							htmlEscape="false" maxlength="1000"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="bjldbh" class="col-sm-2 control-label">北进口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bjldbh" name="bjldbh" v-model="cross.bjldbh" placeholder="北进口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="njldbh" class="col-sm-2 control-label">南进口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="njldbh" name="njldbh" v-model="cross.njldbh" placeholder="南进口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="djldbh" class="col-sm-2 control-label">东进口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="djldbh" name="djldbh" v-model="cross.djldbh" placeholder="东进口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="xjldbh" class="col-sm-2 control-label">西进口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xjldbh" name="xjldbh" v-model="cross.xjldbh" placeholder="西进口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="bcldbh" class="col-sm-2 control-label">北出口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bcldbh" name="bcldbh" v-model="cross.bcldbh" placeholder="北出口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="ncldbh" class="col-sm-2 control-label">南出口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="ncldbh" name="ncldbh" v-model="cross.ncldbh" placeholder="南出口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="dcldbh" class="col-sm-2 control-label">东出口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="dcldbh" name="dcldbh" v-model="cross.dcldbh" placeholder="东出口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="xcldbh" class="col-sm-2 control-label">西出口路段编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xcldbh" name="xcldbh" v-model="cross.xcldbh" placeholder="西出口路段编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="blkh" class="col-sm-2 control-label">北相邻路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="blkh" name="blkh" v-model="cross.blkh" placeholder="北相邻路口号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="nlkh" class="col-sm-2 control-label">南相邻路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="nlkh" name="nlkh" v-model="cross.nlkh" placeholder="南相邻路口号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="dlkh" class="col-sm-2 control-label">东相邻路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="dlkh" name="dlkh" v-model="cross.dlkh" placeholder="东相邻路口号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="xlkh" class="col-sm-2 control-label">西相邻路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xlkh" name="xlkh" v-model="cross.xlkh" placeholder="西相邻路口号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="bz" class="col-sm-2 control-label">备注</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bz" name="bz" v-model="cross.bz" placeholder="备注" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

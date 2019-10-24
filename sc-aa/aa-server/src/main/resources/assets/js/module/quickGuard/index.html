@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>快速警卫系统</title>
+		<link rel="stylesheet" href="lib/layui-v2.1.5/layui/css/layui.css" />
+		<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css" />
+		<link rel="stylesheet" href="lib/bootstrap/bootstrap-switch.css" />
+		<link rel="stylesheet" href="css/signalCtrl.css" />
+	</head>
+
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo">快速警卫</div>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item">
+						<a href="javascript:;">
+							<span id="username"></span>
+						</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="" onclick="window.close();">退出</a>
+							</dd>
+						</dl>
+					</li>
+				</ul>
+			</div>
+
+			<div id="signal-list" class="layui-side layui-bg-black" style="width: 170px;">
+				<div id="signal-list-app" class="layui-side-scroll" style="width: 180px;height:50%;">
+					<div>信号机列表
+						<ul id="signal-list-ul" class="layui-nav layui-nav-tree" lay-filter="test" style="height: 100%;overflow-y: auto;">
+							<li class="layui-nav-item" v-for="item in list" style="cursor: pointer;">
+								<a :data-crossid="item.crossId" @click="signalLiClick(item)">
+								<span class="layui-badge" v-show="item.manCtrl">手动</span>{{item.deviceName}}
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				<div id="video-list-app" class="layui-side-scroll" style="width: 180px; height: 50%; border-top-color: darkred; border-top-width: 3px; border-top-style: dashed;"> 
+					<div>视频列表
+						<ul id="video-list-ul" class="layui-nav layui-nav-tree" lay-filter="test" style="height: 100%;overflow-y: auto;">
+							<li class="layui-nav-item" v-for="item in videos" style="cursor: pointer;">
+								<a :data-crossid="item.tunnel" @click="videoLiClick(item)">{{item.deviceName}}
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-body" style="bottom: 0px;left: 170px;">
+			    <table style="width: 100%">
+			     <tr height="100%">
+			         <td width="390px" id="signal-container">
+			         </td>
+                     <td id="video-content" style="vertical-align: top; padding: 10px">
+                        <span style="text-align: center; padding-top: 25%; font-size: 30px; display: block;">视频插件初始化中，请稍等...</span>
+                     </td>
+			     </tr>
+			    </table>
+				<!-- <div id="signal-container">
+				信号机控制单元容器区域
+				</div>
+				
+				<div id="video-container">
+				视频容器区域
+					<div id="video-content" style="width: 715px;height: 800px;margin-right: 5px;float: right;">
+						<span style="text-align: center; padding-top: 25%; font-size: 30px; display: block;">视频插件初始化中，请稍等...</span>
+					</div>
+				</div> -->
+			</div>
+		</div>
+		<script type="text/template" id="ctrlUnit-Tpl">
+			<div class="ctrlUnit">
+				<nav class="navbar navbar-default" style="margin-bottom: 5px;">
+					<div class="container-fluid" style="height:60px">
+						<div style="line-height:45px">
+							<div class="form-group">
+							<span class="ctrlUnit_crossname">{{staticInfo.deviceName}}</span>
+							<span class="ctrlUnit_devicetp">{{staticInfo.deviceTp}}</span>
+							<div class="pull-right" style="margin-right: 0px;">
+								<span :class="controlModeClassName">{{controlMode}}</span>
+							</div>
+							</div>
+							<div class="form-group">
+							<div class="ctrlSwitch" v-show="modeCtrlShow" style="float: left;">
+								<button type="button" v-show="hasCtrlRole" class="btn btn-warning btn-sm" @click="modeChangeToManCtrl">手动模式</button>
+								<button type="button" v-show="hasCtrlRole" class="btn btn-success btn-sm" @click="modeChangeToAuto">自主模式</button>
+							</div>
+							
+							<div class="pull-right">
+								<div class="dropdown ctrlUnit_seniorCtrl">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">高级 <span class="caret"></span></a>
+								<ul class="dropdown-menu" v-show="hasCtrlRole">
+									<li>
+										<a href="#" @click="release">强制解除</a>
+									</li>
+									<li role="separator" class="divider"></li>
+									<li>
+										<a href="#" @click="setYellowFlash">黄闪</a>
+									</li>
+									<li>
+										<a href="#" @click="setAllRed">全红</a>
+									</li>
+								</ul>
+								</div>
+								<span class="label label-warning">{{lockUser}}</span>
+							</div>
+							</div>
+						</div>
+					</div>
+				</nav>
+				<div class="panel panel-default" style="float: left;width: 360px;font-size: 10px;margin-bottom: 10px;">
+					<div class="panel-body">
+						<div class="form-group" v-if='curCycleLen!=""'>
+							<label for='workStatus' class="col-sm-3 control-label" style="padding-left: 5px;padding-right: 5px;">工作状态：</label>
+							<div class="col-sm-3">
+								{{workStatus}}
+							</div>
+							<label for='curCycleLen' class="col-sm-4 control-label">周期总时长：</label>
+							<div class="col-sm-2">
+								{{curCycleLen}}
+							</div>
+						</div>
+						<div class="form-group" v-if='runInfo.curTimePatternNo!=""'>
+							<label for='curTimePatternNo' class="col-sm-4 control-label" style="padding-left: 5px;padding-right: 5px;">当前方案号：</label>
+							<div class="col-sm-2">{{runInfo.curTimePatternNo}}</div>
+							<label for='curStageTimeNo' class="col-sm-4 control-label">相序配时号：</label>
+							<div class="col-sm-2">{{runInfo.curStageTimeNo}}</div>
+						</div>
+					</div>
+				</div>
+				<div class="map-box">
+					<div id="direc_33" class="red"></div>
+					<div id="direc_34" class="red"></div>
+					<div id="direc_36" class="red"></div>
+
+					<div id="direc_65" class="red"></div>
+					<div id="direc_66" class="red"></div>
+					<div id="direc_68" class="red"></div>
+
+					<div id="direc_97" class="red"></div>
+					<div id="direc_98" class="red"></div>
+					<div id="direc_100" class="red"></div>
+
+					<div id="direc_129" class="red"></div>
+					<div id="direc_130" class="red"></div>
+					<div id="direc_132" class="red"></div>
+
+					<div class="count-down" v-if="countdown!=''">
+						<div>{{countdown}}</div>
+					</div>
+				</div>
+				
+					<div class="ctrlUnit_box">
+						<stage v-model="item" v-for="item in stageList" :stage="item" :crossId="staticInfo.crossId" :deviceId="staticInfo.deviceId" class="layui-row"></stage>
+					</div>
+			</div>
+		</script>
+
+		<script type="text/template" id="stage-Tpl">
+			<div class="layui-row" style="margin-top:8px;margin-bottom:8px;border-bottom-width: 1px;border-bottom-style: dashed;border-bottom-color: #a9a9a9;">
+				<div class="layui-col-md1" style="font-weight: 900;">
+					{{stage.stageNo}}
+				</div>
+				<div class="layui-col-md6 phase-list">
+					<div v-for="(item,index) in stage.phaseList" :data-direcId="crossId+'_'+stage.stageNo+'_'+item.direcId" :class="item.color" :key="index">
+						<div :style="{backgroundImage: 'url(./img/directions/' + item.direcId + '.png)'}"></div>
+					</div>
+				</div>
+				<div class="layui-col-md3">
+					<div :class="stage.lock?'stageCtrl_lock':'stageCtrl_unlock'" />
+					<div class="ctrl-switch-btn">
+						<input type="radio" :id="crossId+'_'+stage.stageNo" :name="crossId+'_radio'" :data-stage="stage.stageNo" data-size="mini" data-radio-all-off="false">
+					</div>
+				</div>
+				<div class="layui-col-md1">
+					<span>{{stage.stageTimeOut}}</span>
+				</div>
+				<div class="layui-col-md1">
+					<span>{{stage.totalStageTime}}</span>
+				</div>
+			</div>
+		</script>
+		<script type="text/javascript" src="js/loadMap.js"></script>
+		<script type="text/javascript" src="lib/layui-v2.1.5/layui/layui.all.js"></script>
+		<script type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/bootstrap.min.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/bootstrap-switch.js"></script>
+		<script type="text/javascript" src="lib/vue/vue.min.js"></script>
+		<script type="text/javascript" src="lib/sortable/Sortable.js"></script>
+		<script type="text/javascript" src="js/loadUI.js"></script>
+		<script type="text/javascript" src="js/posindaLib.js"></script>
+		<script type="text/javascript" src="js/videoPlay.js"></script>
+		<script>
+			var keycode = -1;
+			PosindaLib.SignalUtils.init();
+			
+			function closePage() {
+				//window.opener.closeSignalCtrlWin();
+			}
+			
+			window.onbeforeunload=function (){
+				if(event.clientX>document.body.clientWidth && event.clientY < 0 || event.altKey){
+				     //alert("你关闭了浏览器");
+				     if(window.opener && window.opener.closeSignalCtrlWin){
+				    	 window.opener.closeSignalCtrlWin();
+				     }
+				}else{
+				     //alert("你正在刷新页面");
+					sessionStorage.setItem("refresh",true);
+					
+					//关闭前发现有未解锁的信号机，提示
+					if(keycode!= 116 && keycode!= 108){
+						var lockedList = PosindaLib.SignalUtils.getSignalLocked();
+						if(lockedList && lockedList.length >0){
+							var str = "目前还有 "+lockedList.length+" 台信号机未解锁，是否关闭？";
+							return str; 
+						}
+					}
+				}
+			}
+			
+			window.onload =function(){
+				sessionStorage.setItem("refresh",true);
+				var ss = sessionStorage.getItem("signals");
+				var sigs = JSON.parse(ss);
+				if(null != sigs){
+					PosindaLib.SignalUtils.addToHandleList(sigs);
+				}
+				
+				var ss = sessionStorage.getItem("videos");
+				/* var vis = [];//默认为空
+				if(ss && ""!=ss){
+					vis = JSON.parse(ss);
+				}
+				if(null != vis){
+                    setVideoList(vis);
+                } */
+
+                if(ss && ""!=ss){
+                    var vis = JSON.parse(ss);
+                    if(null != vis){
+                        setVideoList(vis);
+                    }
+                }
+			}
+			
+			function removeCacheSignals(){
+				sessionStorage.clear();
+			}
+			
+			document.onkeydown=function(e){
+				var ev = e || window.event;//获取event对象  
+				if(ev.keyCode){
+					keycode = ev.keyCode;
+				}
+			};  
+			
+			var videoApp = null;
+			function setVideoList(videos){
+				var vds = [];
+				if(!videos){
+					vds = [];
+				}else{
+					for(var i in videos){
+						var v = videos[i];
+						vds.push(v);
+					}
+				}
+				sessionStorage.setItem("videos",JSON.stringify(vds));
+				var ss = sessionStorage.getItem("videos");
+				videoApp = new Vue({
+					el: '#video-list-app',
+					data: {
+						videos:[]
+					},
+					methods: {
+						videoLiClick:function(item){
+							var tunnel = item.tunnel;
+							playVideoWithWindow(tunnel);
+						}
+					}
+				});
+				if(ss && ""!=ss){
+					var vis = JSON.parse(ss);
+					videoApp.videos = vis;
+				}
+				
+				//videoApp.videos = vds;
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,184 @@
+<div id="dahuaEp-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">大华高清卡口
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">id</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="dahuaEpQ.id" placeholder="" htmlEscape="false" />
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-times"></i>&nbsp;删除</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="deviceId" class="col-sm-2 control-label">设备编码</label>
+					<div class="col-sm-4 onelinedis">
+					   <span class="help-inline"><font color="red">*</font></span>
+						<input type="text" class="form-control oneline" id="deviceId" name="deviceId" v-model="dahuaEp.deviceId" placeholder="设备编码" 
+							htmlEscape="false" maxlength="30"/>
+						
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="channelSeq" class="col-sm-2 control-label">通道序号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="channelSeq" name="channelSeq" v-model="dahuaEp.channelSeq" placeholder="通道序号" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="deviceName" class="col-sm-2 control-label">设备名称</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="deviceName" name="deviceName" v-model="dahuaEp.deviceName" placeholder="设备名称" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="ipAddress" class="col-sm-2 control-label">设备IP地址</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="ipAddress" name="ipAddress" v-model="dahuaEp.ipAddress" placeholder="设备IP地址" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="psfx" class="col-sm-2 control-label">拍摄方向</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="psfx" name="psfx" v-model="dahuaEp.psfx" placeholder="拍摄方向" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="lkfx" class="col-sm-2 control-label">设备所在路口方向</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="lkfx" name="lkfx" v-model="dahuaEp.lkfx" placeholder="设备所在路口方向" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="type" class="col-sm-2 control-label">类型</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="type" name="type" v-model="dahuaEp.type" placeholder="类型" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="usedFor" class="col-sm-2 control-label">用途</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="usedFor" name="usedFor" v-model="dahuaEp.usedFor" placeholder="用途" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="crossId" class="col-sm-2 control-label">路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="crossId" name="crossId" v-model="dahuaEp.crossId" placeholder="路口号" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="linkId" class="col-sm-2 control-label">路段号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="linkId" name="linkId" v-model="dahuaEp.linkId" placeholder="路段号" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="shape" class="col-sm-2 control-label">空间信息</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="shape" name="shape" v-model="dahuaEp.shape" placeholder="空间信息" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="status" class="col-sm-2 control-label">设备运行状态</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="status" name="status" v-model="dahuaEp.status" placeholder="设备运行状态" 
+							htmlEscape="false" maxlength="1"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">描述</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="description" name="description" v-model="dahuaEp.description" placeholder="描述" 
+							htmlEscape="false" maxlength="200"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="installDt" class="col-sm-2 control-label">安装时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="installDt" name="installDt" v-model="dahuaEp.installDt" placeholder="安装时间" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="manuId" class="col-sm-2 control-label">生产厂家</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="manuId" name="manuId" v-model="dahuaEp.manuId" placeholder="生产厂家" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="flowUpperLimit" class="col-sm-2 control-label">流量上限阈值</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="flowUpperLimit" name="flowUpperLimit" v-model="dahuaEp.flowUpperLimit" placeholder="流量上限阈值" 
+							htmlEscape="false" maxlength="0"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="morningPeakMean" class="col-sm-2 control-label">早高峰均值</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="morningPeakMean" name="morningPeakMean" v-model="dahuaEp.morningPeakMean" placeholder="早高峰均值" 
+							htmlEscape="false" maxlength="8"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="eveningPeakMean" class="col-sm-2 control-label">晚高峰均值</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="eveningPeakMean" name="eveningPeakMean" v-model="dahuaEp.eveningPeakMean" placeholder="晚高峰均值" 
+							htmlEscape="false" maxlength="8"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="dayOffPeakMean" class="col-sm-2 control-label">白天平峰均值</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="dayOffPeakMean" name="dayOffPeakMean" v-model="dahuaEp.dayOffPeakMean" placeholder="白天平峰均值" 
+							htmlEscape="false" maxlength="8"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="nightOffPeakMean" class="col-sm-2 control-label">夜晚平峰均值</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="nightOffPeakMean" name="nightOffPeakMean" v-model="dahuaEp.nightOffPeakMean" placeholder="夜晚平峰均值" 
+							htmlEscape="false" maxlength="8"/>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

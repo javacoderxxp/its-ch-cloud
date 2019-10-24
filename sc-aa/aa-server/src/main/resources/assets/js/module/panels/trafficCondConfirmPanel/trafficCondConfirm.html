@@ -1,0 +1,45 @@
+<div id="trafficConfirm-panel" class="panel panel-primary" style="width: 600px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">诱导信息发布
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="form-horizontal" v-show="isZdAdmin" >
+			<div class="form-group">
+				<div class="col-sm-3 control-label">人工确认开关</div>
+				<div class="column col-sm-4">
+					<div class="switch" data-on="success" data-off="warning" id="mySwitch">
+						<input type="checkbox" checked />
+					</div>
+				</div>
+			</div>
+		</div>
+		<table class="table" style="width:560px;" v-if="statusList && statusList.length">
+			<tr>
+				<td style="width:40px; overflow:hidden;white-space:nowrap;">编号</td>
+				<td style="width:180px; overflow:hidden;white-space:nowrap;">名字</td>
+				<td style="width:180px; overflow:hidden;white-space:nowrap;">时间</td>
+				<td style="width:40px; overflow:hidden;white-space:nowrap;">查看</td>
+				<td v-if="switchStatus" style="width:120px; overflow:hidden;white-space:nowrap;">操作</td>
+			</tr>
+			<tr v-for="(item,index) in statusList ">
+				<td>{{item.vmsId}}</td>
+				<td>{{item.vmsName}}</td>
+				<td>{{item.rcvdTime}}</td>
+				<td><button class="btn btn-success btn-sm" v-bind:data-item-id="item.imgPath" style="font-size:10px;height:20px; line-height:8px;" @click='showImg'>查看</button></td>
+				<td v-if="switchStatus && item.status=='1'">确认</td>
+				<td v-else-if="switchStatus && item.status=='2'">误报</td>
+				<td v-else-if="switchStatus && item.status=='0'"><button class="btn btn-success btn-sm vmsConfirm" data-item-value="1" v-bind:data-item-id="item.id" style="font-size:10px;height:20px; line-height:8px;" @click="updateStatus">确认</button> &nbsp;
+					<button class="btn btn-danger btn-sm vmsConfirm" data-item-value="2" v-bind:data-item-id="item.id" style="font-size:10px;height:20px; line-height:8px;" @click="updateStatus">误报</button>
+				</td>
+			</tr>
+		</table>
+		<div style="display: none;">
+			<img id="vmsImgPanel" src="./assets/images/vms_blank.jpg" width="512px" height="320px" />
+		</div>
+	</div>
+</div>

@@ -1,0 +1,97 @@
+<div id="vehicleFlow-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">实时卡口流量
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div v-show="!todayData">
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">卡口名</div>
+					<div class="column col-sm-6">
+						<select name="type" class="form-control selectpicker" id="deviceIdQ" v-model="vehiclePassQ.deviceId">
+							<option v-for="ep in epList" v-bind:value="ep.deviceId" data-icon="fa fa-camera-retro">
+								{{ep.deviceName}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">开始时间</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="startDtQ" v-model="vehiclePassQ.startDt" 
+							@click="init97DateStart" 
+							placeholder="开始时间" readonly="readonly" required="required">
+					</div>
+					<div class="col-sm-2 control-label">结束时间</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="endDtQ" v-model="vehiclePassQ.endDt" 
+							@click="init97DateEnd" 
+							placeholder="结束时间" readonly="readonly" required="required">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-6">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+					</div>
+				</div>
+			</div>
+		    <div style="height: 500px; overflow-y: scroll !important ;-ms-overflow-y: scroll;" v-show='showList'>
+				<table class="table table-striped">
+				    <thead>
+				    <tr>
+				        <th></th>
+				        <th>设备编号</th>
+				        <th>设备名称</th>
+				        <th>车流量</th>
+				        <th>今日流量</th>
+				    </tr>
+				    </thead>
+				    <tbody>
+				    <tr v-for="(vehiclePassStat,index) in dataList">
+				    	<td>{{index+1}}</td>
+				    	<td>{{vehiclePassStat.deviceId}}</td>
+				    	<td style="cursor: pointer;font-weight: bold;" @click="locatePosition(vehiclePassStat)">{{vehiclePassStat.deviceName}}</td>
+				    	<td>{{vehiclePassStat.cnt}}</td>
+				    	<td><a class="btn btn-sm" @click="loadTodayData(vehiclePassStat)">查看</a></td>
+				    </tr>
+				    </tbody>
+				</table>
+		    </div>
+		</div>
+		<div v-show="todayData">
+			 <div><h5>{{deviceName}}</h3></div>
+			 <div style="height: 300px; width: 520px;" id="echarts-div">
+		</div>
+		 <div style="height: 200px; overflow-y: scroll !important ;-ms-overflow-y: scroll; overflow: scroll;" v-show="todayData">
+			 <table class="table table-striped">
+				    <thead>
+				    <tr>
+				        <th></th>
+				        <th>开始时间</th>
+				        <th>结束时间</th>
+				        <th>车流量</th>
+				    </tr>
+				    </thead>
+				    <tbody>
+				    <tr v-for="(flow,index) in flows">
+				    	<td>{{index+1}}</td>
+				    	<td>{{flow.startDt}}</td>
+				    	<td>{{flow.endDt}}</td>
+				    	<td>{{flow.totalVolume}}</td>
+				    </tr>
+				    </tbody>
+				</table>
+				</div>
+		<div class="form-group" v-show="todayData" style="float:right;margin-top:10px;margin-right:5px">
+			<div class="col-sm-offset-2 col-sm-10">
+				<input type="button" class="btn btn-warning btn-sm "  @click="back" value="返回" />
+			</div>
+		</div>
+				</div>
+	</div>
+</div>

@@ -1,0 +1,26 @@
+env:
+  sit
+#*********************************************************************************************************************#
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: itssip
+    password: itssip
+    url: jdbc:oracle:thin:@192.168.1.4:1521:orcl
+
+#***************************************分布式Job配置*********************************************#
+##配置注册中心
+regCenter:
+  serverList: #192.168.128.12:2181,192.168.128.13:2181,192.168.128.14:2181
+  namespace: elastic-jobs-duty
+  sessionTimeoutMilliseconds: 15000
+
+simpleJob:
+  cron: 0/30 * * * * ?
+  shardingTotalCount: 2
+  shardingItemParameters: 0=0,1=1
+## 配了3个分片
+simpleJob2:
+  cron: 0/5 * * * * ?
+  shardingTotalCount: 3
+  shardingItemParameters: 0=0,1=1,2=2

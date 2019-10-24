@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../assets/css/app.css" />
+	<link rel="stylesheet" href="../assets/plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../assets/plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../assets/plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../assets/css/sceneStyle.css">
+	<link rel="stylesheet" href="../assets/css/jindustyle.css">
+	<link rel="stylesheet" href="../assets/plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../assets/plugins/bootstrap-select/css/bootstrap-select.css" />
+<style type="text/css"> 
+	.error {
+		color: red;
+    }
+    .selectblue {
+		background-color:#133f58;
+		color:#c2f9fb; 
+     }
+	/*更改颜色*/
+	/*更改颜色*/
+	body{
+		/*background: #133f58;*/
+		background: #f0f2f7;
+		color:#3b4d66;
+	}
+	.imporalarm{
+		/*background: #fff;*/
+		z-index: 0;
+
+	}
+	.leftpannel div{
+		background: #fff!important;
+	}
+	.alarmpennel,.equipmentpannel,.countpannel,.WorkstatisCarpannel,.lastpannel{
+		/*border: dashed;*/
+		background: #fff!important;
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+		border:1px  #e9ebee solid;
+	}
+	.equipfont{
+		color: #3b4d66;
+		/*background: #fff;*/
+		/*height:100%;*/
+	}
+	.centermap{
+		background: #fff;
+		box-shadow: none;
+	}
+	.pconcent{
+		color:#333638;
+	}
+	.pconcent:hover{
+		background: #2196f3!important;
+		color: #fff;
+	}
+	.leader1{
+		background: #fff;
+		color:#76848a;
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+		border:1px  #e9ebee solid;
+	}
+	.topleadernumber{
+		color:#76848a!important;
+	}
+	.leader1 h6{
+		color:#2196f3!important;
+		font-weight: bold;
+	}
+	/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+	::-webkit-scrollbar
+	{
+		width: 12px;
+		height: 12px;
+		background-color: #fff;
+	}
+
+	/*定义滚动条轨道 内阴影+圆角*/
+	::-webkit-scrollbar-track
+	{
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+		border-radius: 20px;
+		background-color: #fff;
+	}
+
+	/*定义滑块 内阴影+圆角*/
+	::-webkit-scrollbar-thumb
+	{
+		border-radius: 20px;
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+		background-color: #e8eaee;
+		opacity: 0.2;
+	}
+
+	.table-hover > tbody > tr, .table-hover > tbody > tr > th, .table-hover > tbody > tr > td{
+		*webkit-transition: all 0s;
+		transition: all 0s;
+	}
+ .selectblue{
+	 background-color: #e9ebee;
+	 color: #3b4d66;
+ }
+
+</style>
+
+
+<script type="text/javascript">
+var itsEnv = window.itsEnv = 'prod'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script>
+<!-- SIT 
+	<script src="http://114.215.146.210:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=a38637152661536811426544710c5a2c"></script>
+-->
+<!-- PROD
+-->
+<script src="http://192.168.15.4:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=96afef81bcb8de97f2687b41d6f4d07a"></script>
+
+
+<!--[if lt IE 9]> 
+	<script type="text/javascript" src="../assets/plugins/loadMap.js"/> 
+<![endif]-->
+<script type="text/javascript" src="../assets/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../assets/plugins/jqgrid/js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../assets/plugins/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/javascript" src="../assets/plugins/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/echarts/theme/walden.js"></script>
+<script type="text/javascript" src="../assets/js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../assets/plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../assets/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+<script type="text/javascript" src="../assets/plugins/bootstrap-select/js/i18n/defaults-zh_CN.js"></script>
+<!--//进度条左2-->
+<!-- <script type="text/javascript" src="../assets/plugins/jQuery/jindujquery.js"></script>
+<script type="text/javascript" src="../assets/plugins/jQuery/index.js"></script> -->
+<!--//数字动画-->
+<!-- <script type="text/javascript" src="../assets/plugins/jQuery/jquery.waypoints.min.js"></script>
+<script type="text/javascript" src="../assets/plugins/jQuery/jquery.countup.min.js"></script> -->
+<title>警员勤务</title>
+</head>
+
+<body>
+<div id="imptDiv" >
+	<div id="mapContainer2"></div>
+	<!--//上面4个小块-->
+	<div class="leader1" style="height:10%;width:54.4%;">
+		<table class="topleadertable" >
+			<tr>
+				<td colspan="4">
+					<div style="text-align: center;">
+						<h6 style="color:#cae5fb;letter-spacing:4px;font-size:17px;">太仓市公安局交通警察大队</h6>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					 <div id="total1" style="text-align: center;">
+					 <span class="topleadernumber" style="margin-left: 20px; font-size:16px;">中队:</span>
+				     <select id="groupIdQ" name="groupIdQ" class="selectblue"  @change="getDutyListByTeamId" 
+				        v-model="groudId" v-if="currentUser.jjddUser">
+						<option v-for="gp in groupList" :value="gp.groupId" data-icon="fa fa-sitemap">
+							{{gp.groupName}}
+						</option>
+					 </select>
+					 <template v-if="currentUser.jjzdUser">
+						<span id="gname" class="topleadernumber" style="margin-left: 5px; font-size:16px;">{{groudName}}</span>
+					</template>    
+				     <span class="topleadernumber" style="margin-left: 20px; font-size:16px;">{{dType}}警员:</span>
+				      <!-- <span  id="umjxm" class="topleadernumber" style="margin-left: 5px; font-size:16px;">{{mjxm}}</span> -->
+					<select id="pN" name="pN" class="selectblue"  @change="sbPn" style="width:65px;"
+				        v-model="picN" v-if="currentUser.jUser">
+						<option v-for="sue in userList" :value="sue.policeNo" data-icon="fa fa-sitemap">
+							{{sue.userName}}
+						</option>
+					 </select>
+				     <span class="topleadernumber" style="margin-left: 20px; font-size:16px;">警号:</span>              
+				     <span  id="umjjh" class="topleadernumber" style="margin-left: 5px; font-size:16px;">{{mjjh}}</span>
+				     <span class="topleadernumber" style="margin-left: 20px; font-size:16px;">日期:</span>
+				     <span  id="usd" class="topleadernumber" style="margin-left: 5px; font-size:16px;"  @click="init97DateStart" v-model="sd">{{sd}}</span>
+					</div>
+					<!-- <label  style="color: #133f58;width: 0%;"></label> -->
+				</td>
+			</tr>
+		</table>
+	</div>
+	<!--//中间地图块-->
+	<div class="centermap" style="height:89%;top:11%;">
+    	<div style="width:100%;height:100%;position: relative;">
+    		<!--<div class="lefttop"></div>-->
+	        <!--<div class="righttop"></div>-->
+	        <!--<div class="leftbot"></div>-->
+	        <!--<div class="rightbot"></div>-->
+	        <!-- <div class="bigtitle">
+				<h6 style="color:#cae5fb;letter-spacing:4px">太仓市公安局交通警察大队</h6>
+			</div> -->
+	        <div class="conmain"  style="padding:4px;width:100%;height:100%;">
+	        	<div style="width:100%;height:100%;" id="mapContainer"></div>
+			</div>
+	    </div>
+	</div>
+	<!--//下面1条重点消息-->
+		
+	
+		<div id="leftpannel" class="left">
+		    <div id="alarmpennel" class="alarmpennel" style="height:32%;">
+		    	<div style="width:100%;height:100%;position: relative;">
+		    		<!--<div class="lefttop"></div>-->
+			        <!--<div class="righttop"></div>-->
+			        <!--<div class="leftbot"></div>-->
+			        <!--<div class="rightbot"></div>-->
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart">
+						</i><span style="font-weight: bold;">一日工作轨迹(当天)</span>
+					</div>
+					<div  style="width:100%;height:90%;min-height:160px;" class="equipfont imporalarm">
+							<table class="table table-hover" style="height:90%;">
+								<thead>
+									<tr>
+										<th width="15%">序号</th>
+										<th width="40%">工作时间</th>
+										<th width="40%">工作内容</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(item,idex) in workList" class="pconcent"
+										@click="repairdetail(item.longitude, item.latitude)">
+										<td>{{idex+1}}</td>
+										<td v-if="item.type =='上班打卡点' || item.type =='下班打卡点'"
+											style="color: #33cc99">{{item.gpsUpdateDt}}</td>
+										<td v-if="item.type !='下班打卡点' && item.type !='上班打卡点'">{{item.gpsUpdateDt}}</td>
+										<td v-if="item.type =='上班打卡点' || item.type =='下班打卡点'"
+											style="color: #33cc99">{{item.type}}</td>
+										<td v-if="item.type !='下班打卡点' && item.type !='上班打卡点'"
+											:title="item.wordss">{{item.type}}</td>
+									</tr>
+								</tbody>
+							</table>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<!--start part2-->
+			<div id="equipmentpannel" class="equipmentpannel" style="height:32%;top:34%;">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<!--<div class="lefttop"></div>-->
+			        <!--<div class="righttop"></div>-->
+			        <!--<div class="leftbot"></div>-->
+			        <!--<div class="rightbot"></div>-->
+					<div class="equipfont">
+					<i style="color:#2196F3" class="fa  fa-area-chart"></i><span style="font-weight: bold;">执法监督(当天)</span>
+					</div>
+					<div  style="width:100%;height:90%;min-height:160px;" class="equipfont imporalarm">
+							<table class="table table-hover" style="height:90%;">
+								<thead>
+									<tr>
+										<th width="35%">种类</th>
+										<th width="40%">处罚时间</th>
+										<th width="25%">处罚数量</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(item,idex) in vListA" class="pconcent" @click="openTujizhifaDetail(item,'A')">
+										<td>一天处理 100 起以上</td>
+										<td>{{item.content}}</td>
+										<td>{{item.cnt}}</td>
+									</tr>
+									<tr v-for="(item,idex) in vListC" class="pconcent" @click="openTujizhifaDetail(item,'C')">
+										<td>5 分钟处理违法 3 起以上</td>
+										<td>{{item.content}}</td>
+										<td>{{item.cnt}}</td>
+									</tr>
+									<tr v-for="(item,idex) in vListB" class="pconcent"  @click="openTujizhifaDetail(item,'B')">
+										<td>同一人车一天4 起以上</td>
+										<td>{{item.day}}</td>
+										<td>{{item.cnt}}</td>
+									</tr>
+									<tr v-if="vListA.length ==0 && vListB.length ==0 && vListC.length ==0" class="pconcent">
+										<td>无</td>
+										<td>无</td>
+										<td>无</td>
+									</tr>
+								</tbody>
+							</table>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+
+			<!--start part3-->
+			<div id="countpannel" class="countpannel" style="height:32%;top:65%;">
+		    	<div style="width:100%;height:100%;position: relative;">
+		    		<!--<div class="lefttop"></div>-->
+			        <!--<div class="righttop"></div>-->
+			        <!--<div class="leftbot"></div>-->
+			       <!--  <div class="rightbot"></div> -->
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">工作汇总(当天)</span><!-- 处罚分析(当天) -->
+					</div>
+					<div  style="width:100%;height:90%;min-height:160px;" class="equipfont imporalarm">
+						<table class="table table-hover" style="height:90%;">
+								<thead>
+									<tr>
+										<th style="width:50%;">工作类别</th>
+										<th>数量</th>
+									</tr>
+									
+								</thead>
+								<tbody>
+									<tr class="pconcent">
+										<td>现场处罚</td>
+										<td>{{wList.xcCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>记分处罚</td>
+										<td>{{wList.jfCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>非机</td>
+										<td>{{wList.fjCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>行人</td>
+										<td>{{wList.xrCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>不记分处罚</td>
+										<td>{{wList.bjfCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>强制凭证</td>
+										<td>{{wList.qzpzCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>违停拍照</td>
+										<td>{{wList.wtpzCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>处警</td>
+										<td>{{wList.cjCount}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>重点车辆告知</td>
+										<td>{{gzNum}}</td>
+									</tr>
+									<tr class="pconcent">	
+										<td>工作指令</td>
+										<td>{{zlNum}}</td>
+									</tr>
+								</tbody>
+							</table>
+						<!-- 	<table class="table table-hover" style="height:90%;">
+								<thead>
+									<tr>
+										<th style="width:5%;">NO.</th>
+										<th style="width:65%;">违法行为</th>
+										<th style="width:25%;">违法数量</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(item, index) in punishList" class="pconcent">
+										<td>{{index+1}}</td>
+										<td>{{item.violatedDesc}}</td>
+										<td>{{item.comments}}</td>
+									</tr>
+								</tbody>
+							</table> -->
+					</div> 
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<!--end part3-->
+			
+		</div>
+		<!--start right-->
+		<div id="rightpannel" class="right">
+			<!--part1-->
+			<div class="WorkstatisCarpannel" style="height: 49%;">
+				<!--<div style="width:100%;height:100%;position: relative;">-->
+		    		<!--<div class="lefttop"></div>-->
+			        <!--<div class="righttop"></div>-->
+			        <!--<div class="leftbot"></div>-->
+			        <!-- <div class="rightbot"></div> -->
+			        <div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span style="font-weight: bold;">责任区管理</span></div>
+					<div  style="width:100%;height:90%;min-height:160px;" class="equipfont imporalarm">
+						<table class="table table-hover" style="height:90%;">
+							<thead>
+								<tr>
+								</tr>
+							</thead>
+						     <tbody>
+								<tr class="pconcent"  style="height:10%;">
+									<td style="width:30%;">网格编号:</td>
+									<td>
+										{{dutyGrid.gridId}}
+									</td>
+								</tr>
+								<tr class="pconcent"  style="height:10%;">
+									<td>网格名称:</td>
+									<td>
+										{{dutyGrid.gridName}}
+									</td>
+								</tr>
+								<tr class="pconcent" style="height:10%;">
+									<td>负责民警:</td>
+									<td>
+										{{dutyGrid.userNames}}
+									</td>
+								</tr>
+								<tr class="pconcent" style="height:10%;">
+									<td>车辆任务:</td>
+									<td>
+										{{dutyGrid.taskNum}} 条 
+									</td>
+								</tr>
+								<tr class="pconcent" style="height:10%;">
+									<td>交通事故:</td>
+									<td>
+										{{dutyGrid.sgNum}} 条
+									</td>
+								</tr>
+								<tr class="pconcent" style="height:10%;">
+									<td>信号灯故障:</td>
+									<td>
+										{{dutyGrid.xhdNum}} 条
+									</td>
+								</tr>
+								<tr class="pconcent" style="height:65%;">
+									<td>责任描述:</td>
+									<td>
+										{{dutyGrid.description}}
+									</td>
+								</tr>
+						     </tbody>
+						</table>
+					</div>
+			  	</div>
+			</div>
+			<div id="myTabContent1" class="lastpannel">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<!--<div class="lefttop"></div>-->
+			        <!--<div class="righttop"></div>-->
+			        <!--<div class="leftbot"></div>-->
+			        <!--<div class="rightbot"></div>-->
+			        <div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span style="font-weight: bold;">警务通-隐患上报(当天)</span></div>
+					<div  style="width:100%;height:90%;min-height:160px;" class="equipfont imporalarm">
+						<table class="table table-hover" style="height:90%;">
+								<thead>
+									<tr>
+										<th style="width:49%;">隐患</th>
+										<th style="width:49%;">位置</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(item, index) in hiddenDangerList" class="pconcent">
+										<td>{{item.content}}</td>
+										<td>{{item.priority}}</td>
+									</tr>
+								</tbody>
+							</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="display: none">
+				<div id="tujizhifaDetail" class="tablescrollbar" style="font-size:10px;height:360px; overflow-y: auto;-ms-overflow-y:auto; margin-bottom: 0px">
+					<table class="table table-hover" style="table-layout: fixed;border:0px;margin: 0px;">
+						<thead>
+							<tr>
+								<th style="width:2%;">#</th>
+								<th style="width:5%;text-align:center">警号</th>
+								<th style="width:10%; text-align:center">民警</th>
+								<th style="width:6%; text-align:center">车牌号</th>
+                                <th style="width:5%;text-align:center">被罚人</th>
+								<th style="width:7%;text-align:center">处罚时间</th>
+								<th style="width:6%; text-align:center">处罚地点</th>
+								<th style="width:22%; text-align:center">处罚详情</th>
+							</tr>
+						</thead>
+						<tbody id="tujizhifaDetailTb">
+							<tr v-for="(item, index) in tujizhifaDetailList">
+								<td>{{index+1}}</td>
+								<td style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+								 white-space: nowrap;text-align: left" :title="item.punisherNo">{{item.punisherNo}}</td>
+								<td  style="text-align:center">{{item.publisherName}}</td>
+								<td style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+								 white-space: nowrap;text-align: left" :title="item.carNo">{{item.carNo}}</td>
+								<td  style="text-align:center">{{item.violatedName}}</td>
+								<td  style="text-align:center">{{item.violatedDt}}</td>
+								<td  style="text-align:center" style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+								 white-space: nowrap;text-align: left" :title="item.violatedPlace">{{item.violatedPlace}}</td>
+								<td  style="text-align:center" style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+								 white-space: nowrap;text-align: left" :title="item.violatedDesc">{{item.violatedDesc}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+	</div>
+	<div class="clearfix"></div>
+	
+	<!--end right-->
+	<!-- 
+	<div id="lnglatWidgetPanel">
+		<input id="mapLevel" type="text" class="rightcoordinate" style="border-radius: 3px;"/>
+		<input id="mapLngLat" type="text" class="coordinate" style="border-radius: 3px;"/>
+	</div> -->
+	<!-- <div id="posindaPanel">
+		<a href="http://www.posinda.com"><img alt="ponsinda" src="../assets/images/posinda.png" width="60px" height="15px">
+		&nbsp;江苏普信达智能交通有限公司&nbsp;</a>
+	</div> -->
+	
+	<script type="text/javascript" src="../assets/js/module/visualScene/dynAlarmVisualScene/qwComdScene.js"></script>
+	<!--//滚动条-->
+	<script src="../assets/plugins/jQuery/perfect-scrollbar.min_1.js"></script>
+	<script src="../assets/plugins/jQuery/perfect-scrollbar.jquery.min_1.js"></script>
+	<link rel="stylesheet" href="../assets/plugins/jQuery/perfect-scrollbar.min_1.css" />
+</body>
+
+</html>

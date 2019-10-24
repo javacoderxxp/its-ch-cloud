@@ -1,0 +1,203 @@
+<div id="validCatch-panel" class="panel panel-primary" style="width: 600px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">战果录入
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">所属中队</div>
+					<div class="column col-sm-4"><!--  -->
+                        <select v-if="currentUser.jjddUser" id="groupIdQ" class="form-control" v-model="validCatchQ.groupId">
+                            <option value="">所有</option>
+                            <option v-for="group in groupList" v-bind:value="group.groupId">
+                                {{group.groupName}}
+                            </option>
+                        </select>
+                       <template v-if="currentUser.jjzdUser">
+                            <span>{{currentUser.group.groupName}}</span>
+                            <input type="hidden" id="groupIdQ" v-model="validCatchQ.groupId"/>
+                        </template> 
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">类型</div>
+					<div class="column col-sm-4">
+                        <select class="form-control" id="typeQ" v-model="validCatchQ.type" htmlEscape="false" >
+                            <option value="">所有</option>
+                            <option value="CL">车辆</option>
+                            <option value="JSY">驾驶员</option>
+                        </select>
+					</div>
+					<div class="col-sm-2 control-label">查获来源</div>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="moduleQ" v-model="validCatchQ.module" htmlEscape="false">
+                            <option value="">所有</option>
+                            <option value="BKBJ">布控告警</option>
+                            <option value="FXBJ">分析告警</option>
+                            <option value="BJBK">部局布控</option>
+                            <option value="QT">其他</option>
+                        </select>
+                    </div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="type" class="col-sm-2 control-label">类型<span class="help-inline"><font color="red">*</font> </span></label>
+					<div class="col-sm-4">
+                        <select class="form-control" id="type" v-model="validCatch.type" htmlEscape="false" required="required">
+                            <option value="CL">车辆</option>
+                            <option value="JSY">驾驶员</option>
+                        </select>
+					</div>
+                    <label for="module" class="col-sm-2 control-label">查获来源<span class="help-inline"><font color="red">*</font> </span></label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="module" v-model="validCatch.module" htmlEscape="false">
+                            <option value="BKBJ">布控告警</option>
+                            <option value="FXBJ">分析告警</option>
+                            <option value="BJBK">部局布控</option>
+                            <option value="QT">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <fieldset style="padding:2px; border:1px solid silver;"><!-- v-show="validCatch.type =='CL'"  -->
+                <legend style="border:0;width:auto; font-size:12px; margin:1px; ">车辆信息</legend>
+                <div class="form-group">
+                    <label for="catchHphm" class="col-sm-2 control-label">号牌号码<span class="help-inline"><font color="red">*</font> </span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="catchHphm" name="catchHphm" v-model="validCatch.catchHphm" placeholder="号牌号码" 
+                            htmlEscape="false" maxlength="20"/>
+                    </div>
+                    <label for="catchHpzl" class="col-sm-2 control-label">号牌类型<span class="help-inline"><font color="red">*</font> </span></label>
+                    <div class="col-sm-4">
+                        <select id="catchHpzl" class="form-control" v-model="validCatch.catchHpzl">
+                            <option v-for="dict in plateTypeDicts" v-bind:value="dict.value">
+                                {{dict.label}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                </fieldset>
+                <fieldset  style="padding:2px; border:1px solid silver;"><!-- v-show="validCatch.type =='JSY'" -->
+                <legend style="border:0;width:auto; font-size:12px; margin:1px; ">驾驶员信息</legend>
+				<div class="form-group">
+					<label for="catchJszh" class="col-sm-2 control-label">驾驶证号<span class="help-inline"><font color="red">*</font> </span></label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="catchJszh" name="catchJszh" v-model="validCatch.catchJszh" placeholder="驾驶证号" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="catchXm" class="col-sm-2 control-label">驾驶人</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="catchXm" name="catchXm" v-model="validCatch.catchXm" placeholder="驾驶人" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+                </fieldset>
+                <fieldset style="padding:2px; border:1px solid silver;">
+                <legend style="border:0;width:auto; font-size:12px; margin:1px; ">详细信息</legend>
+                <div class="form-group">
+                    <label for="groupId" class="col-sm-2 control-label">中队</label>
+                    <div class="col-sm-4">
+                        <select v-if="currentUser.jjddUser" id="groupId" class="form-control" v-model="validCatch.groupId">
+                            <option value="">请选择</option>
+                            <option v-for="group in groupList" v-bind:value="group.groupId">
+                                {{group.groupName}}
+                            </option>
+                        </select>
+                         <template v-if="currentUser.jjzdUser">
+                            <span>{{currentUser.group.groupName}}</span>
+                            <input type="hidden" id="groupId" v-model="validCatch.groupId"/>
+                        </template>
+                    </div>
+                    <label for="userId" class="col-sm-2 control-label">警员姓名</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="userId" name="userId" v-model="validCatch.userId" placeholder="姓名" 
+                            htmlEscape="false" maxlength="20"/>
+                    </div>
+                </div>
+				<div class="form-group">
+					<label for="catchDate" class="col-sm-2 control-label">查获日期<span class="help-inline"><font color="red">*</font> </span></label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="catchDate" name="catchDate" v-model="validCatch.catchDate" placeholder="查获日期" readonly
+							@click="init97Date" 
+							htmlEscape="false" required="required"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="catchLocation" class="col-sm-2 control-label">查获地点</label>
+					<div class="col-sm-9">
+						<textarea class="form-control" id="catchLocation" name="catchLocation" v-model="validCatch.catchLocation"
+							htmlEscape="false" maxlength="200"></textarea>
+					</div>
+				</div>
+                <div class="form-group">
+                    <label for="catchDetail" class="col-sm-2 control-label">查获经过</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="catchDetail" name="catchDetail" v-model="validCatch.catchDetail"
+                            htmlEscape="false" maxlength="200"></textarea>
+                    </div>
+                </div>
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">核查情况</label>
+					<div class="col-sm-9">
+                        <textarea class="form-control" id="description" name="description" v-model="validCatch.description"
+                            htmlEscape="false" maxlength="200"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">处理结果</label>
+					<div class="col-sm-9">
+                        <textarea class="form-control" id="result" name="result" v-model="validCatch.result"
+                            htmlEscape="false" maxlength="200"></textarea>
+					</div>
+				</div>
+				<div id="imgDiv" class="form-group"  style="display: none;">
+					<label class="col-sm-2 control-label">图片上传(最多三张)</label>
+					<div id='image-list' style="margin-left: 5px; float:left;">
+					 </div>
+					 <img id="shizi" src="./assets/images/shizitu.png" @click="openFileUpload"
+							style="margin-left: 25px; width: 88px; height: 88px;cursor:pointer;"/>
+					 <input id="fileupload" type="file" name="multiFiles"  class="hide"/>
+				</div>
+				<div id="ptDiv" class="form-group" style="display: none;">
+					<label class="col-sm-2 control-label">图片</label>
+					<div id='newImage'>
+						<template v-for="repairs in hPaths"> <img
+							style="margin-left: 25px; width: 88px; height: 88px;cursor:pointer;"
+							:src="repairs" @click="imgOnclick(repairs)"> </template>
+					</div>
+				</div>
+                </fieldset>
+                <!-- 点击图片放大 -->
+				<div id="outerdiv"
+					style="position: fixed; top: 0; left: 0; background: rgba(0, 0, 0, 0.7); z-index: 2; width: 100%; height: 100%; display: none;">
+					<div id="innerdiv" style="position: absolute;">
+						<img id="bigimg" style="border: 5px solid #fff;" src="" />
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

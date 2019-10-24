@@ -1,0 +1,90 @@
+<div id="lane-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">车道
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">编号</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="laneQ.bh" placeholder="编号" htmlEscape="false" />
+					</div>
+					<div class="col-sm-2 control-label">转向</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="laneQ.cdzx" placeholder="转向" htmlEscape="false" />
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="bh" class="col-sm-2 control-label">编号</label>
+					<div class="col-sm-4 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="bh" name="bh" v-model="lane.bh" placeholder="编号" 
+							htmlEscape="false" required="required" maxlength="255"/>
+					</div>
+					<label for="ssld" class="col-sm-2 control-label">所属路段</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="ssld" name="ssld" v-model="lane.ssld" placeholder="所属路段" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="cdzx" class="col-sm-2 control-label">车道转向</label>
+					<div class="col-sm-4 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="cdzx" name="cdzx" v-model="lane.cdzx" placeholder="车道转向" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="cdwz" class="col-sm-2 control-label">车道位置</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="cdwz" name="cdwz" v-model="lane.cdwz" placeholder="车道位置" 
+							htmlEscape="false" required="required" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="fx" class="col-sm-2 control-label">方向</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="fx" name="fx" v-model="lane.fx" placeholder="方向" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="lx" class="col-sm-2 control-label">类型</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="lx" name="lx" v-model="lane.lx" placeholder="类型" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zb" class="col-sm-2 control-label">坐标</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zb" name="zb" v-model="lane.zb" placeholder="坐标" 
+							htmlEscape="false" maxlength="0"/>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

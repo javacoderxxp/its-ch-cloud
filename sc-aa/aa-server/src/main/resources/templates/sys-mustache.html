@@ -1,0 +1,12 @@
+<div id="mustache-template" style="display: none">
+	<div id="mustache-tab-li">
+		<li role="presentation" class="tab-list active">
+			<a href="${r'#'}{{tabId}}" aria-controls="profile" role="tab" data-toggle="tab" style="padding: 5px"><span class="fa fa-square-o"></span>&nbsp;{{tabTitle}}&nbsp;&nbsp;<i class="fa fa-remove tab-close" style="font-size: 18px; cursor: pointer;"></i></a>
+		</li>
+	</div>
+	<div id="mustache-tab-content">
+		<div role="tabpanel" class="tab-pane fade in active" id="{{tabId}}" style="overflow-y:auto; overflow-x:no; height: 100%;">
+		     <iframe frameborder="0" src="{{tabSrc}}" style="width: 100%;height: 99%;"></iframe>
+		</div>
+	</div>
+</div>

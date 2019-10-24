@@ -1,0 +1,115 @@
+<div id="notice-panel" class="panel panel-primary" style="width: 600px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">警务通下发
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">关键字</div>
+					<div class="column col-sm-10">
+						<input type="text" class="form-control" v-model="noticeQ.keyword" placeholder="" htmlEscape="false" />
+					</div>
+				</div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">开始时间</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control form_datetime Wdate" id="startDtQ" v-model="noticeQ.startDt" 
+                            @click="init97DateStart" 
+                            placeholder="开始时间" readonly="readonly" required="required">
+                    </div>
+                    <div class="col-sm-2 control-label">结束时间</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control form_datetime Wdate" id="endDtQ" v-model="noticeQ.endDt" 
+                            @click="init97DateEnd" 
+                            placeholder="结束时间" readonly="readonly" required="required">
+                    </div>
+                </div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="title" class="col-sm-2 control-label"><b>通知标题</b></label>
+					<div class="col-sm-4" style="padding-top: 7px">
+						{{notice.title}}
+					</div>
+					<label for="publishDt" class="col-sm-2 control-label"><b>通知时间</b></label>
+					<div class="col-sm-4" style="padding-top: 7px">
+						{{notice.publishDt}}
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="publisher" class="col-sm-2 control-label"><b>发布者</b></label>
+					<div class="col-sm-4" style="padding-top: 7px">
+						{{notice.publisher==''?'系统':notice.publisher}}
+					</div>
+                    <label for="pictureCnt" class="col-sm-2 control-label"><b>图片数</b></label>
+                    <div class="col-sm-4" style="padding-top: 7px">
+                        {{notice.pictureCount}}
+                    </div>
+				</div>
+				<div class="form-group">
+                    <label for="content" class="col-sm-2 control-label"><b>通知内容</b></label>
+                    <div class="col-sm-10" style="padding-top: 7px">
+                        <textarea class="form-control" v-model="notice.content" readonly="readonly" rows="" cols="" style="height: 100px;resize: none;"></textarea>
+                    </div>
+				</div>
+                <div class="form-group">
+                    <label for="deviceIds" class="col-sm-2 control-label"><b>接收警号</b></label>
+                    <div class="col-sm-10" style="padding-top: 7px">
+                        <!-- {{notice.policeNos}} -->
+                        <textarea class="form-control" v-model="notice.policeNos" readonly="readonly" rows="" cols="" style="height: 100px;resize: none;"></textarea>
+                    </div>
+                </div>
+                <!-- 
+				<div class="form-group">
+                    <label for="deviceIds" class="col-sm-2 control-label"><b>接收警员</b></label>
+                    <div class="col-sm-10" style="padding-top: 7px">
+                        {{notice.policeNames}}
+                    </div>
+				</div>
+                <div class="form-group">
+                    <label for="readFlag" class="col-sm-2 control-label">被读取</label>
+                    <div class="col-sm-4" style="padding-top: 7px">
+                        {{notice.readFlag=='0'?'未读':'已读'}}
+                    </div>
+                    <label for="baseDir" class="col-sm-2 control-label">所在路径</label>
+                    <div class="col-sm-4" style="padding-top: 7px">
+                        {{notice.baseDir}}
+                    </div>
+                </div> 
+                -->
+				<div class="form-group">
+					<label for="pictureNames" class="col-sm-2 control-label"><b>图片列表</b></label>
+					<div class="col-sm-10" style="padding-top: 7px">
+                        {{notice.pictureNames}}
+					</div>
+				</div>
+                <div class="form-group">
+                    <label for="noticeName" class="col-sm-2 control-label">通知文件</label>
+                    <div class="col-sm-10" style="padding-top: 7px">
+                        {{notice.baseDir}}/{{notice.noticeName}}
+                    </div>
+                </div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<!-- <button type="submit" class="btn btn-primary btn-sm" @click="save">提交</button>
+						&nbsp;&nbsp; -->
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

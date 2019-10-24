@@ -1,0 +1,28 @@
+<div id="aroundRes-panel">
+	<div class="layui-row">
+		<div class="layui-col-md3" style="font-size: 18px;font-weight: bold;">周边资源列表</div>
+		<div class="layui-col-md1 layui-col-md-offset8">
+			<button @click='hidePanel'>隐藏</button>
+			<button @click='closePanel'>关闭</button>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-tab layui-tab-brief layui-col-md9" style="margin-top: 0;">
+			<ul class="layui-tab-title">
+				<li class="layui-this" v-show="isShowVideo">视频</li>
+				<li v-show="isShowPolice">警力</li>
+				<li v-show="isShowVms">诱导屏</li>
+				<li v-show="isShowSignal">信号机</li>
+			</ul>
+			<div class="layui-tab-content" style="height: 220px">
+				<div class="layui-tab-item layui-show" v-show="isShowVideo">1</div>
+				<div class="layui-tab-item" v-show="isShowPolice">2</div>
+				<div class="layui-tab-item" v-show="isShowVms">3</div>
+				<div class="layui-tab-item" v-show="isShowSignal">4</div>
+			</div>
+		</div>
+		<div class="layui-col-md3">
+			<div id="aroundResPie">统计结果饼图</div>
+		</div>
+	</div>
+</div>

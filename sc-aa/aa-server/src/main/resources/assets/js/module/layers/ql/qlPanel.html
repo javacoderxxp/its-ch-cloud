@@ -1,0 +1,118 @@
+<div id="ql-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">桥梁信息管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">桥梁名称</div>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" v-model="qlQ.mc" placeholder="桥梁名称" required="required">
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="bh" class="col-sm-2 control-label">编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bh" name="bh" v-model="ql.bh" placeholder="编号" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="mc" class="col-sm-2 control-label">桥梁名称</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="mc" name="mc" v-model="ql.mc" placeholder="桥梁名称" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="dj" class="col-sm-2 control-label">桥梁等级</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="dj" name="dj" v-model="ql.dj" placeholder="桥梁等级" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="dl" class="col-sm-2 control-label">道路</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="dl" name="dl" v-model="ql.dl" placeholder="道路" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="ssxq" class="col-sm-2 control-label">所属辖区</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="ssxq" name="ssxq" v-model="ql.ssxq" placeholder="所属辖区" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="qd" class="col-sm-2 control-label">起点</label>
+					<div class="col-sm-4 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="qd" name="qd" v-model="ql.qd" placeholder="起点" 
+							htmlEscape="false" required maxlength="50"/>
+					</div>
+					<label for="zd" class="col-sm-2 control-label">终点</label>
+					<div class="col-sm-4 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="zd" name="zd" v-model="ql.zd" placeholder="终点" 
+							htmlEscape="false" required maxlength="50"/>
+						
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="gldw" class="col-sm-2 control-label">管理单位</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="gldw" name="gldw" v-model="ql.gldw" placeholder="所属交通管理单位" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="bz" class="col-sm-2 control-label">备注</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bz" name="bz" v-model="ql.bz" placeholder="备注" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="cd" class="col-sm-2 control-label">长度（米）</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="cd" name="cd" v-model="ql.cd" placeholder="长度" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="kd" class="col-sm-2 control-label">宽度（米）</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="kd" name="kd" v-model="ql.kd" placeholder="宽度" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zb" class="col-sm-2 control-label">坐标</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zb" name="zb" v-model="ql.zb" placeholder="坐标" 
+							htmlEscape="false" maxlength="2000"/>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

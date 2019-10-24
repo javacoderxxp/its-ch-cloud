@@ -1,0 +1,310 @@
+ul p{margin:0;padding: 0;}
+ul li{list-style-type:none}
+p{font-size: 10px;font-family: "microsoft yahei";}
+/* .bodyimg{
+	width: 100%;
+	height:100%;
+	background-image: url('img/body.jpg')  no-repeat;
+	background-size: 100% 100%;
+} */
+.left{
+ 	float:left;
+}
+.right{float:right;
+}
+.alarmpennel{
+    position:fixed;
+    bottom:54%;
+    left:0;
+	width:25%;
+	height:35%;
+	padding:10px;
+	z-index:500;
+	background: rgba(3,40,53,0.77);
+	box-shadow: inset 0 0 25px #2196f3;
+	border-radius: 10px;
+}
+.tabfont{
+	color:#FFFFFF;
+	height: 80%;
+	overflow-y: auto;
+    overflow-x: hidden;
+}
+.item{
+    /* border-bottom: 1px solid #687074; */
+    box-shadow: inset 0 2px 2px 0px #687074;
+    cursor: pointer;
+ 
+    padding-left: 5px;
+    padding-top: 5px;
+    position: relative;
+    text-align: left;
+    /*line-height: 25px;*/
+}
+.item:hover{
+	background: #DDDDDD;
+	opacity: 0.5;
+}
+.togBtn{
+	background: rgba(0, 0, 0, 0) url("../images/yincang.png") no-repeat scroll 0 0;
+    height: 89px;
+ 	position: fixed;  
+    left:25%;
+    top:12%;
+    width: 20px;
+    z-index: 1122;
+}
+.togBtn2{
+	background: rgba(0, 0, 0, 0) url("../images/yin.png") no-repeat scroll 0 0;
+    height: 89px;
+ 	position: fixed;  
+    right:25%;
+    top:12%;
+    width: 20px;
+    z-index: 1122;
+}
+.clearfix{
+	clear: both;
+}
+/*part2*/
+.equipmentpannel{
+ 	position:fixed ;
+    bottom:0;
+    left:0;
+    height:30%; 
+    overflow-y: auto;
+	margin-top: 20px;
+	float: left;
+	z-index: 500;
+	width:25%;
+	padding:10px;
+	background: rgba(3,40,53,0.77);
+	box-shadow: inset 0 0 25px #2196f3;
+	border-radius: 10px;
+}
+.accordion-inner{color:#FFFFFF}
+a:hover, a:focus {
+    color: #2196F3;
+    text-decoration: none;
+}
+.equipfont{
+	color:#ffff;
+	font-family: "microsoft yahei";
+}
+.equipfont span{margin-left: 6px;color:#2196f3}
+
+/*//part3*/
+.countpannel{
+	position:fixed ;
+    bottom: 31%;
+    left:0;
+	margin-top: 20px;
+	z-index: 500;
+	width:25%;
+	height:22%;
+	padding:10px;
+	background: rgba(3,40,53,0.77);
+	box-shadow: inset 0 0 25px #2196f3;
+	border-radius: 10px;
+}
+
+ .acc-num-tr{
+    color: #2196F3;
+    font-size: 12px;
+    text-align: right;
+    font-weight: bold;
+ }
+/*  .acc-num-ul{ padding-top: 10px;
+    padding-left: 5px;
+    color: #2196F3;
+    overflow: hidden;
+    clear: both;}
+ .acc-num-ul li {
+    line-height: 20px;
+    min-width: 125px;
+    display: inline-block;
+    font-size: 12px;
+    text-align: right;
+}
+.acc-num-ul li span {
+    display: inline-block;
+    width: 42px;
+    font-weight: bold;
+    text-align: left;
+    color:#fff;
+} */
+/*part4*/
+.WorkstatisCarpannel{
+	height: 35%;
+	/*max-height: 400px;*/
+	position: fixed;
+	bottom:54%;
+	right: 0;
+	z-index: 500;
+	width:25%;
+	padding:10px;
+	background: rgba(3,40,53,0.77);
+	box-shadow: inset 0 0 25px #2196f3;
+	border-radius: 10px;
+}
+.Workstatis{
+width:100%;
+height:100%;
+float:left}
+
+.countpanne1{
+	position: fixed;
+	bottom: 31%;
+    right:0;
+	margin-top: 20px;
+	z-index: 500;
+	width:25%;
+	height:22%;
+	padding:10px;
+	background: rgba(3,40,53,0.77);
+	box-shadow: inset 0 0 25px #2196f3;
+	border-radius: 10px;
+	
+}
+.Roadtraffic{
+	position: fixed;
+	bottom:0;
+	right: 0;
+	height: 30%;
+	z-index: 500;
+	margin-top: 10px;
+	width:25%;
+	padding:10px;
+	background: rgba(3,40,53,0.77);
+	box-shadow: inset 0 0 25px #2196f3;
+	border-radius: 10px;
+	
+}
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/  
+::-webkit-scrollbar  
+{  
+    width: 12px;  
+    height: 12px;  
+    background-color: rgba(3,40,53,0.77);  
+}  
+  
+/*定义滚动条轨道 内阴影+圆角*/  
+::-webkit-scrollbar-track  
+{  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);  
+    border-radius: 20px;  
+    background-color: rgba(3,40,53,0.77);
+}  
+  
+/*定义滑块 内阴影+圆角*/  
+::-webkit-scrollbar-thumb  
+{  
+    border-radius: 20px;  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);  
+    background-color: #2196F3; 
+    opacity: 0.2; 
+}  
+
+.nav-tabs > li > a, .nav-tabs > li > a:focus {
+    margin-right: 0;
+    background-color: transparent;
+    border: none;
+    color: #BDC7EC;
+    -webkit-box-shadow: inset 0 -1px 0 #dddddd;
+    box-shadow: inset 0 -1px 0 #dddddd;
+    -webkit-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+}
+#importantAlarmTB td{border-bottom: 1px solid #999999;}
+.tdnumber{width: 25%;
+    text-align: left;
+    color: #bdc7ec;}
+
+
+/*//header*/
+.leader1 {
+    /* min-width: 1200px; */
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    height: 100px;
+    background: url('../images/header.png') no-repeat;
+    background-size:100%;
+    /*border-radius: 2px;
+    background: rgba(3,40,53,0.77);
+    box-shadow: inset 0 0 40px  #0472ca;*/
+    z-index: 1000;
+}
+.leader {
+    /* min-width: 1200px; */
+    width: 100%;
+    position: absolute;
+    top: 10px;
+    height: 50px;
+    z-index: 1;
+    border-radius: 2px;
+    background: rgba(3,40,53,0.77);
+    box-shadow: inset 0 0 40px  #0472ca;
+    z-index: 1000;
+}
+.header1{
+	/*display:inline;*/
+	position: absolute;
+    top: 0px;
+    left:10px;
+	width:60px;height:60px;
+	background-image: url('../images/bigjiao.png');
+	z-index: 1000;
+}
+.header2{
+	/*display:inline;*/
+	position: absolute;
+    top: -6px;
+    left:70px;
+	width:80px;height:80px;
+	background-image: url('../images/bighu.png');
+	background-size: 100% 100%;
+    z-index: 1000;
+}
+.header3{
+	/*display:inline;*/
+	position: absolute;
+    top: 15px;
+    left:160px;
+    z-index: 1000;
+    color: #2196F3;
+    font-size:24px;
+    font-family: "microsoft yahei";
+    font-weight: 400;
+}
+.header3 span{
+	font-size:24px;
+	font-weight: 300;
+	margin-left: 10px;
+	color:#FFFFFF;
+}
+
+#header3span{
+	font-size:16px;
+}
+.header4{
+	position: absolute;
+    top: 30px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    background-image: url(../images/suo.png);
+    background-size: 100%;
+    z-index: 1000;
+}
+
+/*//shigong*/
+.shigong{
+	margin: auto;
+	width: 70%;
+   	height: 70%;
+   	margin-top: 8%;
+    background: url(../images/shigong.png) no-repeat;
+   	background-size: 100%;
+}

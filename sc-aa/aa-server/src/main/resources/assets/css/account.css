@@ -1,0 +1,58 @@
+.sizeclass{width:20%;margin-left: 0px;float: left;padding: 0px 8px 0 10px;}
+.panel-primary > .panel-heading {
+    color: #2196f3 !important;
+    background-color: #efefef !important;
+    border-color: #2196f3 !important;
+}
+.sizeclasstwo{ float: left; padding: 0px 15px 0 0;width: 80%;}
+.textleft{text-align: left !important;float: right;}
+.firstkoudown{
+	width: 50%;-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);border-radius: 5px;background-color: #F9F9F9;border: 1px solid #dddddd;
+}
+.textright{    
+	    text-align: right !important;
+    width: 48%;
+    padding: 24px 0px 0 24px;
+    float: right;
+    /*border: 1px solid #dddddd;*/
+    border-radius: 6px;
+    margin-left: 10px;
+    /*box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 8px;*/
+    border-radius: 5px;
+    background-color: #F9F9F9;}
+
+.form-horizontal .control-label {
+     padding-top: 0px; 
+}
+.content-header {
+     padding: 0 !important; 
+}
+.content {
+    min-height: 250px;
+    padding-right: 10px;
+}
+.col-md-6{padding: 5px;}
+.chartclass{    
+	width: 100% !important;
+    /*margin-top: 20px;*/
+    /*border: 1px solid rgb(221, 221, 221);*/
+    /*padding-top: 10px;
+    padding-right: 6px;*/
+    border-radius: 4px;
+    }
+.clearfloat{clear:both}
+.form-group {
+    margin-bottom: 0px !important; 
+    margin-top: 15px !important;
+}
+/*//台帐左侧*/
+.tdtextleft{    
+	width: 40% !important;
+    text-align: right !important;
+    padding-right: 10px !important;
+    }
+.td-textright{    
+	width: 60%;
+    text-align: left;
+    }

@@ -1,0 +1,42 @@
+<div id="linkStatus-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通路况查询
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="tab-pane fade in active" id="linkStatusQuery">
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div for="linkId" class="col-sm-2 control-label">路段编号</div>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="linkId" name="linkId" v-model="linkStatusQ.linkId" placeholder="路段编号" required="required">
+					</div>
+					<div for="linkName" class="col-sm-2 control-label">路段名称</div>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="linkName" name="linkName" v-model="linkStatusQ.linkName" placeholder="路段名称" required="required">
+					</div>
+				</div>
+				<div class="form-group">
+					<div for="status" class="col-sm-2 control-label">路段状态</div>
+					<div class="column col-sm-4">
+						<select name="status" class="form-control" v-model="linkStatusQ.status">
+							<option value="0">所有</option>
+							<option value="G">通畅</option>
+							<option value="Y">缓行</option>
+							<option value="R">拥堵</option>
+						</select>
+					</div>
+					<div class="col-sm-6">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+					</div>
+				</div>
+			</div>
+		    <table id="jqGrid"></table>
+		    <div id="jqGridPager"></div>
+		</div>
+	</div>
+</div>

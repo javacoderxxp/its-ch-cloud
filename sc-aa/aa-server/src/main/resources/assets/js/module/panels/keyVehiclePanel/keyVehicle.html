@@ -1,0 +1,181 @@
+<div id="keyVehicle-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">重点企业车辆线路
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div v-show='showList'>
+			<div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">所属中队</div>
+                    <div class="column col-sm-4">
+                        <select class="form-control" v-model="keyVehicleQ.groupId" htmlEscape="false">
+                            <option value="">所有</option>
+                            <option v-for="group in groupList" v-bind:value="group.groupId">
+                                {{group.groupName}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2 control-label">车牌号</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control" v-model="keyVehicleQ.plateNo" placeholder="车牌号" htmlEscape="false" />
+                    </div>
+                </div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">车辆类型</div>
+					<div class="column col-sm-4">
+						<select id="cartype" class="form-control" v-model="keyVehicleQ.plateType" htmlEscape="false" >
+							<option value="">所有</option>
+							<option v-for="plateType in plateTypeList" v-bind:value="plateType">
+								{{plateType}}
+							</option>
+						</select>
+					</div>
+					<div class="col-sm-2 control-label">使用性质</div>
+					<div class="column col-sm-4">
+						<select id="caruse" class="form-control" v-model="keyVehicleQ.type" htmlEscape="false" >
+							<option value="">所有</option>
+							<option v-for="vehType in vehTypeList" v-bind:value="vehType">
+								{{vehType}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-8">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						
+						<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+						<!-- <a class="btn btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+						<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a> -->
+					</div>
+				</div>
+			    <table id="jqGrid"></table>
+			    <div id="jqGridPager"></div>
+			</div>
+		</div>
+		<div v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+                <div class="form-group">
+                	<label for="plateNo" class="col-sm-2 control-label">车牌号</label>
+					<div class="col-sm-4 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="plateNo" name="plateNo" v-model="keyVehicle.plateNo" placeholder="车牌号" htmlEscape="false" 
+							required="required" minlength="2" maxlength="20" readonly="readonly"/>
+						
+					</div>
+				</div>
+                <div class="form-group">
+                	<label for="plateType" class="col-sm-2 control-label">车辆类型</label>
+					<div class="col-sm-4 onelinedis">
+					   <span class="help-inline"><font color="red">*</font> </span>
+						<select class="form-control oneline" id="plateType" name="plateType" v-model="keyVehicle.plateType" readonly="readonly" htmlEscape="false" required="required">
+							<option v-for="plateType in plateTypeList" v-bind:value="plateType">
+								{{plateType}}
+							</option>
+						</select>
+						
+					</div>
+                	<label for="type" class="col-sm-2 control-label">使用性质</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<select class="form-control oneline" id="type" name="type" v-model="keyVehicle.type" readonly="readonly" htmlEscape="false" required="required">
+							<option v-for="vehType in vehTypeList" v-bind:value="vehType">
+								{{vehType}}
+							</option>
+						</select>
+						
+					</div>
+				</div>
+                <div class="form-group">
+                	<label for="company" class="col-sm-2 control-label">公司名称</label>
+					<div class="col-sm-4 onelinedis">
+					    <span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="company" name="company" v-model="keyVehicle.company" placeholder="公司名称" htmlEscape="false" readonly="readonly" required="required" maxlength="20"/>
+						
+					</div>
+                	<label for="companyPhoneNo" class="col-sm-2 control-label">电话</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="companyPhoneNo" name="companyPhoneNo" v-model="keyVehicle.companyPhoneNo" placeholder="公司联系方式" htmlEscape="false" readonly="readonly" maxlength="20"/>
+					</div>
+				</div>
+                <div class="form-group">
+                	<label for="inspectionExpiryDt" class="col-sm-2 control-label">车检过期</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="inspectionExpiryDt" name="inspectionExpiryDt" 
+							v-model="keyVehicle.inspectionExpiryDt" placeholder="车检过期" readonly="readonly">
+					</div>
+                    <label for="dwxz" class="col-sm-2 control-label">单位性质</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="dwxz" name="jszh" 
+                            v-model="keyVehicle.dwxz" placeholder="单位性质" readonly="readonly" htmlEscape="false" maxlength="20"/>
+                    </div>
+				</div>
+                <div class="form-group">
+                    <label for="jsr" class="col-sm-2 control-label">驾驶人</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="jsr" name="jsr" 
+                            v-model="keyVehicle.jsr" placeholder="驾驶人"  readonly="readonly" htmlEscape="false" maxlength="20"/>
+                    </div>
+                    <label for="jszh" class="col-sm-2 control-label">驾驶证号</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="jszh" name="jszh" 
+                            v-model="keyVehicle.jszh" placeholder="驾驶证号"  readonly="readonly" htmlEscape="false" maxlength="20"/>
+                    </div>
+                </div>
+                <!-- <div class="form-group">
+                    <label for="groupId" class="col-sm-2 control-label">所属中队</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="groupId" name="groupId" 
+                            v-model="keyVehicle.groupId" placeholder="单位性质" htmlEscape="false" maxlength="20"/>
+                    </div>
+                    <label for="gridId" class="col-sm-2 control-label">责任区</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="gridId" name="gridId" 
+                            v-model="keyVehicle.gridId" placeholder="责任区" htmlEscape="false" maxlength="20"/>
+                    </div>
+                </div> -->
+				<div class="form-group" >
+					<label class="col-sm-2 control-label">通行线路</label>
+					<div id="tjdiv" class="col-sm-4">
+						<button type="button" class="btn btn-xs btn-default"
+							@click="addRhPost">添加</button>
+						<button type="button" class="btn btn-xs btn-danger"
+							@click="clearRhPost">清除</button>
+					</div>
+					<div class="col-sm-6 onelinedis">
+					<span class="help-inline"><font	color="red">*</font></span>
+						<input type="text" class="form-control oneline" id="lines"
+							name="lines" v-model="keyVehicle.lines"
+							placeholder="通行线路" readonly htmlEscape="false" required
+							maxlength="3900" /> 
+					</div>
+				</div>
+                <div class="form-group">
+                	<label class="col-sm-2 control-label">允许通行时间段</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control Wdate" id="passStartDt" name="passStartDt" 
+							@click="init97DatePassStart" 
+							v-model="keyVehicle.passStartDt" placeholder="开始时刻" readonly="readonly">
+					</div>
+                	<label class="col-sm-2 control-label">-</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control Wdate" id="passEndDt" name="passEndDt" 
+							@click="init97DatePassEnd" 
+							v-model="keyVehicle.passEndDt" placeholder="结束时刻" readonly="readonly">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						 <button type="submit" class="btn btn-sm btn-primary" @click="save">提交</button> 
+						<button type="button" class="btn btn-sm btn-warning" @click="reload">返回</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,156 @@
+<div id="roadsgCount-panel" class="panel panel-primary" style="width: 700px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">路段事故分析
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="trafficControlQuery">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所属中队</label>
+						<div class="column col-sm-4">
+							<select v-if="currentUser.jjddUser"
+								class="form-control selectpicker" id="groupIdQ" name="groupIdQ"
+								v-model="roadsgCountQ.groupId" @change="getDutyListByTeamId">
+								<option  value="" data-icon="fa fa-sitemap">所有</option>
+								<option v-for="group in groupList" v-bind:value="group.groupId"
+									data-icon="fa fa-sitemap">{{group.groupName}}</option>
+							</select>
+							<template v-if="currentUser.jjzdUser"> <span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupIdQ" v-model="roadsgCountQ.groupId" />
+							</template>
+						</div>
+
+						<label  class="col-sm-2 control-label">责任区</label>
+						<div class="column col-sm-4">
+							<select id="gridIdQ" name="gridIdQ" class="form-control selectpicker" v-model="roadsgCountQ.gridId" >
+								<option value="">所有</option>
+								<option v-for="duty in dutyGridList" v-bind:value="duty.gridId">{{duty.gridName}}</option>
+							</select>	
+						</div>
+				  </div>
+				  <div class="form-group">
+						<div class="col-sm-2 control-label">基准日期</div>
+						<div class="column col-sm-4">
+								<input type="text" class="form-control form_datetime Wdate" 
+								id="endDt" name="endDt"  readonly="readonly"
+								onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-{%d-1}'})"/>
+						</div>
+						<div class="col-sm-2 control-label">基准时间</div>
+						<div class="column col-sm-4">
+							<select id="timeQ" name="timeQ" class="form-control selectpicker" v-model="roadsgCountQ.time" >
+								<option value="">所有</option>
+								<option value="0">0时</option><option value="1">1时</option><option value="2">2时</option><option value="3">3时</option>
+								<option value="4">4时</option><option value="5">5时</option><option value="6">6时</option><option value="7">7时</option>
+								<option value="8">8时</option><option value="9">9时</option><option value="10">10时</option><option value="11">11时</option>
+								<option value="12">12时</option><option value="13">13时</option><option value="14">14时</option><option value="15">15时</option>
+								<option value="16">16时</option><option value="17">17时</option><option value="18">18时</option><option value="19">19时</option>
+								<option value="20">20时</option><option value="21">21时</option><option value="22">22时</option><option value="23">23时</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-1"></div>
+						<div class="column col-sm-6">
+                            <span class="help-inline"><font color="red">{{remindeMsg}}</font></span>
+                        </div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">道路名称</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control"
+								v-model="roadsgCountQ.mc" placeholder="道路名称"
+								htmlEscape="false" />
+						</div>
+						<div class="col-sm-2 control-label">路段类型</div>
+						<div class="column col-sm-4">
+							<select style="width: 100px" id="vLdlxQ" name="vLdlxQ" v-model="roadsgCountQ.vLdlxQ" 
+								class="form-control" htmlEscape="false">
+								<option value="">所有</option>
+								<option value="1">国省道</option>
+								<option value="2">城镇道路</option>
+								<option value="3">县道路</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						</div>
+					</div>
+				<div  id="overone" class="tablescrollbar" style="height:260px; overflow-y: scroll;-ms-overflow-y:scroll; margin-bottom: 0px">
+					<table class="table table-hover" style="table-layout: fixed;border:0px;margin: 0px;">
+					<thead>
+						<tr>
+							<th style="width:4%;">NO.</th>
+							<th style="width:27%; text-align:center">路段名称</th>
+							<th style="width:14%;text-align:center">所属中队</th>
+							<th style="width:11%; text-align:center">事故数量</th>
+							<th style="width:11%;text-align:center">环比数量</th>
+							<th style="width:11%; text-align:center">同比数量</th>
+							<th style="width:11%;text-align:center">路段类型</th>
+							<th style="width:11%;text-align:center" v-if="roadsgCountQ.time == ''">分段统计</th>
+						</tr>
+					</thead>
+					<tbody id="policeControlTb">
+						<tr v-for="(item, index) in rdList" @click="applyDataToUI(item.alList,item.region)">
+							<td>{{index+1}}</td>
+							<td style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+							 white-space: nowrap;text-align: left" :title="item.mc">{{item.mc}}</td>
+							<td style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+							 white-space: nowrap;text-align: left" :title="item.groupName">{{item.groupName}}</td>
+							<td  style="text-align:center">{{item.counts}}</td>
+							<td  style="text-align:center">{{item.tb}}</td>
+							<td  style="text-align:center">{{item.hb}}</td>
+							<td  style="text-align:center" v-if="item.vLdlx == 1">国省道</td>
+							<td  style="text-align:center" v-if="item.vLdlx == 2">城镇道路</td>
+							<td  style="text-align:center" v-if="item.vLdlx == 3">县道路</td>
+							<td v-if="roadsgCountQ.time == ''" style="text-align:center"><a class="btn btn-sm" @click="showSplitStatic(item.alList,item.mc)">查看</a></td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+				</div>
+			</div>
+			<!-- 分段统计div -->
+			<div id="SplitStaticDiv" v-show='false'>
+				<div class="form-group" style="margin-left: 0px; margin-right: 0px;margin-top:5px;">
+					<table class="table table-bordered" style="table-layout: fixed;border:0px;margin: 0px;">
+					<thead>
+						<tr>
+							<th style="width:45px; text-align:center">时段</th>
+							<th v-for="(item, index) in splitStaticList1" style="width:45px; text-align:left">{{item.name}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr >
+							<td style="text-align:center">数量</td>
+							<td v-for="(item, index) in splitStaticList1" style="text-align:center" ><span v-if="item.value != 0" style="color:red;font-weight:blod">{{item.value}}</span><span v-else>{{item.value}}</span></td>
+						</tr>
+					</tbody>
+					</table>
+					<table class="table table-bordered" style="table-layout: fixed;border:0px;margin: 0px;">
+					<thead>
+						<tr>
+							<th style="width:45px; text-align:center">时段</th>
+							<th v-for="(item, index) in splitStaticList2" style="width:45px; text-align:left">{{item.name}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr >
+							<td style="text-align:center">数量</td>
+							<td v-for="(item, index) in splitStaticList2" style="text-align:center"><span v-if="item.value != 0" style="color:red;font-weight:blod">{{item.value}}</span><span v-else>{{item.value}}</span></td>
+						</tr>
+					</tbody>
+					</table>
+					<div style="height: 200px; width: 600px;margin-top:5px" id="jtsgEchartsDiv"></div>
+				</div>
+				
+		</div>
+		</div>
+	</div>

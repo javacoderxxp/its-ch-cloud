@@ -1,0 +1,226 @@
+<div id="plan-panel" class="panel panel-primary" style="width: 650px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">预案管理
+    		<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="planManagerTab" class="nav nav-tabs">
+			<li class="active"><a href="#queryTab" data-toggle="tab">查询</a></li>
+			<li><a href="#detailTab" data-toggle="tab" v-show="isZdAdmin">登记</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="queryTab">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div for="planNameQ" class="col-sm-2 control-label">预案名称</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="planNameQ" name="planNameQ" v-model="planQ.planName" placeholder="预案名称" htmlEscape="false"/>
+						</div>
+						<div for="typeQ" class="col-sm-2 control-label">预案类型</div>
+						<div class="column col-sm-4">
+							<select id="casetype" class="form-control" name="typeQ" v-model="planQ.type">
+								<option value="">所有</option>
+								<option value="jwxl">警卫线路</option>
+								<option value="tfsj">突发事件</option>
+								<option value="jtgz">交通管制</option>
+								<option value="dxhd">大型活动</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-10">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="addNewPlan" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+							<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+						</div>
+					</div>
+				</div>
+			    <table id="jqGrid"></table>
+			    <div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade" id="detailTab">
+				<div id="planDetailForm" v-show="!showSceneForm">
+				<form class="form-horizontal" id="detailForm" role="form">
+	                <div class="form-group">
+	                	<label for="type" class="col-sm-2 control-label">预案类型</label>
+						<div class="col-sm-4">
+							<select :disabled="planConfirmed" id="casetype1" class="form-control" id="type" name="type" v-model="plan.type" required="required">
+								<option value="jwxl">警卫线路</option>
+								<option value="tfsj">突发事件</option>
+								<option value="jtgz">交通管制</option>
+								<option value="dxhd">大型活动</option>
+							</select>
+						</div>
+	                	<label for="planName" class="col-sm-2 control-label">预案名称</label>
+						<div class="col-sm-4">
+							<input :disabled="planConfirmed" type="text" class="form-control" id="planName" name="planName" v-model="plan.planName" placeholder="预案名称" htmlEscape="false" required="required">
+						</div>
+					</div>
+	                <div class="form-group">
+	                		<label for="startDt" class="col-sm-2 control-label">开始时间</label>
+							<div class="column col-sm-4">
+								<input :disabled="planConfirmed" type="text" class="form-control form_datetime Wdate" id="planStartDt" v-model="plan.startDt" name="startDt"
+								@click="setPlanDateStart" placeholder="开始时间" readonly="readonly" required="required">
+							</div>
+	                		<label for="endDt" class="col-sm-2 control-label">结束时间</label>
+							<div class="column col-sm-4">
+								<input :disabled="planConfirmed" type="text" class="form-control form_datetime Wdate" id="planEndDt" v-model="plan.endDt" name="endDt"
+								@click="setPlanDateEnd" placeholder="结束时间" readonly="readonly" required="required">
+							</div>
+					</div>
+					<!-- 
+	                <div class="form-group">
+						<div class="col-sm-3">
+							<button type="button" class="btn btn-xs btn-success" @click="addShape">绘制</button>
+							<button type="button" class="btn btn-xs btn-danger" @click="clearShape">清除</button>
+						</div>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" id="shape" name="shape" v-model="plan.shape" placeholder="空间范围" htmlEscape="false" readonly="readonly"/>
+						</div>
+					</div>
+					 -->
+	                <div class="form-group">
+	                	<label for="planDetail" class="col-sm-2 control-label">预案详情</label>
+						<div class="col-sm-8">
+							<textarea :disabled="planConfirmed" rows="2" cols="25" class="form-control" id="planDetail" name="planDetail" v-model="plan.planDetail" placeholder="预案详情" htmlEscape="false"></textarea>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						 <label v-if="sceneList.length>0" for="scenes" class="col-sm-2 control-label">场景列表</label>
+						 <ul class="list-group col-sm-10" style="max-height: 400px;overflow-y: auto;">
+							<li class="list-group-item" v-for="(item,index) in sceneList">
+								<span>{{index+1}}</span>
+								<span>{{item.sceneName}}</span>
+								<button type="button" class="btn btn-link btn-sm" style="float: right;" @click="deleteScene(index,item)" v-show="isZdAdmin">
+			 						<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+								</button>
+								<button data-toggle="tooltip" title="查看修改" type="button" v-show="!planExecute && isZdAdmin" class="btn btn-link btn-sm" style="float: right;" @click="editScene(item) ">
+			 						<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+								</button>
+								<button data-toggle="tooltip" title="执行" type='button' v-show="planExecute && isZdAdmin" class='btn btn-link btn-sm' style="float: right;" @click="startScene(item)">
+									<span class='glyphicon glyphicon-play' aria-hidden='true'></span>
+								</button>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="button" class="btn btn-sm btn-warning" @click="back2query">返回</button>
+							<button type="button" class="btn btn-sm btn-default" v-show="!planExecute && planConfirmed && isZdAdmin" @click="addScene">添加场景</button>
+							<button type="submit" class="btn btn-sm btn-primary" :disabled="planConfirmed" @click="save"  v-show="isZdAdmin">确认预案</button>
+						</div>
+					</div>
+				</form>
+				</div>
+				<div id="sceneForm" v-show="showSceneForm">
+					<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="test" class="col-sm-2 control-label">方案开始时间</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" v-model="plan.startDt" htmlEscape="false" readonly="readonly" disabled="disabled"/>
+						</div>
+						<label for="test" class="col-sm-2 control-label">方案结束时间</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" v-model="plan.endDt" htmlEscape="false" readonly="readonly" disabled="disabled"/>
+						</div>
+					</div>
+					
+					<div class="form-group" v-show="showVideoType">
+						<label class="col-sm-2 control-label">调取监控类型</label>
+						<div class="col-sm-4">
+							<input type="radio" v-model="isGuardUsed" value="1" ><label>警卫监控</label>
+						</div>
+						<div class="col-sm-4">
+							<input type="radio" v-model="isGuardUsed" value="0"><label>交警、科信、高空监控</label>
+						</div>
+					</div>
+	                <div class="form-group">
+	                	<label for="sceneName" class="col-sm-2 control-label">场景名称</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="sceneName" name="sceneName" v-model="scene.sceneName" placeholder="场景名称" htmlEscape="false" required="required"/>
+						</div>
+						<div class="col-sm-3">
+							<button type="button" class="btn btn-xs btn-success" :disabled="planExecute" @click="addShape">绘制</button>
+							<button type="button" class="btn btn-xs btn-danger" :disabled="planExecute" @click="clearShape">清除</button>
+						</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="shape" name="shape" v-model="scene.shape" placeholder="场景点位" htmlEscape="false" readonly="readonly"/>
+						</div>
+					</div>
+					<div class="form-group">
+	                	<label for="sceneDetail" class="col-sm-2 control-label">场景详情</label>
+						<div class="col-sm-10">
+							<textarea rows="2" cols="25" class="form-control" id="sceneDetail" name="sceneDetail" v-model="scene.sceneDetail" placeholder="场景详情" htmlEscape="false"></textarea>
+						</div>
+					</div>
+	                <div class="form-group">
+	                	<label for="sceneStartDt" class="col-sm-2 control-label">开始时间</label>
+						<div class="column col-sm-4" :disabled="planExecute">
+							<input :disabled="planExecute" type="text" class="form-control form_datetime Wdate" id="sceneStartDt" v-model="scene.startDt"
+								@click="setSceneDateStart" placeholder="开始时间" readonly="readonly" required="required">
+						</div>
+	                	<label for="endDt" class="col-sm-2 control-label">结束时间</label>
+						<div class="column col-sm-4" :disabled="planExecute">
+							<input :disabled="planExecute" type="text" class="form-control form_datetime Wdate" id="sceneEndDt" v-model="scene.endDt"
+								@click="setSceneDateEnd" placeholder="结束时间" readonly="readonly" required="required">
+						</div>
+					</div>
+					 <div class="form-group">
+					 	 <div v-show="searchingDev" class="col-sm-12" style="line-height: 60px;">
+					 	 	<div class="col-sm-6">
+					 	 		<label class="pull-right">设备搜索中...</label>
+					 	 	</div>
+					 	 	<img src="./assets/images/dev-searching.gif">
+					 	 </div>
+					 	 <div class="col-sm-12">
+					 	 	<span class="col-sm-6" style="font-size: 18px;font-family: 微软雅黑;font-weight: bold;">信号机列表</span>
+						 	<span class="col-sm-6" style="font-size: 18px;font-family: 微软雅黑;font-weight: bold;">视频监控列表</span>
+						 </div>
+						 <div class="col-sm-6">
+							 <ul class="list-group" style="max-height: 300px;overflow-y: auto;">
+								<li class="list-group-item" v-for="(item,index) in relatedSignals " @mouseenter="deventer(item.signal)" @mouseleave="devleave(item.signal)">
+									<span>{{index+1}}</span>
+									<span>{{item.signal.deviceName}}</span>
+									<button type="button" class="btn btn-link btn-sm" @click="removeFromSignalList(index)" style="float: right;">
+				 						<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+									</button>
+								</li>
+							</ul>
+						</div>
+						<div class="col-sm-6">
+							 <ul class="list-group" style="max-height: 300px;overflow-y: auto;">
+								<li class="list-group-item" v-for="(item,index) in relatedVideos " @mouseenter="deventer(item.video)" @mouseleave="devleave(item.video)">
+									<span>{{index+1}}</span>
+									<span>{{item.video.deviceName}}</span>
+									<button type="button" class="btn btn-link btn-sm" @click="removeFromVideoList(index)" style="float: right;">
+				 						<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+									</button>
+									<button data-toggle="tooltip" title="打开监控" type='button' v-show="planExecute" class='btn btn-link btn-sm' style="float: right;" @click="openOneVideo(index,item)">
+										<span class='glyphicon glyphicon-play' aria-hidden='true'></span>
+									</button>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="button" class="btn btn-sm btn-warning" @click="back2Plan">返回</button>
+							<button type="button" class="btn btn-sm btn-primary" v-if="!planExecute" @click="addSceneToPlan">确定</button>
+							<button type="button" class="btn btn-sm btn-primary" v-if="planExecute" @click="openGuardPage">打开警卫页面</button>
+							<button type="button" class="btn btn-sm btn-primary" v-if="planExecute" @click="openRelatedSignals">打开信号机</button>
+							<button type="button" class="btn btn-sm btn-primary" v-if="planExecute" @click="openRelatedVideos">打开视频监控</button>
+						</div>
+					</div>
+				</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

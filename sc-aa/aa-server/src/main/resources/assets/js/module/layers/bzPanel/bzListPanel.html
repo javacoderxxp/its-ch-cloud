@@ -1,0 +1,207 @@
+<div id="bzs-app" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通标志管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">标志类别</div>
+					<div class="column col-sm-4">
+						<select class="form-control" v-model="bzsQ.lb" htmlEscape="false" @Change="loadBzMcList">
+							<option value="">所有</option>
+							<option v-for="lb in bzLbList" v-bind:value="lb">
+								{{lb}}
+							</option>
+						</select>
+						<!-- <input type="text" class="form-control" v-model="bzsQ.lb"
+							placeholder="标志类别" required="required"> -->
+					</div>
+					<div class="col-sm-2 control-label">子类别</div>
+					<div class="column col-sm-4">
+						<select class="form-control" v-model="bzsQ.mc" htmlEscape="false" >
+							<option value="">所有</option>
+							<option v-for="mc in bzMcList" v-bind:value="mc">
+								{{mc}}
+							</option>
+						</select>
+						<!-- <input type="text" class="form-control" v-model="bzsQ.mc"
+							placeholder="标志名称" required="required"> -->
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">限速</div>
+					<div class="column col-sm-4">
+						<select class="form-control" v-model="bzsQ.xs">
+							<option value="-1">所有</option>
+							<option value="0">未设</option>
+							<option value="1">1-30 (km/h)</option>
+							<option value="30">30-60 (km/h)</option>
+							<option value="60">60-80 km/h </option>
+							<option value="80">80 km/h以上</option>
+						</select>
+					</div>
+					<div class="column col-sm-6">
+						<span class="help-inline" style="margin-left:20px"><font color="red">限速查询只适用于 [禁令标志]</font> </span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">道路</div>
+					<div class="column col-sm-4">
+						<select class="form-control selectpickerDl" id="linkIdQ" v-model="bzsQ.roadId">
+							<option v-for="road in roadList" v-bind:value="road.bh" data-icon="fa fa-road">
+								{{road.mc}}
+							</option>
+						</select>
+					</div>
+					<div class="col-sm-2 control-label">路口</div>
+					<div class="column col-sm-4">
+						<select class="form-control selectpickerLk" id="crossIdQ" v-model="bzsQ.crossId">
+							<option v-for="cross in crossList" v-bind:value="cross.bh" data-icon="fa fa-crosshairs">
+								{{cross.mc}}
+							</option>
+						</select>
+					</div>
+				</div> 
+				<div class="form-group">
+					<div class="col-sm-12">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						<a class="btn btn-sm" @click="areaSearch"><i class="fa fa-star-o"></i>&nbsp;区域选择</a>
+						<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+						<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a> 
+						<!-- <a class="btn btn-sm" @click="lineSearch"><i class="fa fa-pencil"></i>&nbsp;画线选择</a> -->
+					</div> 
+				</div>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">标志编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bh" name="bh"
+							v-model="bzs.bh" placeholder="标志编号" required="required" readonly="readonly" maxlength="50">
+					</div>
+					<label class="col-sm-2 control-label">标志类型</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="lb" name="lb"
+							v-model="bzs.lb" placeholder="标志类型" required="required" maxlength="50">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">子类别</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="mc" name="mc"
+							v-model="bzs.mc" placeholder="标志名称" required="required" maxlength="50">
+					</div>
+					<label class="col-sm-2 control-label">点位坐标</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zb" name="zb"
+							v-model="bzs.zb" placeholder="点位坐标" required="required" readonly="readonly" mmaxlength="100">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">限速</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="xs" name="xs"
+							v-model="bzs.xs" placeholder="限速" required="required">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">安装时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="azsj" name="azsj"
+							v-model="bzs.azsj" placeholder="安装时间" required="required"  readonly="readonly">
+					</div>
+					<label class="col-sm-2 control-label">方向</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="fx" name="fx"
+							v-model="bzs.fx" placeholder="方向" required="required" maxlength="50">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">材质</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="cz" name="cz"
+							v-model="bzs.cz" placeholder="材质" maxlength="50">
+					</div>
+					<label class="col-sm-2 control-label">规格</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="gg" name="gg"
+							v-model="bzs.gg" placeholder="规格" maxlength="50">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">工程编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="gcbh" name="gcbh"
+							v-model="bzs.gcbh" placeholder="工程编号" required="required" maxlength="50">
+					</div>
+					<label class="col-sm-2 control-label">安装方式</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="azfs" name="azfs"
+							v-model="bzs.azfs" placeholder="安装方式" maxlength="50">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">设备状态</label>
+					<div class="col-sm-4">
+						<select class="form-control" v-model="bzs.syzt"
+							required="required">
+							<option value="">请选择</option>
+							<option value="1">正常使用</option>
+							<option value="2">拆除</option>
+							<option value="3">维护中</option>
+							<option value="8">其他</option>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label">辖区中队</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xqzd" name="xqzd"
+							v-model="bzs.xqzd" placeholder="辖区中队" maxlength="50">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">施工单位</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="sgdw" name="sgdw"
+							v-model="bzs.sgdw" placeholder="施工单位" maxlength="50">
+					</div>
+					<label class="col-sm-2 control-label">维护单位</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="whdw" name="whdw"
+							v-model="bzs.whdw" placeholder="维护单位" required="required" maxlength="50">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">权属单位</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="qsdw" name="qsdw"
+							v-model="bzs.qsdw" placeholder="权属单位" maxlength="50">
+					</div>
+					<label class="col-sm-2 control-label">备注</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bz" name="bz"
+							v-model="bzs.bz" placeholder="备注" maxlength="50">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button id="sButton" type="submit" class="btn btn-sm btn-primary"
+							@click="save" v-show="isZdAdmin">提交</button>
+						<input id="editB" type="button"
+							class="btn btn-warning btn-sm pull-right" @click="reload"
+							value="返回" />
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,70 @@
+<div id="facilitiesCount-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">维护类型统计
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+	<div class="form-horizontal">
+		<div class="form-group">
+			<div class="col-sm-2 control-label">开始时间</div>
+			<div class="column col-sm-4">
+				<input type="text" class="form-control form_datetime Wdate" id="startDt"
+					onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:$('#endDt').val()})"
+					name="startDt" readonly="readonly">
+			</div>
+			<div class="col-sm-2 control-label">结束时间</div>
+			<div class="column col-sm-4">
+				<input type="text" class="form-control form_datetime Wdate" id="endDt"
+					onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:$('#startDt').val()})"
+					name="endDt" readonly="readonly">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2 control-label">维修单位</div>
+			<div class="column col-sm-4">
+				<select id="repairUnitIdQ" name="repairUnitIdQ" class="form-control" 
+					v-model="facilitiesRepairQ.repairUnitId"  required="required">
+					<option value="">所有</option>
+					<option v-for="dict in unitNamesQ" v-bind:value="dict.id">
+					{{dict.unitName}}</option>
+				</select>
+			</div>
+			<div class="col-sm-2 control-label">发单部门</div>
+			<div class="column col-sm-4">
+				<select v-if="currentUser.jjddUser" class="form-control" id="groupIdQ" v-model="facilitiesRepairQ.createBy">
+                    <option value="">所有</option>
+                    <option value="jkzx">交控中心</option>
+                    <option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+                        {{group.groupName}}
+                    </option>
+                </select>
+                <template v-if="currentUser.jjzdUser">
+                    <span>{{currentUser.group.groupName}}</span>
+                    <input type="hidden" id="groupIdQ" v-model="facilitiesRepairQ.createBy"/>
+                </template>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2 control-label">维护状态</div>
+			<div class="column col-sm-4">
+				<select id="results" name="results" class="form-control">
+					<option value="" selected="selected">所有</option>
+					<option value="1">待维护</option>
+					<option value="2">维护中</option>
+					<option value="3">已维护</option>
+					<option value="4">无需维护</option>
+				</select>
+			</div>
+		</div>
+		<div class="grid-btn" style="margin-bottom: 10px">	
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+		</div>
+	</div>
+	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="height:400px;padding:10px;"></div> 
+    </div> 
+</div>

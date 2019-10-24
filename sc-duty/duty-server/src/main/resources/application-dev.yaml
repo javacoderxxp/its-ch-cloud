@@ -1,0 +1,23 @@
+#*****************************************************************************************#
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: admin
+    password: 123456
+    url: jdbc:mysql://localhost:3306/wxdc?serverTimeZone=Asia/Shanghai&characterEncoding=utf-8&userSSL=false&allowMultiQueries=true&useUnicode=true
+#***************************************分布式Job配置*********************************************#
+##配置注册中心
+regCenter:
+  serverList: #localhost:2181
+  namespace: elastic-jobs-duty
+  sessionTimeoutMilliseconds: 15000
+
+simpleJob:
+  cron: 0/30 * * * * ?
+  shardingTotalCount: 2
+  shardingItemParameters: 0=0,1=1
+## 配了3个分片
+simpleJob2:
+  cron: 0/5 * * * * ?
+  shardingTotalCount: 3
+  shardingItemParameters: 0=0,1=1,2=2

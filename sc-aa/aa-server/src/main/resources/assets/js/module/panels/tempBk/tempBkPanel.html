@@ -1,0 +1,110 @@
+<div id="tempBk-panel" class="panel panel-primary" style="width: 500px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">车辆布控
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul class="nav nav-tabs">
+			<li class="active" id="liQuery"><a href="#queryTab" data-toggle="tab">查询</a></li>
+			<li id="liDetail"><a href="#detailTab" data-toggle="tab" v-show="isZdAdmin">登记</a></li>
+			<li id="liEdit" style="display: none"><a href="#detailTab" data-toggle="tab" v-show="isZdAdmin">修改</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="queryTab">
+				<div class="form-horizontal">
+					<div class="form-group">
+	               		<label for="startDt" class="col-sm-2 control-label">开始时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="query_startDt" v-model="queryObj.startDt" name="startDt"
+								@click="setBkDateStart" placeholder="开始时间" readonly="readonly" required="required">
+						</div>
+						<label for="endDt" class="col-sm-2 control-label">结束时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="query_endDt" v-model="queryObj.endDt" name="startDt"
+								@click="setBkDateEnd" placeholder="开始时间" readonly="readonly" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">车牌号</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="query_plateNo" placeholder="苏E....." required="required">
+						</div>
+					</div>	
+					<div class="grid-btn" style="margin-bottom: 10px">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+							<a class="btn btn-sm" @click="deleteBk" v-show="isZdAdmin"><i class="fa fa-trash-o"></i>&nbsp;撤控</a>
+					</div>
+				</div>
+			    <table id="jqGrid"></table>
+			    <div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade" id="detailTab">
+				<form class="form-horizontal" id="detailForm" role="form" >
+					<div class="form-group">
+						<label for='plateNo' class="col-sm-3 control-label">布控车牌</label>
+						<div class="column col-sm-8">
+							<input type="text" class="form-control" id="tempBk-plateNo" v-model="newBk.plateNo" name="plateNo" placeholder="苏E....." required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">车牌类型</label>
+						<div class="column col-sm-8">
+							<select name="plateTypeId" class="form-control" id="plateTypeId" v-model="newBk.plateType" required="required">
+								<option value="">选择一个号牌类型</option>
+								<option v-for="dict in dictList" v-bind:value="dict.value">
+									{{dict.label}}
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">布控类型</label>
+						<div class="column col-sm-8">
+							<select name="bkTypeId" class="form-control" id="bkTypeId" v-model="newBk.bkType" required="required"> 
+								<option value="">请选择一个类型</option>
+								<option v-for="dict in bkDictList" v-bind:value="dict.value">
+									{{dict.label}}
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">布控案由</label>
+						<div class="column col-sm-8">
+							<input type="text" class="form-control" id="bkBrief" v-model="newBk.bkBrief" name="bkBrief" maxlength="80">
+						</div>
+					</div>
+					<div class="form-group">
+	               		<label for="startDt" class="col-sm-3 control-label">开始时间</label>
+						<div class="column col-sm-8">
+							<input type="text" class="form-control form_datetime Wdate" id="newBk_startDt" v-model="newBk.startDt" name="startDt1"
+								@click="setNewBkDateStart" placeholder="开始时间" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+	               		<label for="endDt" class="col-sm-3 control-label">结束时间</label>
+						<div class="column col-sm-8">
+							<input type="text" class="form-control form_datetime Wdate" id="newBk_endDt" v-model="newBk.endDt" name="endDt1"
+								@click="setNewBkDateEnd" placeholder="结束时间" readonly="readonly">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<div class="col-sm-offset-3 col-sm-9">
+							<button type="submit" class="btn btn-sm btn-primary" @click="submitBk" v-show="isZdAdmin">提交</button>
+							&nbsp;&nbsp;
+							<button id="editC" type="button" class="btn btn-sm btn-primary" @click="cancelBk" v-if="isZdAdmin">撤控</button>
+							&nbsp;&nbsp;
+							<input id="editB" type="button" class="btn btn-warning btn-sm " style="display: none" @click="reload" value="返回" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

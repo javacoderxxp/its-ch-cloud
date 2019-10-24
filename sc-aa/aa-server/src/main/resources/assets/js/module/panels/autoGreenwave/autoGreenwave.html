@@ -1,0 +1,139 @@
+<div id="autoGreenwave-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">车牌自动绿波
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="greenwaveTab" class="nav nav-tabs">
+			<li class="active" @click="queryTab"><a href="#queryTab" data-toggle="tab">查询</a></li>
+			<li v-show="showDetail" ><a href="#detailTab" data-toggle="tab">登记</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="queryTab">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">路线名称</div>
+						<div class="column col-sm-4">
+							<input id="greenwaveNameQ" type="text" class="form-control" placeholder="路线名称" v-model="lineQ.greenwaveName">
+						</div>
+						<div class="col-sm-2 control-label">路线状态</div>
+						<div class="column col-sm-4">
+							<select id="lineStatus" class="form-control" name="lineStatus" v-model="lineQ.status">
+								<option value="">所有</option>
+								<option value="0">未执行</option>
+								<option value="1">执行中</option>
+								<option value="2">已完成</option>
+							</select>
+						</div>
+						<div class="col-sm-6">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+							<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+							<a class="btn btn-sm" @click="deleteLine"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+						</div>
+					</div>
+				</div>
+			    <table id="jqGrid"></table>
+			    <div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade" id="detailTab">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group">
+						<label for='greenwaveName' class="col-sm-2 control-label">路线名称</label>
+						<div class="column col-sm-8">
+							<span class="help-inline"><font color="red">*</font></span>
+							<input type="text" class="form-control oneline" id="greenwaveName" v-model="greenwaveName" name="greenwaveName" placeholder="填写路线名称" required="required">
+						</div>
+						<div class="column col-sm-2">
+							<input type="text" class="form-control" id="status" name="status" v-model="lineStatus" placeholder="路线状态" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="carNo" class="col-sm-2 control-label">车牌号码</label>
+				   		<div class="col-sm-7">
+							<span class="help-inline"><font color="red">*</font></span>
+							<input type="text" class="form-control oneline" v-model="carNo" id="carNo" name="carNo" placeholder="填写车牌号码" required="required">
+						</div>
+				   		<div class="col-sm-2" style="padding-top: 7px;">
+							<a :class="[showLbkk ? 'btn-default' : 'btn-success', 'btn','btn-sm']"  @click="showLbkkDevs">{{showLbkk?"隐藏":"显示"}}绿波卡口</a>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description" class="col-sm-2 control-label">路线描述&nbsp;</label>
+				   		<div class="col-sm-8">
+						<textarea class="form-control oneline" id="description" v-model="description" name="description" cols="120" rows="2" placeholder="描述信息"
+							htmlEscape="false" maxlength="200"></textarea>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<div class="column col-sm-12">
+							<button type="button" class="btn btn-default btn-flat" @click="drawAutoGreenwaveLine" style="width: 100%">
+					  			<span class="glyphicon glyphicon-flag pull-left" aria-hidden="true"></span> 
+					  			<span>设置自动绿波路线</span>
+							</button>
+							<br/>
+							<span class="help-inline" style="margin-left:20px"><font color="red">*为了保证方向准确性，请确保绘制线路时，地图缩放级别不小于15</font> </span>
+						</div>
+					</div>
+					
+					<div v-if="lineShape!=null" class="form-group" style="padding: 0 50px;">
+						<ul class="timeline" style="max-height: 400px;overflow-y: scroll; -ms-overflow-y: scroll;">
+						  <li class="time-label">
+						    <span class="bg-green">信号机及控制相位</span>
+						  </li>
+						  
+						  <li v-for="(item,index) in relatedSignalList">
+						    <i class="fa">{{index+1}}</i>
+						    <div class="timeline-item"  @mouseenter="signalenter(item)" @mouseleave="signalleave(item)">
+						      <h3 class="timeline-header">
+						        <a href="#">{{item.signal.deviceName}}</a>
+						        <button type="button" class="btn btn-link btn-sm pull-right" @click="removeFromSignalList(index)">
+			 						<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+								</button>
+						      </h3>
+						      <div class="timeline-body">
+						      	<select name="phaseId" class="form-control phaseselectpicker" v-model="item.phaseId">
+									<option v-for="phase in phaseList" v-bind:value="phase.value" :selected="item.phaseId == phase.value">
+										{{phase.label}}
+									</option>
+								</select>
+						      </div>
+						    </div>
+						  </li>
+
+						  <li>
+						    <i class="fa fa-clock-o bg-gray"></i>
+						  </li>
+						</ul>
+					</div>
+					
+					<div class="form-group">
+						<div class="col-sm-offset-1 col-sm-2">
+							<button type="button" class="btn btn-sm btn-warning" @click="goback">返回</button>
+						</div>
+						<div v-if="lineShape!=null" class="col-sm-offset-1 col-sm-2">
+							<button type="button" class="btn btn-sm btn-primary" @click="openRelatedSignals">打开信号机</button>
+						</div>
+						<div v-if="lineShape!=null && !isEdit && !isExec" class="col-sm-offset-1 col-sm-2">
+							<button type="submit" class="btn btn-sm btn-primary" @click="submitAutoGreenwaveLine">提交</button>
+						</div>
+						<div v-if="lineShape!=null && isEdit && !isExec" class="col-sm-offset-1 col-sm-2">
+							<button type="button" class="btn btn-sm btn-primary" @click="saveAutoGreenwaveLine">保存</button>
+						</div>
+						<div v-if="lineShape!=null && isEdit && !isExec" class="col-sm-offset-1 col-sm-2">
+							<button type="button" class="btn btn-sm btn-primary" @click="execAutoGreenwaveLine">执行</button>
+						</div>
+						<div v-if="lineShape!=null && isEdit && isExec" class="col-sm-offset-1 col-sm-2">
+							<button type="button" class="btn btn-sm btn-primary" @click="closeAutoGreenwaveLine">停止执行</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

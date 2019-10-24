@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="图表" />
+<meta name="keywords" content="图表" />
+<link rel="stylesheet" href="../../../css/app.css" />
+<link rel="stylesheet"
+	href="../../../plugins/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="../../../plugins/bootstrap/css/bootswatch.css" />
+<link rel="stylesheet"
+	href="../../../plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+<link rel="stylesheet" href="../../../css/account.css" />
+<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+<link rel="stylesheet"
+	href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+<link rel="stylesheet"
+	href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+<style type="text/css">
+.error {
+	color: red;
+}
+
+.nav>li>a {
+	position: relative;
+	display: block;
+	padding: 10px 25px;
+}
+
+.tablescrollbar {
+	height: 500px;
+	overflow-y: scroll;
+}
+
+.imgsize {
+	width: 60px;
+	height: 60px;
+	margin-left: 15%;
+}
+
+.imgsizeon {
+	width: 60px;
+	height: 60px;
+}
+</style>
+
+<!-- <script type="text/javascript">
+var itsEnv = window.itsEnv = 'sit'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script> -->
+
+<script type="text/javascript"
+	src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript"
+	src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript"
+	src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript"
+	src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript"
+	src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<title>数据研判报表</title>
+</head>
+
+<body>
+	<header>
+		<div class="headerfont">
+			<div class="backgroundimg onerow"></div>
+			<div class="navbar-brand"
+				style="color: #fff; margin-left: 10px; font-size: 16px;">
+				<p>太仓市公安局交通警察大队</p>
+				<p style="color: #fff; margin-left: 38px; font-size: 14px">交通服务管理平台</p>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</header>
+
+	<div id="vue-app" class="content-wrapper"
+		style="margin-left: 0px; margin-top: 50px; background-color: #fff; height: 100%; overflow: auto;">
+
+		<!-- Main content -->
+		<div class="panel panel-primary"
+			style="width: 100%; margin-bottom: 0px">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					数据研判报表
+					<div class="btn-group pull-right">
+						<a id='xzExecl' class="btn btn-sm" href="" style="height: 23px;"><i
+							class="fa fa-file-excel-o"></i>&nbsp;下载报表</a>
+					</div>
+				</h3>
+			</div>
+			<div style="margin: auto; width: 95%;">
+				<ul id="myTab" class="nav nav-tabs" style="text-align: center;">
+					<li class="active"><a href="#qwsqhz" data-toggle="tab"
+						@click="query('sgbb')">
+							<div class="imgsize"
+								style="background: url('../../../images/shequ.png') no-repeat; background-size: 100%"></div>
+							<div>
+								<h6>事故报表</h6>
+							</div>
+					</a></li>
+					<!-- <li><a href="#qwsqhz" data-toggle="tab" @click="query('jam')">
+							<div class="imgsize"
+								style="background: url('../../../images/zwgf.png') no-repeat; background-size: 100%"></div>
+							<div>
+								<h6>拥堵报表</h6>
+							</div>
+					</a></li> -->
+					<li><a href="#qwsqhz" data-toggle="tab" @click="query('sgzd')">
+							<div class="imgsize"
+								style="background: url('../../../images/weifa.png') no-repeat; background-size: 100%"></div>
+							<div>
+								<h6>施工报表</h6>
+							</div>
+					</a></li>
+					
+					<li>
+						<a href="#jcj" data-toggle="tab" @click="query('jcj')">
+							<div class="imgsize" style="background:url('../../../images/jcj.png') no-repeat;background-size:100%"></div>
+							<div><h6>接处警</h6></div>
+						</a>
+					</li>
+					<li>
+						<a href="#jamPm" data-toggle="tab" @click="query('jamPm')">
+							<div class="imgsize" style="background:url('../../../images/yd.png') no-repeat;background-size:100%"></div>
+							<div><h6>拥堵排名</h6></div>
+						</a>
+					</li>
+					<li><a href="#clgl" data-toggle="tab" @click="query('clgl')">
+							<div class="imgsize"
+								style="background: url('../../../images/qwwg.png') no-repeat; background-size: 100%"></div>
+							<div>
+								<h6>重点车排查</h6>
+							</div>
+					</a></li>
+					<li>
+						<a href="#jsz" data-toggle="tab" @click="query('jsz')">
+								<div class="imgsize"
+									style="background: url('../../../images/jsz.png') no-repeat; background-size: 100%"></div>
+								<div>
+									<h6>重点证排查</h6>
+								</div>
+						</a>
+					</li>
+					<li>
+						<a href="#ytgl" data-toggle="tab" @click="query('ytgl')">
+							<div class="imgsize" style="background:url('../../../images/ytgl.png') no-repeat;background-size:100%"></div>
+							<div><h6>源头管理</h6></div>
+						</a>
+					</li>
+					<li>
+						<a href="#jfjd" data-toggle="tab" @click="query('jfjd')">
+							<div class="imgsize" style="background:url('../../../images/zfjd.png') no-repeat;background-size:100%"></div>
+							<div><h6>处罚统计</h6></div>
+						</a>
+					</li>
+				</ul>
+
+			</div>
+			<div class="panel-body">
+				<!-- <div id="queryDate" class="panel panel-default">
+					<div class="form-horizontal" style="width: auto;">
+						<div class="form-group">
+							<div class="col-sm-1 control-label" style="margin-top: 8px;">日期</div>
+							<div class="column col-sm-2">
+								<input type="text" class="form-control form_datetime Wdate"
+									id="startDt" style="font-size: 12px;" @click="init97DateStart"
+									readonly />
+							</div>
+							<div class="col-sm-8" style="width: 140px; padding-top: 5px;">
+								<a class="btn btn-success btn-sm" @click="query(ts)"><i
+									class="fa fa-search"></i>&nbsp;查询</a>
+							</div>
+						</div>
+					</div>
+				</div> -->
+				<div id="queryDate" class="panel panel-default" style="display:none">
+					<div class="form-horizontal" style="width: auto;">
+						<div class="form-group">
+							 <div class="col-sm-1 control-label" style="margin-top: 8px;">开始日期</div>
+			                <div class="column col-sm-2">
+			                    <input type="text" class="form-control form_datetime Wdate" id="startDtQ"  
+			                        @click="init97DateStartQ"  style="font-size: 12px;"readonly="readonly">
+			                </div>
+			                <div class="col-sm-1 control-label" style="margin-top: 8px;">结束日期</div>
+			                <div class="column col-sm-2">
+			                    <input type="text" class="form-control form_datetime Wdate" id="endDtQ"
+			                        @click="init97DateEndQ"  readonly="readonly"  style="font-size: 12px;">
+			                </div>	
+							<div class="col-sm-8" style="width: 140px; padding-top: 5px;">
+								<a class="btn btn-success btn-sm" @click="query(ts)"><i
+									class="fa fa-search"></i>&nbsp;查询</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel-group" id="accordion">
+					<div id="myTabContent" class="tab-content">
+						<div class="tab-pane fade in active" id="qwsqhz" style="width: auto;">
+							<table id="jqGrid"></table>
+							<div id="jqGridPager"></div>
+						</div>	
+					<!--start驾驶证状态统计 -->
+						<div class="tab-pane fade" id="jsz">
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">驾驶证管理 </h4>
+								</div>
+								<div>
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>驾驶证状态</th>
+														<th>超分</th>	
+														<th>暂扣</th>
+														<th>吊销</th>	
+														<th>毒驾</th>	
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>外地户籍</td>
+														<td>{{Nd.cxzd}}</td>
+														<td>{{Nd.kfqzd}}</td>
+														<td>{{Nd.njzd}}</td>
+														<td>{{Nd.sxzd}}</td>
+													</tr>
+													<tr>
+														<td>本市户籍</td>
+														<td>{{Yd.cxzd}}</td>
+														<td>{{Yd.kfqzd}}</td>
+														<td>{{Yd.njzd}}</td>
+														<td>{{Yd.sxzd}}</td>
+													</tr>
+													<tr>
+														<td>总计</td>
+														<td>{{Sd.cxzd}}</td>
+														<td>{{Sd.kfqzd}}</td>
+														<td>{{Sd.njzd}}</td>
+														<td>{{Sd.sxzd}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="collapseEightLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion"
+											href="#collapseEight" id="collapseEightLink"> 超分 </a>
+									</h4>
+								</div>
+								<div id="collapseEight" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr v-for="item in cfd">
+														<td>{{item.name}}</td>
+														<td>{{item.cxzd}}</td>
+														<td>{{item.kfqzd}}</td>
+														<td>{{item.njzd}}</td>
+														<td>{{item.sxzd}}</td>
+														<td>{{item.lhzd}}</td>
+														<td>{{item.gqzd}}</td>
+														<td>{{item.hjzd}}</td>
+														<td>{{item.sfzd}}</td>
+														<td>{{item.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="collapseNineLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion"
+											href="#collapseNine" id="collapseNineLink"> 暂扣 </a>
+									</h4>
+								</div>
+								<div id="collapseNine" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr  v-for="item in zkd">
+														<td>{{item.name}}</td>
+														<td>{{item.cxzd}}</td>
+														<td>{{item.kfqzd}}</td>
+														<td>{{item.njzd}}</td>
+														<td>{{item.sxzd}}</td>
+														<td>{{item.lhzd}}</td>
+														<td>{{item.gqzd}}</td>
+														<td>{{item.hjzd}}</td>
+														<td>{{item.sfzd}}</td>
+														<td>{{item.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="collapseTenLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion"
+											href="#collapseTen" id="collapseTenLink">吊销 </a>
+									</h4>
+								</div>
+								<div id="collapseTen" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr  v-for="item in dxd">
+														<td>{{item.name}}</td>
+														<td>{{item.cxzd}}</td>
+														<td>{{item.kfqzd}}</td>
+														<td>{{item.njzd}}</td>
+														<td>{{item.sxzd}}</td>
+														<td>{{item.lhzd}}</td>
+														<td>{{item.gqzd}}</td>
+														<td>{{item.hjzd}}</td>
+														<td>{{item.sfzd}}</td>
+														<td>{{item.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="djLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion"
+											href="#dj" id="djLink">毒驾 </a>
+									</h4>
+								</div>
+								<div id="dj" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr  v-for="item in sdd">
+														<td>{{item.name}}</td>
+														<td>{{item.cxzd}}</td>
+														<td>{{item.kfqzd}}</td>
+														<td>{{item.njzd}}</td>
+														<td>{{item.sxzd}}</td>
+														<td>{{item.lhzd}}</td>
+														<td>{{item.gqzd}}</td>
+														<td>{{item.hjzd}}</td>
+														<td>{{item.sfzd}}</td>
+														<td>{{item.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			
+						</div>
+						<!--end 驾驶证状态统计 -->
+			
+			
+						<!--start 车辆状态统计 -->
+						<div class="tab-pane fade" id="clgl">
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">五类重点车辆检查任务监督 </h4>
+								</div>
+								<div>
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>任务数</td>
+														<td>{{NODd.cxzd}}</td>
+														<td>{{NODd.kfqzd}}</td>
+														<td>{{NODd.njzd}}</td>
+														<td>{{NODd.sxzd}}</td>
+														<td>{{NODd.lhzd}}</td>
+														<td>{{NODd.gqzd}}</td>
+														<td>{{NODd.hjzd}}</td>
+														<td>{{NODd.sfzd}}</td>
+														<td>{{NODd.num}}</td>
+													</tr>
+													<tr>
+														<td>完成数</td>
+														<td>{{YesDd.cxzd}}</td>
+														<td>{{YesDd.kfqzd}}</td>
+														<td>{{YesDd.njzd}}</td>
+														<td>{{YesDd.sxzd}}</td>
+														<td>{{YesDd.lhzd}}</td>
+														<td>{{YesDd.gqzd}}</td>
+														<td>{{YesDd.hjzd}}</td>
+														<td>{{YesDd.sfzd}}</td>
+														<td>{{YesDd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="15cwfLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion" href="#15cwf"
+											id="15cwfLink">15次违法未处理且逾期未年检车辆 </a>
+									</h4>
+								</div>
+								<div id="15cwf" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>未分配中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>未分责任区</td>
+														<td>{{swGQd.cxzd}}</td>
+														<td>{{swGQd.kfqzd}}</td>
+														<td>{{swGQd.njzd}}</td>
+														<td>{{swGQd.sxzd}}</td>
+														<td>{{swGQd.lhzd}}</td>
+														<td>{{swGQd.gqzd}}</td>
+														<td>{{swGQd.hjzd}}</td>
+														<td>{{swGQd.sfzd}}</td>
+														<td>{{swGQd.nogid}}</td>
+														<td>{{swGQd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="wfwclLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion" href="#wfwcl"
+											id="wfwclLink"> 15次违法未处理车辆</a>
+									</h4>
+								</div>
+								<div id="wfwcl" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>未分配中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>未分责任区</td>
+														<td>{{swGd.cxzd}}</td>
+														<td>{{swGd.kfqzd}}</td>
+														<td>{{swGd.njzd}}</td>
+														<td>{{swGd.sxzd}}</td>
+														<td>{{swGd.lhzd}}</td>
+														<td>{{swGd.gqzd}}</td>
+														<td>{{swGd.hjzd}}</td>
+														<td>{{swGd.sfzd}}</td>
+														<td>{{swGd.nogid}}</td>
+														<td>{{swGd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="wfwclzdLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion" href="#wfwclzd"
+											id="wfwclzdLink"> 违法未处理重点车辆 </a>
+									</h4>
+								</div>
+								<div id="wfwclzd" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>未分配中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>未分责任区</td>
+														<td>{{Gd.cxzd}}</td>
+														<td>{{Gd.kfqzd}}</td>
+														<td>{{Gd.njzd}}</td>
+														<td>{{Gd.sxzd}}</td>
+														<td>{{Gd.lhzd}}</td>
+														<td>{{Gd.gqzd}}</td>
+														<td>{{Gd.hjzd}}</td>
+														<td>{{Gd.sfzd}}</td>
+														<td>{{Gd.nogid}}</td>
+														<td>{{Gd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="wnjzdLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion" href="#wnjzd"
+											id="wnjzdLink"> 逾期未年检重点车辆 </a>
+									</h4>
+								</div>
+								<div id="wnjzd" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>未分配中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>未分责任区</td>
+														<td>{{Qd.cxzd}}</td>
+														<td>{{Qd.kfqzd}}</td>
+														<td>{{Qd.njzd}}</td>
+														<td>{{Qd.sxzd}}</td>
+														<td>{{Qd.lhzd}}</td>
+														<td>{{Qd.gqzd}}</td>
+														<td>{{Qd.hjzd}}</td>
+														<td>{{Qd.sfzd}}</td>
+														<td>{{Qd.nogid}}</td>
+														<td>{{Qd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<i class="fa fa-caret-right" id="cyzqwnjLabel"></i> <a
+											data-toggle="collapse" data-parent="#accordion" href="#cyzqwnj"
+											id="cyzqwnjLink"> 超一周期未年检车辆 </a>
+									</h4>
+								</div>
+								<div id="cyzqwnj" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>未分配中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>未分责任区</td>
+														<td>{{Cd.cxzd}}</td>
+														<td>{{Cd.kfqzd}}</td>
+														<td>{{Cd.njzd}}</td>
+														<td>{{Cd.sxzd}}</td>
+														<td>{{Cd.lhzd}}</td>
+														<td>{{Cd.gqzd}}</td>
+														<td>{{Cd.hjzd}}</td>
+														<td>{{Cd.sfzd}}</td>
+														<td>{{Cd.nogid}}</td>
+														<td>{{Cd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			
+						</div>
+						<!--end 车辆状态统计 -->	
+						<!-- 拥堵排名-->
+						<div class="tab-pane fade" id="jamPm">
+							<div class="panel panel-success">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<i class="fa fa-caret-down" id="collapseOneLabel"></i>
+									<a data-toggle="collapse" data-parent="#accordion" 
+									   href="#collapseOne" id="collapseOneLink">
+										拥堵排名
+									</a>
+								</h4>
+							</div>
+							<div id="collapseOne" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<div class="tablescrollbar">
+										<table class="table table-bordered table-striped table-condensed" style="margin-top: 5px;margin-bottom: 0px">
+											<tr>
+												<th class="text-center">排名</th>
+												<th class="text-center">路段</th>
+												<th class="text-center">次数</th>
+												<th class="text-center">中队</th>
+											</tr>
+											 <tr v-for="(array,index)  in chartVOList">
+											   <td class="text-center" width="45px">{{index+1}}</td>
+											   <td class="text-center">{{array.name}}</td>
+											   <td class="text-center">{{array.value}}</td>
+											   <td class="text-center">{{array.roaddraw.groupName}}</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						<!-- 拥堵排名 -->
+						<!-- 接处警-->
+						<div class="tab-pane fade" id="jcj">
+							<div class="panel panel-success">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<i class="fa fa-caret-down" id="jcjLabel"></i>
+									<a data-toggle="collapse" data-parent="#accordion" 
+									   href="#jcjOne" id="jcjLink">
+										接处警
+									</a>
+								</h4>
+							</div>
+							<div id="jcjOne" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>当日</td>
+														<td>{{jcjDd.cxzd}}</td>
+														<td>{{jcjDd.kfqzd}}</td>
+														<td>{{jcjDd.njzd}}</td>
+														<td>{{jcjDd.sxzd}}</td>
+														<td>{{jcjDd.lhzd}}</td>
+														<td>{{jcjDd.gqzd}}</td>
+														<td>{{jcjDd.hjzd}}</td>
+														<td>{{jcjDd.sfzd}}</td>
+														<td>{{jcjDd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						<!-- 接处警 -->
+						<!-- 源头管理-->
+						<div class="tab-pane fade" id="ytgl">
+							<div class="panel panel-success">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<i class="fa fa-caret-down" id="ytglLabel"></i>
+									<a data-toggle="collapse" data-parent="#accordion" 
+									   href="#ytglOne" id="ytglLink">
+										危化品单位现场检查任务
+									</a>
+								</h4>
+							</div>
+							<div id="ytglOne" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>未完成</td>
+														<td>{{YtGlDd.cxzd}}</td>
+														<td>{{YtGlDd.kfqzd}}</td>
+														<td>{{YtGlDd.njzd}}</td>
+														<td>{{YtGlDd.sxzd}}</td>
+														<td>{{YtGlDd.lhzd}}</td>
+														<td>{{YtGlDd.gqzd}}</td>
+														<td>{{YtGlDd.hjzd}}</td>
+														<td>{{YtGlDd.sfzd}}</td>
+														<td>{{YtGlDd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						<!-- 源头管理 -->
+						<!-- 执法监督-->
+						<div class="tab-pane fade" id="jfjd">
+							<div class="panel panel-success">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<i class="fa fa-caret-down" id="wfcfjLabel"></i>
+									<a data-toggle="collapse" data-parent="#accordion" 
+									   href="#wfcfjOne" id="wfcfjLink">
+										各中队处罚情况
+									</a>
+								</h4>
+							</div>
+							<div id="wfcfjOne" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>单位名称</th>
+														<th>城厢中队</th>	
+														<th>开发区中队</th>
+														<th>南郊中队</th>	
+														<th>沙溪中队</th>	
+														<th>浏河中队</th>	
+														<th>港区中队</th>	
+														<th>璜泾中队</th>	
+														<th>双凤中队</th>
+														<th>合计</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>当日</td>
+														<td>{{WfCfDd.cxzd}}</td>
+														<td>{{WfCfDd.kfqzd}}</td>
+														<td>{{WfCfDd.njzd}}</td>
+														<td>{{WfCfDd.sxzd}}</td>
+														<td>{{WfCfDd.lhzd}}</td>
+														<td>{{WfCfDd.gqzd}}</td>
+														<td>{{WfCfDd.hjzd}}</td>
+														<td>{{WfCfDd.sfzd}}</td>
+														<td>{{WfCfDd.num}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+								</div>
+							</div>
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<i class="fa fa-caret-down" id="WfTypeLabel"></i>
+									<a data-toggle="collapse" data-parent="#accordion" 
+									   href="#WfTypeOne" id="WfTypeLink">
+										处罚主要类别
+									</a>
+								</h4>
+							</div>
+							<div id="WfTypeOne" class="panel-collapse collapse in">
+								<div class="panel-body">
+									<div style="max-height: 500px; overflow-y: auto;">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>处罚类别</th>
+														<th>现场处罚</th>	
+														<th>记分处罚</th>
+														<th>非机处罚</th>	
+														<th>行人处罚</th>	
+														<th>其他重点违法</th>	
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>当日</td>
+														<td>{{WfTypeDd.cxzd}}</td>
+														<td>{{WfTypeDd.kfqzd}}</td>
+														<td>{{WfTypeDd.njzd}}</td>
+														<td>{{WfTypeDd.sxzd}}</td>
+														<td>{{WfTypeDd.lhzd}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						<!-- 执法监督 -->
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript"
+	src="../../../js/module/qwDayData/qwDayDataPage.js"></script>
+</html>

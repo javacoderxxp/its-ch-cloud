@@ -1,0 +1,109 @@
+<div id="psPlan-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">配时方案
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">路口名</div>
+					<div class="column col-sm-4">
+						<!-- 
+						<input type="text" class="form-control" v-model="psPlanQ.deviceName" placeholder="" htmlEscape="false" />
+						-->
+                        <select class="form-control" id="deviceName" v-model="psPlanQ.deviceName" htmlEscape="false" >
+                            <option value="">所有</option>
+                            <option v-for="signalCtrler in signalCtrlerList" v-bind:value="signalCtrler.deviceName">
+                                {{signalCtrler.deviceName}}
+                            </option>
+                        </select>
+					</div> 
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a class="btn btn-sm" v-show="isZdAdmin" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+                <a class="btn btn-sm" v-show="isZdAdmin" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+                <a class="btn btn-sm" v-show="isZdAdmin" @click="clone"><i class="fa fa-pencil-square-o"></i>&nbsp;复制</a>
+                <a class="btn btn-sm" v-show="isZdAdmin" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+                    <label for="deviceName" class="col-sm-2 control-label">路口名</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="deviceName" name="deviceName" v-model="psPlan.deviceName" placeholder="路口名" 
+                            htmlEscape="false" maxlength="20" required="required"/>
+                        <span class="help-inline"><font color="red">*</font></span>
+                    </div>
+					<label for="crossId" class="col-sm-2 control-label">路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="crossId" name="crossId" v-model="psPlan.crossId" placeholder="路口号" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="planNo" class="col-sm-2 control-label">方案号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="planNo" name="planNo" v-model="psPlan.planNo" placeholder="方案号" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="planName" class="col-sm-2 control-label">方案名</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="planName" name="planName" v-model="psPlan.planName" placeholder="方案名" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="timingName" class="col-sm-2 control-label">配时名</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="timingName" name="timingName" v-model="psPlan.timingName" placeholder="配时名" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="cycleLen" class="col-sm-2 control-label">周期(秒)</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="cycleLen" name="cycleLen" v-model="psPlan.cycleLen" placeholder="周期(秒)" 
+							htmlEscape="false" maxlength="5"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="exeDts" class="col-sm-2 control-label">执行日期</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="exeDts" name="exeDts" v-model="psPlan.exeDts" placeholder="执行日期" 
+							htmlEscape="false" maxlength="200"/>
+					</div>
+					<label for="exeDurations" class="col-sm-2 control-label">执行时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="exeDurations" name="exeDurations" v-model="psPlan.exeDurations" placeholder="执行时间" 
+							htmlEscape="false" maxlength="200"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="timingDetail" class="col-sm-2 control-label">配时详情</label>
+					<div class="col-sm-10">
+						<textarea type="text" class="form-control" id="timingDetail" name="timingDetail" v-model="psPlan.timingDetail" placeholder="配时详情" 
+							htmlEscape="false" maxlength="2000"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" v-show="isZdAdmin" class="btn btn-primary btn-sm" @click="save">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+        <div id="psPlanEchartPopup" v-show="false" >
+	        <div id="psPlanEchart" style="width: 580px;height:480px; "></div>
+        </div>
+	</div>
+</div>

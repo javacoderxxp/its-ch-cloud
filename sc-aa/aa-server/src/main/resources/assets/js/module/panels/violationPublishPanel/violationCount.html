@@ -1,0 +1,91 @@
+<div id="violationPublish-panel" class="panel panel-primary"
+	style="width:600px">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			违法行为分析
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs"
+					onclick="TUtils.togglePanelBody()">
+					<i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i>
+				</button>
+				<button type="button" class="btn btn-default btn-xs" @click="close">
+					<i class="fa fa-close"></i>
+				</button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="publishQuery">
+				<div class="form-horizontal">
+					<div class="form-group">
+                		<label for="startDt" class="col-sm-2 control-label">开始时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="startTime" v-model="publishQ.startTime" name="startTime"
+							onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:$('#endTime').val()})"
+							placeholder="开始时间" readonly="readonly" required="required">
+						</div>
+                		<label for="endDt" class="col-sm-2 control-label">结束时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="endTime" v-model="publishQ.endTime" name="endTime"
+							onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:$('#startTime').val()})"
+							placeholder="结束时间" readonly="readonly" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所属中队</label>
+						<div class="column col-sm-4">
+							<select id="groupIdQ" name="groupId" class="form-control selectpicker"  v-model="publishQ.zdId" @change="getDutyListByTeamId">
+								<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+									{{group.groupName}}
+								</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">处罚民警</label>
+						<div class="column col-sm-4">
+							<select id="punisherNo" name="punisherNo" class="form-control selectpicker"  v-model="publishQ.punisherNo">
+								<option v-for="user in userList" v-bind:value="user.policeNo" data-icon="fa fa-sitemap">
+									{{user.userName}}
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="form-horizontal" style="width: auto; margin-left:4px;">
+						<div class="form-group" style="margin-top: 5px">
+							<div class="col-sm-2 control-label" style="width:150px;font-size:14px;margin-left: -7px;"><b>违法处罚总数：</b></div>
+							<div class="column col-sm-4" style="height:25px;margin-top: 8px">
+								{{tCounts}}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div  id="overone" class="tablescrollbar" style="height:260px; overflow-y: scroll;-ms-overflow-y:scroll; margin-bottom: 0px">
+					<table class="table table-hover" style="table-layout: fixed;border:0px;margin: 0px;">
+					<thead>
+						<tr>
+							<th style="width:5%;">NO.</th>
+							<th style="width:70%; text-align:center">违法行为</th>
+							<th style="width:15%;text-align:center">违法数量</th>
+						</tr>
+					</thead>
+					<tbody id="policeControlTb">
+						<tr v-for="(item, index) in punishList">
+							<td>{{index+1}}</td>
+							<td style="text-overflow: ellipsis; -moz-text-overflow: ellipsis;overflow: hidden; 
+							 white-space: nowrap;text-align: left" :title="item.violatedDesc">{{item.violatedDesc}}</td>
+							<td  style="text-align:center">{{item.comments}}</td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

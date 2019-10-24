@@ -1,0 +1,125 @@
+<div id="roadLink-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">路段
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">编号</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="roadLinkQ.bh" placeholder="" htmlEscape="false" />
+					</div>
+					<div class="col-sm-2 control-label">名称</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="roadLinkQ.mc" placeholder="" htmlEscape="false" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">限速</div>
+					<div class="column col-sm-4">
+						<select class="form-control" v-model="roadLinkQ.xs">
+							<option value="-1">所有</option>
+							<option value="0">未设</option>
+							<option value="1">1-30 (km/h)</option>
+							<option value="30">30-60 (km/h)</option>
+							<option value="60">60-80 km/h </option>
+							<option value="80">80 km/h以上</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="bh" class="col-sm-2 control-label">编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bh" name="bh" v-model="roadLink.bh" placeholder="编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="mc" class="col-sm-2 control-label">名称</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="mc" name="mc" v-model="roadLink.mc" placeholder="名称" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="ssdlbh" class="col-sm-2 control-label">所属道路编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="ssdlbh" name="ssdlbh" v-model="roadLink.ssdlbh" placeholder="所属道路编号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="fx" class="col-sm-2 control-label">方向</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="fx" name="fx" v-model="roadLink.fx" placeholder="方向" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="cds" class="col-sm-2 control-label">车道数</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="cds" name="cds" v-model="roadLink.cds" placeholder="车道数" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="xs" class="col-sm-2 control-label">限速</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xs" name="xs" v-model="roadLink.xs" placeholder="限速" 
+							htmlEscape="false" maxlength="4"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="jfgldlx" class="col-sm-2 control-label">机非隔离带类型</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="jfgldlx" name="jfgldlx" v-model="roadLink.jfgldlx" placeholder="机非隔离带类型" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="zygldlx" class="col-sm-2 control-label">中央隔离带类型</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zygldlx" name="zygldlx" v-model="roadLink.zygldlx" placeholder="中央隔离带类型" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="kslkbh" class="col-sm-2 control-label">开始路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="kslkbh" name="kslkbh" v-model="roadLink.kslkbh" placeholder="开始路口号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+					<label for="jslkbh" class="col-sm-2 control-label">结束路口号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="jslkbh" name="jslkbh" v-model="roadLink.jslkbh" placeholder="结束路口号" 
+							htmlEscape="false" maxlength="255"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zb" class="col-sm-2 control-label">坐标</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zb" name="zb" v-model="roadLink.zb" placeholder="坐标" 
+							htmlEscape="false" maxlength="0"/>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save" v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

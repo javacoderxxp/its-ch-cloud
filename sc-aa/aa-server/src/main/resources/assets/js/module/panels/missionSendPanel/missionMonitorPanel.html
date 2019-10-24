@@ -1,0 +1,101 @@
+<div id="pure-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">任务列表
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="btn-group" role="group" aria-label="..." style="margin-bottom: 10px;">
+			<button type="button" class="btn btn-xs btn-default" @click="loadMsgs('1')">未完成 <span class="badge">{{unFinishedList.length}}</span></button>
+			<button type="button" class="btn btn-xs btn-default" @click="loadMsgs('2')">已完成 <span class="badge">{{finishedList.length}}</span></button>
+		</div>
+		
+		<div class="panel-group" id="accordion2" v-show="showMissionType == '1'" style="height: 350px; overflow-y: auto; margin-bottom: 0px">
+			<div class="panel panel-warning" v-for="item in unFinishedList">
+				<div class="panel-heading" style="background-color: #ffffff;">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion2"  v-bind:href="'#'+item.id">
+							<span class="text-danger" style="font-weight: bold;">{{item.title}}</span>
+						</a>
+						<span class="label label-default pull-right" title="发送时间" style="cursor:pointer;">{{item.publishDt}}</span>
+						<span v-if="'0'==item.status" title="任务状态：未签收" class="label label-danger pull-right">未签收</span>
+						<span v-if="'1'==item.status" title="任务状态：已签收未完成" class="label label-warning pull-right">未完成</span>
+					</h4>
+				</div>
+				<div :id=item.id class="panel-collapse collapse">
+					<div class="panel-body" style="padding-left: 0;padding-right: 0;">
+						<span style="font-weight: bold;font-size: 13px;">{{item.content}}</span>
+						<div class="form-group" style="margin-top: 10px;" v-if="null != item.signDt">
+							<div class="col-sm-offset-1 col-sm-2 control-label" style="margin-top: 5px;">签收警员:</div>
+							<div class="column col-sm-3" style="margin-top: 5px;">
+								<span class="text-default">{{item.signPoliceName}} {{item.signUser}}</span>
+							</div>
+							<div class="col-sm-2 control-label" style="margin-top: 5px;">签收时间:</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.signDt}}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div v-if="null != item.zdName" style="margin-right: 20px;">
+								<span class="label label-default pull-right" title="指派中队与警员" style="cursor:pointer;margin-top: 13px;">{{item.zdName}}-{{item.designatedPn}}</span>
+							</div>
+							<button type="button" class="btn btn-default btn-xs pull-right" @click="locateMission(item)" style="margin-right: 20px;margin-top: 10px;">
+								<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>定位
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel-group" id="accordion3" v-show="showMissionType == '2'" style="height: 350px; overflow-y: auto; margin-bottom: 0px">
+			<div class="panel panel-default" v-for="item in finishedList">
+				<div class="panel-heading" style="background-color: #ffffff;">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion3"  v-bind:href="'#'+item.id">
+							<span class="text-warning" style="font-weight: bold;">{{item.title}}</span>
+						</a>
+						<span class="label label-default pull-right" title="发送时间" style="cursor:pointer;">{{item.publishDt}}</span>
+						<span v-if="'2'==item.status" title="任务状态：已完成" class="label label-success pull-right">已完成</span>
+					</h4>
+				</div>
+				<div :id=item.id class="panel-collapse collapse">
+					<div class="panel-body" style="padding-left: 0;padding-right: 0;">
+						<span style="font-weight: bold;font-size: 13px;">{{item.content}}</span>
+						<div class="form-group" style="margin-top: 10px;" v-if="null != item.signDt">
+							<div class="col-sm-offset-1 col-sm-2 control-label" style="margin-top: 5px;">签收警员:</div>
+							<div class="column col-sm-3" style="margin-top: 5px;">
+								<span class="text-default">{{item.signPoliceName}} {{item.signUser}}</span>
+							</div>
+							<div class="col-sm-2 control-label" style="margin-top: 5px;">签收时间:</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.signDt}}</span>
+							</div>
+						</div>
+						<div class="form-group" v-if="null != item.finishDt">
+							<div class="col-sm-offset-1 col-sm-2 control-label" style="margin-top: 5px;">完成警员:</div>
+							<div class="column col-sm-3" style="margin-top: 5px;">
+								<span class="text-default">{{item.finishPoliceName}} {{item.finishUser}}</span>
+							</div>
+							<div class="col-sm-2 control-label" style="margin-top: 5px;">完成时间:</div>
+							<div class="column col-sm-4" style="margin-top: 5px;">
+								<span class="text-default">{{item.finishDt}}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div v-if="null != item.zdName" style="margin-right: 20px;">
+								<span class="label label-default pull-right" title="指派中队" style="cursor:pointer;margin-top: 13px;">{{item.zdName}}</span>
+							</div>
+							<button type="button" class="btn btn-default btn-xs pull-right" @click="locateMission(item)" style="margin-right: 20px;margin-top: 10px;">
+								<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>定位
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

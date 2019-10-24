@@ -1,0 +1,155 @@
+<div id="facilitiesManage-panel" class="panel panel-primary"
+	style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">信号机管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="myTabContent" class="tab-content">
+			<div id="querDetail" v-show='showList'>
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备类型</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="type" name="type"
+								v-model="facilitiesManageQ.type">
+						</div>
+						<div class="col-sm-2 control-label">设备编号</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="deviceId"
+								name="deviceId" v-model="facilitiesManageQ.deviceId">
+						</div>
+
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备名字</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="deviceName"
+								name="deviceName" v-model="facilitiesManageQ.deviceName">
+						</div>
+
+						<div class="col-sm-6">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a> 
+							<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+						</div>
+					</div>
+				</div>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+			<div v-show='!showList' id="faManageDetail">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">设备编号</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="deviceId" 
+								name="deviceId" v-model="facilitiesManage.deviceId" maxlength="20"
+								placeholder="设备编号" required="required">
+								
+						</div>
+						<label class="col-sm-2 control-label">设备类型</label>
+						<div class="column col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="type" name="type" maxlength="20"
+								v-model="facilitiesManage.type" placeholder="设备状态"  required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">设备名称</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="deviceName" maxlength="20"
+								name="deviceName" v-model="facilitiesManage.deviceName"
+								placeholder="设备名称" required="required">
+								
+						</div>
+						<label class="col-sm-2 control-label">安装路口</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="crossId"
+								name="crossId" v-model="facilitiesManage.crossId" maxlength="10"
+								placeholder="安装路口" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">位置描述</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="location"
+								name="location" v-model="facilitiesManage.location" maxlength="20"
+								placeholder="位置描述">
+						</div>
+						<label class="col-sm-2 control-label">点位坐标</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control  oneline" id="shape" name="shape" maxlength="50"
+								v-model="facilitiesManage.shape" placeholder="点位坐标" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">生产厂家</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="manuId" name="manuId"  maxlength="20"
+								v-model="facilitiesManage.manuId" placeholder="生产厂家" required="required">
+								
+						</div>
+						<label class="col-sm-2 control-label">服务器IP</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="serverIp"
+								name="serverIp" v-model="facilitiesManage.serverIp" maxlength="20"
+								placeholder="所属服务器IP" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">信号机ID</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="serverCid"
+								name="serverCid" v-model="facilitiesManage.serverCid" maxlength="10"
+								placeholder="中心信号机ID" required="required">
+								
+						</div>
+						<label class="col-sm-2 control-label">设备状态</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<select name="status" class="form-control oneline"
+								v-model="facilitiesManage.status" required="required">
+								<option value="">请选择</option>
+								<option value="1">正常使用</option>
+								<option value="2">拆除</option>
+								<option value="3">维护中</option>
+								<option value="8">其他</option>
+							</select>
+							
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">描述信息</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="description"
+								name="description" v-model="facilitiesManage.description"
+								placeholder="描述信息">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="sButton" type="submit" class="btn btn-sm btn-primary"
+								@click="save" v-show="isZdAdmin">提交</button>
+							<input id="editB" type="button"
+								class="btn btn-warning btn-sm pull-right" @click="reload"
+								value="返回" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

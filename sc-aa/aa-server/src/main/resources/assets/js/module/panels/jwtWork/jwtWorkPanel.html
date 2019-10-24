@@ -1,0 +1,116 @@
+<div id="jwtWork-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">警员一日工作
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">警员编号</label>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="jwtWorkQ.policeNo" placeholder="" htmlEscape="false" />
+					</div>
+					<label class="col-sm-2 control-label">警员姓名</label>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="jwtWorkQ.policeName" placeholder="" htmlEscape="false" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-4">
+						<!--  v-if="currentUser.jjddUser"  -->
+						<select v-if="currentUser.jjddUser" class="form-control" v-model="jwtWorkQ.deptName">
+							<option value="">所有</option>
+							<option v-for="group in groupListQ" v-bind:value="group.groupName">{{group.groupName}}</option>
+						</select>
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupIdQ" v-model="jwtWorkQ.deptName" />
+						</template>
+					</div>
+					<label class="col-sm-2 control-label">工作时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="workTime" 
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-{%d}',isShowClear:false,readOnly:true})" 
+							name="workTime">
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;工作回放</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="jwtWorkDetail"  v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">警员编号:</label>
+					<div class="col-sm-4">
+						<span class="form-control">{{mjjh}}</span>
+					</div>
+					<label class="col-sm-2 control-label">警员姓名:</label>
+					<div class="col-sm-4">
+						<span class="form-control">{{mjxm}}</span>
+					</div>
+				</div>
+				 <div id="guiji" class="form-group" style="display: none;">
+					<label for="sd" class="col-sm-2 control-label">速度</label>
+					<div class="col-sm-2">
+						<select class="form-control" id="sd" v-model="sd" @change="variableSpeed">
+							<option value="-3" > -3X </option>
+							<option value="-2" > -2X </option>
+							<option value="-1" > -1X </option>
+							<option value="" > 正常 </option>
+							<option value="1" > 1X </option>
+							<option value="2" > 2X </option>
+							<option value="3" > 3X </option>
+						</select>
+					</div>
+					<label for="startDt" class="col-sm-1 control-label"></label>
+					<div class="col-sm-2">
+						<img id="bf" src="./assets/images/zanting.png" title='暂停' @click="togglePauseMove" style="display: none;">
+						<img id="zt" src="./assets/images/bofang.png" title='播放' @click="jixuMove" style="display: none;">
+					</div>
+				</div>
+				<div  id="overone" style="height:260px; overflow-y: scroll;-ms-overflow-y: scroll; margin-bottom: 0px">
+					<table style="width: 500px; margin-left: 10px" class="table table-striped">
+					<thead>
+						<tr>
+							<th width="8%">序号</th>
+							<th width="40%">工作时间</th>
+							<th width="50%">工作内容</th>
+						</tr>
+					</thead>
+					<tbody id="policeControlTb">
+						<tr v-for="(item,idex) in workList" @click="repairdetail(item.longitude, item.latitude)" >
+							<td>{{idex+1}}</td>
+							<td v-if="item.type =='上班打卡点' || item.type =='下班打卡点'" style="color:#33cc99">{{item.gpsUpdateDt}}</td>
+							<td v-if="item.type !='下班打卡点' && item.type !='上班打卡点'">{{item.gpsUpdateDt}}</td>
+							<td v-if="item.type =='上班打卡点' || item.type =='下班打卡点'" style="color:#33cc99">{{item.type}}</td>
+							<td v-if="item.type !='下班打卡点' && item.type !='上班打卡点'" :title="item.wordss">{{item.type}}</td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-12">
+                        <input id="editB" type="button" class="btn btn-warning btn-sm pull-right"  @click="reload" value="返回"/>
+						&nbsp;&nbsp;
+						<!-- <input id="yyButton" type="button" class="btn btn-sm btn-primary" @click="showTrackSearchJwt" value="查询"/> -->
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,175 @@
+<div id="clgl-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">车辆信息管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">id</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="clglQ.id" placeholder="" htmlEscape="false" />
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+				<a class="btn btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="xh" class="col-sm-2 control-label">自动编号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xh" name="xh" v-model="clgl.xh" placeholder="自动编号" 
+							htmlEscape="false" maxlength="8"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="hpzl" class="col-sm-2 control-label">号牌种类</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="hpzl" name="hpzl" v-model="clgl.hpzl" placeholder="号牌种类" 
+							htmlEscape="false" maxlength="8"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="hphm" class="col-sm-2 control-label">号牌号码</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="hphm" name="hphm" v-model="clgl.hphm" placeholder="号牌号码" 
+							htmlEscape="false" maxlength="15"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="clxh" class="col-sm-2 control-label">处理序号</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="clxh" name="clxh" v-model="clgl.clxh" placeholder="处理序号" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="qzbfqz" class="col-sm-2 control-label">强制报废日期</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="qzbfqz" name="qzbfqz" v-model="clgl.qzbfqz" placeholder="强制报废日期" readonly
+							htmlEscape="false"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="bxzzrq" class="col-sm-2 control-label">报修日期</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="bxzzrq" name="bxzzrq" v-model="clgl.bxzzrq" placeholder="报修日期" readonly
+							htmlEscape="false"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="bpcs" class="col-sm-2 control-label">查收</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bpcs" name="bpcs" v-model="clgl.bpcs" placeholder="查收" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="bzcs" class="col-sm-2 control-label">备注</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="bzcs" name="bzcs" v-model="clgl.bzcs" placeholder="备注" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="clly" class="col-sm-2 control-label">处理</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="clly" name="clly" v-model="clgl.clly" placeholder="处理" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="yxqz" class="col-sm-2 control-label">有效期止</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="yxqz" name="yxqz" v-model="clgl.yxqz" placeholder="有效期止" readonly
+							htmlEscape="false"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="syr" class="col-sm-2 control-label">所有人</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="syr" name="syr" v-model="clgl.syr" placeholder="所有人" 
+							htmlEscape="false" maxlength="150"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zsxxdz" class="col-sm-2 control-label">住所详细地址</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zsxxdz" name="zsxxdz" v-model="clgl.zsxxdz" placeholder="住所详细地址" 
+							htmlEscape="false" maxlength="500"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zzxxdz" class="col-sm-2 control-label">住址详细地址</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zzxxdz" name="zzxxdz" v-model="clgl.zzxxdz" placeholder="住址详细地址" 
+							htmlEscape="false" maxlength="500"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="sjhm" class="col-sm-2 control-label">手机号码</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="sjhm" name="sjhm" v-model="clgl.sjhm" placeholder="手机号码" 
+							htmlEscape="false" maxlength="15"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zt" class="col-sm-2 control-label">车辆状态</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zt" name="zt" v-model="clgl.zt" placeholder="车辆状态" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="ccdjrq" class="col-sm-2 control-label">初次登记日期</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="ccdjrq" name="ccdjrq" v-model="clgl.ccdjrq" placeholder="初次登记日期" readonly
+							htmlEscape="false"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="groupId" class="col-sm-2 control-label">所属中队</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="groupId" name="groupId" v-model="clgl.groupId" placeholder="所属中队" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="gridId" class="col-sm-2 control-label">所属责任区</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="gridId" name="gridId" v-model="clgl.gridId" placeholder="所属责任区" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="point" class="col-sm-2 control-label">点位</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="point" name="point" v-model="clgl.point" placeholder="点位" 
+							htmlEscape="false" maxlength="200"/>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

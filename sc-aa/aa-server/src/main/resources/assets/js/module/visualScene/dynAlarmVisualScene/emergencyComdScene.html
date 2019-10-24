@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../../css/app.css" />
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../../css/sceneStyle.css">
+	<link rel="stylesheet" href="../../../../css/jindustyle.css">
+	<link rel="stylesheet" href="../../../../plugins/font-awesome/css/font-awesome.min.css">
+<style type="text/css"> 
+	.error {
+		color: red;
+    }	
+</style>
+
+<script type="text/javascript">
+var itsEnv = window.itsEnv = 'prod'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script>
+<!-- SIT 
+<script src="http://114.215.146.210:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=a38637152661536811426544710c5a2c"></script>
+-->
+<!-- PROD-->
+<script src="http://192.168.15.4:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=96afef81bcb8de97f2687b41d6f4d07a"></script>
+
+
+<!--[if lt IE 9]> 
+	<script type="text/javascript" src="../../../../plugins/loadMap.js"/> 
+<![endif]-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/theme/walden.js"></script>
+<script type="text/javascript" src="../../../../js/module/signal/js/loadMap.js"></script>
+<!--//进度条左2-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jindujquery.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/index.js"></script>
+<!--//数字动画-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.waypoints.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.countup.min.js"></script>
+<title>应急指挥处置可视化场景</title>
+</head>
+
+<body style="background: #133f58;">
+	<div id="mapContainer2"></div>
+	<!--//上面4个小块-->
+	<!--//1-->
+	
+	<!--//2-->
+	
+	<!--//3-->
+	
+	<!--//4-->
+	
+	<!--//中间地图块-->
+	<div class="centermappannel">
+    	<div style="width:100%;height:100%;position: relative;">
+    		<div class="lefttop"></div>
+	        <div class="righttop"></div>
+	        <div class="leftbot"></div>
+	        <div class="rightbot"></div>
+	        <div class="bigtitle">
+				<h6 style="color:#cae5fb;letter-spacing:4px">太仓市公安局交通警察大队</h6>
+			</div>
+	        <div class="conmain"  style="padding:4px;width:100%;height:100%;">
+	        	<div style="width:100%;height:100%;" id="mapContainer"></div>
+			</div>
+	    </div>
+	</div>
+	<!--//下面1条重点消息-->
+		
+	<div id="imptDiv" >
+		<div id="leftpannel" class="left">
+			<!--警情开始-->
+		    <div id="alarmpennel" class="alarmpennel" style="height:100%">
+		    	<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">实时重大警情</span>
+					</div>
+					<div class="imporalarm" id="timealarm" style="top:4%;">
+						<table id="importantAlarmTB"></table>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<!--警情结束-->
+
+			<!--start part3-->
+			
+			
+			
+			<!--start part2-->
+			
+			
+		</div>
+		<!--end part3-->
+		<!--start right-->
+		<div id="rightpannel" class="right">
+			<!--part1-->
+			<div class="WorkstatisCarpannel" style="height: 49%;">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+			        <div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span>周边警力</span></div>
+					
+					<div style="width:100%;height:100%;">
+						<div id="jwtDevDiv"  style="width:100%;height:90%;min-height:160px;" class="equipfont imporalarm">
+							<table class="table table-hover" style="height:90%;">
+								<thead>
+									<tr>
+										<th width="40%">警员编号</th>
+										<th width="40%">警员姓名</th>
+										<th width="20%">状态</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="item in allGpsDevList" class="pconcent">
+										<td>{{item.policeNo}}</td>
+										<td>{{item.policeName}}</td>
+										<td>{{item.status=='0'?'在线':'离线'}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+			  	</div>
+			</div>
+			<div id="myTabContent1" class="lastpannel">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+			        <div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span>周边电台</span></div>
+					<div>
+						<div id="carRadioDiv" style="width:100%;height:90%;min-height:160px;" class="equipfont imporalarm">
+							<table class="table table-hover" style="height:90%;">
+								<thead>
+									<tr>
+										<th width="30%">GPS ID</th>
+										<th width="50%">电台名称</th>
+										<th width="20%">状态</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="item in allRadioDevList" class="pconcent">
+										<td>{{item.gpsId}}</td>
+										<td>{{item.radioName}}</td>
+										<td>{{item.status=='0'?'在线':'离线'}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<!--end right-->
+	<!-- 
+	<div id="lnglatWidgetPanel">
+		<input id="mapLevel" type="text" class="rightcoordinate" style="border-radius: 3px;"/>
+		<input id="mapLngLat" type="text" class="coordinate" style="border-radius: 3px;"/>
+	</div> -->
+	<!-- <div id="posindaPanel">
+		<a href="http://www.posinda.com"><img alt="ponsinda" src="../../../../images/posinda.png" width="60px" height="15px">
+		&nbsp;江苏普信达智能交通有限公司&nbsp;</a>
+	</div> -->
+	
+	<script type="text/javascript" src="emergencyComdScene.js"></script>
+	<!--//滚动条-->
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.min_1.js"></script>
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.jquery.min_1.js"></script>
+	<link rel="stylesheet" href="../../../../plugins/jQuery/perfect-scrollbar.min_1.css" />
+	<script>
+		$('#jwtDevDiv').perfectScrollbar();
+		$('#carRadioDiv').perfectScrollbar();
+		$('.countup').countUp();	
+	</script>
+</body>
+
+</html>

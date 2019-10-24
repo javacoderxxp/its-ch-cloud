@@ -1,0 +1,210 @@
+<div id="facilitiesRepair-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通设施设备维护
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="myTab" class="nav nav-tabs">
+			<li id="liQuery" ><a id="aQuery" href="#facilitiesRepairQuery" data-toggle="tab">查询</a></li>
+			<li id="liDetail" class="active"><a id="addQuery"  href="#facilitiesRepairDetail" data-toggle="tab" v-show="isZdAdmin">登记</a></li>
+			<li id="liEdit" style="display:none" ><a href="#constOccupDetail" data-toggle="tab">修改</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade" id="facilitiesRepairQuery" >
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">开始时间</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="startTime"
+							onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:$('#endTime').val()})" 
+							name="startTime" readonly="readonly">
+						</div>
+						<div class="col-sm-2 control-label">结束时间</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="endTime" 
+							onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:$('#startTime').val()})"
+							name="endTime" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">状态</div>
+						<div class="column col-sm-4">
+							<select id="results" name="results" class="form-control">
+								<option value="">所有</option>
+								<option value="1">待维护</option>
+								<option value="2">维护中</option>
+								<option value="3">已维护</option>
+								<option value="4">无需维护</option>
+							</select>
+						</div>
+						<div class="col-sm-6">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+							<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+						</div>
+					</div>
+				</div>
+			    <table id="jqGrid"></table>
+			    <div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade in active" id="facilitiesRepairDetail">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group">
+						<label  class="col-sm-2 control-label">设备编号</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="facilitiesId" name="facilitiesId" maxlength="20"
+							v-model="facilitiesRepair.facilitiesId" readonly="readonly" placeholder="设备编号" required="required">
+						</div>
+						<label class="col-sm-2 control-label">设备类型</label>
+						<div class="col-sm-4">
+							<input type="text" id="typeWord" name="typeWord" class="form-control" 
+							v-model="facilitiesRepair.typeWord" readonly="readonly" >
+							<input type="hidden" id="type" name="type" class="form-control" 
+							v-model="facilitiesRepair.type" readonly="readonly" >
+						</div>
+					</div>
+					<div class="form-group">
+						<label  class="col-sm-2 control-label">标题</label>
+						<div class="column col-sm-9 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="title" name="title" maxlength="50"
+							 v-model="facilitiesRepair.title" placeholder="标题"  required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">问题描述</label>
+						<div class="column col-sm-9 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="content" name="content" maxlength="200" style="width:420px"
+							v-model="facilitiesRepair.content" placeholder="问题描述" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label  class="col-sm-2 control-label">位置描述</label>
+						<div class="column col-sm-9 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="position" name="position" maxlength="100" style="width:420px"
+							 v-model="facilitiesRepair.position" placeholder="位置描述"  required="required">
+							 
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始日期</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-contro oneline" id="startDt" 
+							name="startDt" placeholder="开始日期" required="required" readonly="readonly">
+						</div>
+						<label class="col-sm-2 control-label">结束日期</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control form_datetime Wdate oneline" id="endDt" 
+							onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:$('#startDt').val()})"
+							name="endDt"  placeholder="结束日期" required="required" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">完成时间</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control form_datetime" id="finishDt" 
+							name="finishDt"  placeholder="完成时间" readonly="readonly">
+						</div>
+						<label class="col-sm-2 control-label">优先级</label>
+						<div class="col-sm-4 onelinedis">
+						    <span class="help-inline"><font color="red">*</font> </span>
+							<select id="priority" name="priority" class="form-control oneline" 
+							v-model="facilitiesRepair.priority"  required="required">
+								<option value="">请选择</option>
+								<option value="1">高</option>
+								<option value="2">中</option>
+								<option value="3">低</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修单位</label>
+						<div class="col-sm-4 onelinedis">
+						   <span class="help-inline"><font color="red">*</font> </span>
+							<select id="repairUnitId" name="repairUnitId" class="form-control oneline" 
+								v-model="facilitiesRepair.repairUnitId"  required="required">
+								<option value="">请选择</option>
+								<option v-for="dict in unitNames" v-bind:value="dict.id">
+								{{dict.unitName}}</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">维修者</label>
+						<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<select id="wxId" name="wxId" class="form-control oneline"
+							v-model="facilitiesRepair.wxId" required="required">
+							<option value="">请选择</option>
+							<option v-for="dict in repairUnits" v-bind:value="dict.wxId">
+								{{dict.name}}</option>
+						</select>
+						</div>
+					</div>
+					<div id="imgDiv" class="form-group"   style="display: none;">
+						<label class="col-sm-2 control-label">图片上传(最多三张)</label>
+						<div id='image-list'style="margin-left: 5px; float:left;">
+						
+						 <!-- <input type="button" @click="uploadImage();"value="提交"/> -->
+						 </div>
+						 <img id="shizi" src="./assets/images/shizitu.png" @click="openFileUpload"
+								style="margin-left: 25px; width: 88px; height: 88px;cursor:pointer;"/>
+						 <input id="fileupload" type="file" name="multiFiles"  class="hide"/>
+					</div>
+					<div id="divDesc" class="form-group" style="display: none;">
+						<label class="col-sm-2 control-label">维修结果</label>
+							<div class="col-sm-4">
+								<textarea id="resultDesc" name="resultDesc" placeholder="维修结果"
+								v-model="facilitiesRepair.resultDesc" style="width: 300px;"
+								class="layui-textarea" maxlength="200" readonly="readonly" ></textarea>
+								<!-- <span class="help-inline"><font color="red">*</font> </span> -->
+							</div>
+					</div>
+					<div id="ptDiv" class="form-group" style="display: none;">
+						<label class="col-sm-2 control-label">待维护</label>
+						<div id='oldImage'>
+							<template v-for="repairs in ptPaths"> <img
+								style="margin-left: 25px; width: 88px; height: 88px"
+								:src="repairs" @click="imgOnclick(repairs)"> </template>
+						</div>
+					</div>	
+					<div id="oldDiv" class="form-group" style="display: none;">
+						<label class="col-sm-2 control-label">报修图片</label>
+						<div id='oldImage'>
+							<template v-for="repairs in oFilePaths"> <img
+								style="margin-left: 25px; width: 88px; height: 88px"
+								:src="repairs" @click="imgOnclick(repairs)"> </template>
+						</div>
+					</div>
+					<div id="newDiv" class="form-group" style="display: none;">
+						<label class="col-sm-2 control-label">维护后</label>
+						<div id='newImage'>
+							<template v-for="repairs in nFilePaths"> <img
+								style="margin-left: 25px; width: 88px; height: 88px"
+								:src="repairs" @click="imgOnclick(repairs)"> </template>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="sButton" type="submit" class="btn btn-sm btn-primary" @click="save" v-show="isZdAdmin">提交</button>
+							<input id="editB" type="button" class="btn btn-warning btn-sm pull-right" style="display:none"  @click="reload" value="返回"/>
+						</div>
+					</div>
+					<!-- 点击图片放大 -->
+					<div id="outerdiv"
+						style="position: fixed; top: 0; left: 0; background: rgba(0, 0, 0, 0.7); z-index: 2; width: 100%; height: 100%; display: none;">
+						<div id="innerdiv" style="position: absolute;">
+							<img id="bigimg" style="border: 5px solid #fff;" src="" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

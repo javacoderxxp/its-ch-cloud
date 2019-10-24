@@ -1,0 +1,172 @@
+<div id="trafficControl-panel" class="panel panel-primary"
+	style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通管制管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs"
+					onclick="TUtils.togglePanelBody()">
+					<i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i>
+				</button>
+				<button type="button" class="btn btn-default btn-xs" @click="close">
+					<i class="fa fa-close"></i>
+				</button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="myTab" class="nav nav-tabs">
+			<li id="liQuery" class="active"><a href="#trafficControlQuery"
+				data-toggle="tab">查询</a></li>
+			<li id="liDetail"><a href="#trafficControlDetail" v-show="isZdAdmin"
+				data-toggle="tab">登记</a></li>
+			<li id="liEdit" style="display: none"><a
+				href="#trafficControlDetail" data-toggle="tab">修改</a></li>
+			<li id="liPublish" v-show="publish" style="display: none"><a
+				href="#trafficControlDetail" data-toggle="tab">发布</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="trafficControlQuery">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">管制类型</div>
+						<div class="column col-sm-4">							
+							<select style="width:100px" id="typeId" name="typeId"  htmlEscape="false">
+								<option value="">所有</option>
+								<option value="0">道路施工占道</option>
+								<option value="1">交通警卫</option>
+								<option value="2">交通事故</option>
+								<option value="3">交通拥堵</option>
+								<option value="4">大型活动</option>
+								<option value="5">其他</option>
+							</select>
+
+						</div>
+						<div class="col-sm-2 control-label">开始时间</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" 
+							onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:$('#endTime').val()})"
+								id="startTime" name="startTime" readonly="readonly">
+						</div>
+
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">结束时间</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" 
+							onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:$('#startTime').val()})"
+								id="endTime" name="endTime" readonly="readonly">
+						</div>
+					</div>	
+
+					<div class="grid-btn" style="margin-bottom: 10px">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i
+							class="fa fa-pencil-square-o"></i>&nbsp;修改</a> <a class="btn btn-sm" v-show="isZdAdmin"
+							@click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+							<a class="btn btn-sm" v-show="isZdAdmin"
+							@click="publishToDriver"><i class="fa fa-tencent-weibo"></i>&nbsp;发布</a>
+					</div>
+				</div>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade" id="trafficControlDetail">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group" style="margin-top: 10px;">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-sm btn-default"
+								@click="addGrid">添加管制区域</button>
+						</div>
+						<div class="col-sm-4 onelinedis" style="margin-left: 20px;">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="region"
+								v-model="trafficControl.region" placeholder="管制区域点位"
+								readonly="readonly" required="required"> 
+								
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">标题</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control oneline" id="title" name="title"
+								v-model="trafficControl.title" placeholder="请输入标题"
+								required="required" maxlength="50"> 
+								
+						</div>
+						<label class="col-sm-2 control-label">管制类型</label>
+						<div class="column col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<select name="type" id="type" class="form-control oneline"
+								v-model="trafficControl.type" required="required">
+								<option value="">请选择</option>
+								<option value="0">道路施工占道</option>
+								<option value="1">交通警卫</option>
+								<option value="2">交通事故</option>
+								<option value="3">交通拥堵</option>
+								<option value="4">大型活动</option>
+								<option value="5">其他</option>
+							</select> 
+							
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">管制内容</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<textarea id="content" name="content oneline" placeholder="管制内容"
+								v-model="trafficControl.content" style="width: 155px;"
+								class="layui-textarea" maxlength="500" required="required">
+							</textarea>
+							
+						</div>
+						<label class="col-sm-2 control-label">路段长度</label>
+						<div class="col-sm-4 onelinedis">
+							<input type="text" class="form-control oneline" id="length" name="length"
+								v-model="trafficControl.length" placeholder="请输入路段长度"
+								maxlength="20"> 
+							
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始时间</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control form_datetime Wdate oneline" id="startDt"
+								name="startDt" placeholder="开始时间" required="required"
+								onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:$('#endDt').val()})"
+								readonly="readonly">
+								
+						</div>
+						<label class="col-sm-2 control-label">结束时间</label>
+						<div class="col-sm-4 onelinedis">
+							<span class="help-inline"><font color="red">*</font> </span>
+							<input type="text" class="form-control form_datetime Wdate oneline" id="endDt"
+								name="endDt" placeholder="结束时间" required="required"
+								onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:$('#startDt').val()})"
+								readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group" v-show="publish">
+						<label class="col-sm-2 control-label">短信内容</label>
+						<div class="col-sm-10">
+							<textarea id="msg" name="content oneline" placeholder="【太仓交警温馨提醒】"
+								style="width: 100%;margin: 0px;height: 78px;font-size: 12px;"
+								class="layui-textarea" maxlength="500">【太仓交警温馨提醒】</textarea>
+							
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="sButton" type="submit" class="btn btn-sm btn-primary" @click="save" v-show="isZdAdmin && !publish">提交</button>
+							&nbsp;&nbsp;
+							<button id="genBtn" type="button" class="btn btn-sm btn-primary" @click="generateExcel" v-show="isZdAdmin && publish">生成</button>
+							&nbsp;&nbsp;
+							<input id="editB" type="button" class="btn btn-warning btn-sm " style="display: none" @click="reload" value="返回" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

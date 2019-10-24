@@ -1,0 +1,136 @@
+<div id="school-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">学校
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">名称</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="schoolQ.mc" placeholder="名称" htmlEscape="false" />
+					</div>
+					<div class="col-sm-2 control-label">类型</div>
+					<div class="column col-sm-4">
+						<select class="form-control" v-model="schoolQ.lx" htmlEscape="false" >
+							<option value="">所有</option>
+							<option value="小学">小学</option>
+							<option value="中学">中学</option>
+							<option value="幼儿园">幼儿园</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="reset"><i class="fa fa-eraser"></i>&nbsp;重置</a>
+				<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-times"></i>&nbsp;删除</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="mc" class="col-sm-2 control-label">名称</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="mc" name="mc" v-model="school.mc" placeholder="名称" 
+							htmlEscape="false" required="required" maxlength="50"/>
+						
+					</div>
+					<label for="lx" class="col-sm-2 control-label">类型</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="lx" name="lx" v-model="school.lx" placeholder="类型（幼儿园、小学、中学）" 
+							htmlEscape="false" required="required" maxlength="5"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="dz" class="col-sm-2 control-label">地址</label>
+					<div class="col-sm-4 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="dz" name="dz" v-model="school.dz" placeholder="地址" 
+							htmlEscape="false" required="required" maxlength="200"/>
+						<input type="hidden" class="form-control oneline" id="zb" name="zb" v-model="school.zb" placeholder="坐标" 
+							htmlEscape="false" maxlength="100"/>
+					</div>
+					<label for="lxdh" class="col-sm-2 control-label">联系电话</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="lxdh" name="lxdh" v-model="school.lxdh" placeholder="联系电话" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="zgjgDm" class="col-sm-2 control-label">组织机构代码</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zgjgDm" name="zgjgDm" v-model="school.zgjgDm" placeholder="组织机构代码" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+					<label for="djzsDm" class="col-sm-2 control-label">登记证书代码</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="djzsDm" name="djzsDm" v-model="school.djzsDm" placeholder="登记证书代码" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="xcxz" class="col-sm-2 control-label">校车性质（自有、租赁）</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xcxz" name="xcxz" v-model="school.xcxz" placeholder="校车性质（自有、租赁）" 
+							htmlEscape="false" maxlength="10"/>
+					</div>
+					<label for="zndw" class="col-sm-2 control-label">租赁单位</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="zndw" name="zndw" v-model="school.zndw" placeholder="租赁单位" 
+							htmlEscape="false" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="xxfr" class="col-sm-2 control-label">学校法人</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xxfr" name="xxfr" v-model="school.xxfr" placeholder="学校法人" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="xxfrDh" class="col-sm-2 control-label">法人电话</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="xxfrDh" name="xxfrDh" v-model="school.xxfrDh" placeholder="法人电话" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="aqfzr" class="col-sm-2 control-label">安全负责人</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="aqfzr" name="aqfzr" v-model="school.aqfzr" placeholder="安全负责人" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+					<label for="aqfzrDh" class="col-sm-2 control-label">安全负责人电话</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="aqfzrDh" name="aqfzrDh" v-model="school.aqfzrDh" placeholder="安全负责人电话" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="aqfzrSfzh" class="col-sm-2 control-label">安全负责人身份证</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="aqfzrSfzh" name="aqfzrSfzh" v-model="school.aqfzrSfzh" placeholder="安全负责人身份证" 
+							htmlEscape="false" maxlength="20"/>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save"  v-show="isZdAdmin">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

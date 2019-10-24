@@ -1,0 +1,38 @@
+<div id="trafficFlowIndex-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通流量指数
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="form-horizontal">
+        <div class="col-md-12">
+            <div class="col-sm-2 control-label">日期</div>
+            <div class="column col-sm-4">
+                <input type="text" class="form-control form_datetime Wdate" id="startDtQ" v-model="vehiclePassQ.startDt" 
+                    @click="init97DateStart" 
+                    placeholder="日期" readonly="readonly" required="required">
+            </div>
+            <div class="col-sm-4 control-label">&nbsp;</div>
+            <div class="column col-sm-2">
+                <a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+            </div>
+        </div>
+		<div class="col-md-12">
+            <div class="column col-sm-12" style="text-align: right;">
+				<img alt="" src="./assets/images/trafficIndex.png">
+            </div>
+		</div>
+		<div class="col-md-12">
+			<div id="trafficIndexChart" style="width: 520px;height:300px;"></div>
+		</div>
+		<div class="col-md-12">
+			1.横坐标表示时间(小时)，纵坐标表示交通指数.<br/>
+			2.交通指数范围为0～10，分为五个等级：畅通（0-2）、基本畅通（2-4）、缓行（4-6）、较拥堵（6-8）、拥堵（8-10）。
+		</div>
+		</div>
+	</div>
+</div>

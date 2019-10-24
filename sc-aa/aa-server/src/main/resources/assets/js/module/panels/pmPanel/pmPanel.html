@@ -1,0 +1,142 @@
+<div id="pm-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">项目建设管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="projectQuery" v-show="showList">
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">项目类别</div>
+					<div class="column col-sm-4">
+						<select id="protype" class="form-control" v-model="projectQ.xmlb">
+							<option value="">所有</option>
+							<option value="硬件建设">硬件建设</option>
+							<option value="软件开发">软件开发</option>
+						</select>
+					</div>
+					<div class="col-sm-2 control-label">项目状态</div>
+					<div class="column col-sm-4">
+						<select id="prostatus" class="form-control" v-model="projectQ.xmzt">
+							<option value="">所有</option>
+							<option v-for="dict in projectStatusDicts" v-bind:value="dict.value">
+								{{dict.label}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">项目编号</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="projectQ.zdbh" placeholder="项目编号" htmlEscape="false"/>
+					</div>
+					<div class="col-sm-2 control-label">项目名称</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="projectQ.xmmc" placeholder="项目名称" htmlEscape="false"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-12">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						<a class="btn btn-sm" @click="detail"><i class="fa fa-search"></i>&nbsp;详情</a>
+						<a class="btn btn-sm" @click="relation"><i class="fa fa-link"></i>&nbsp;关联设备</a>
+					</div>
+				</div>
+			</div>
+		    <table id="jqGrid"></table>
+		    <div id="jqGridPager"></div>
+		</div>
+		<div id="dutyGridDetail" v-show="!showList">
+			<h5>项目详情</h5>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label class="col-sm-2"><b>项目编号</b></label>
+					<div class="column col-sm-4">
+						{{project.zdbh}}
+					</div>
+					<label class="col-sm-2"><b>项目类别</b></label>
+					<div class="col-sm-4">
+						{{project.xmlb}}
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2"><b>项目名称</b></label>
+					<div class="column col-sm-4">
+						{{project.xmmc}}
+					</div>
+					<label class="col-sm-2"><b>启动日期</b></label>
+					<div class="column col-sm-4">
+						{{project.qdsj}}
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2"><b>建设单位</b></label>
+					<div class="col-sm-4">
+						{{project.jsdw}}
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2"><b>项目简介</b></label>
+					<div class="col-sm-10" v-html="project.xmjj">
+					</div>
+				</div>
+			</form>
+			<h5>项目流水</h5>
+		    <div style="height: 300px; overflow-y: scroll" v-if="project.projectTraceList.length>0">
+				<table class="table table-striped">
+				    <thead>
+				    <tr>
+				        <th>流水编号</th>
+				        <th>流水类型</th>
+				        <th>实施人</th>
+				        <th>实施日期</th>
+				        <th>具体内容</th>
+				    </tr>
+				    </thead>
+				    <tbody>
+				    <tr v-for="projectTrace in project.projectTraceList">
+				    	<td>{{projectTrace.zdbh}}</td>
+				    	<td>{{projectTrace.lslx}}</td>
+				    	<td>{{projectTrace.ssr}}</td>
+				    	<td>{{projectTrace.sssj}}</td>
+				    	<td>
+				    		<a href="#" class="btn btn-sm btn-success" @click="showTraceContent(projectTrace.jtnr)">具体内容</a>
+				    	</td>
+				    </tr>
+				    </tbody>
+				</table>
+			</div>
+			<div v-if="project.projectTraceList.length == 0">无</div>
+			<input type="button" class="btn btn-warning btn-sm pull-right" @click="reload" value="返回"/>
+		</div>
+		<div id="shebeiRelation" style="display: none;width: 520px;">
+			<div class="form-group">
+				<label  class="col-sm-3 control-label">设备设施类型</label>
+			   	<div class="column col-sm-4">
+				   	<select name="deviceType" class="form-control"  @change="sbssSelect"
+				   	id="deviceType" v-model="ssType">
+					   	<option  value="1">信号机</option >
+					   	<option  value="2">卡口电警</option >
+						<option  value="3">诱导屏</option >
+						<option  value="4">交警大队监控</option>
+						<option  value="5">高空监控</option >
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="groupUsers" class="col-sm-1 control-label"></label>
+			   	<div class="col-sm-10" id="groupUserListCol" style="width: 480px;">
+				</div>
+			</div>	
+			<div class="form-group">	
+				<div class="col-sm-offset-2 col-sm-10" style="margin-top:25px">
+					<button id="frButton" v-show="isZdAdmin" type="submit" class="btn btn-sm btn-primary"  @click="relationSave">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../../css/app.css" />
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../../css/sceneStyle.css">
+	<link rel="stylesheet" href="../../../../css/jindustyle.css">
+	<link rel="stylesheet" href="../../../../plugins/font-awesome/css/font-awesome.min.css">
+<style type="text/css"> 
+	.error {
+		color: red;
+    }
+    .equipfont {
+   		 color: #aacbda;
+    }	
+    .list-group-item {
+	    border: 1px solid #254a5f;
+        background-color: rgb(19, 63, 88);
+	}
+	td {border-top: 1px solid #254a5f !important;}
+	th{ border-bottom: 2px solid #254a5f !important;}
+	.table-hover > tbody > tr:hover{
+		background-color: #999 !important;
+	}
+</style>
+
+<script type="text/javascript">
+var itsEnv = window.itsEnv = 'sit'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script>
+<!-- SIT 
+-->
+<script src="http://114.215.146.210:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=a38637152661536811426544710c5a2c"></script>
+<!-- PROD
+<script src="http://192.168.15.4:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=96afef81bcb8de97f2687b41d6f4d07a"></script>
+-->
+
+<!--[if lt IE 9]> 
+	<script type="text/javascript" src="../../../../plugins/loadMap.js"/> 
+<![endif]-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/theme/walden.js"></script>
+<script type="text/javascript" src="../../../../js/module/signal/js/loadMap.js"></script>
+<!--//进度条左2-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jindujquery.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/index.js"></script>
+<!--//数字动画-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.waypoints.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.countup.min.js"></script>
+<title>大型活动和安保警卫可视化场景</title>
+</head>
+
+<body style="background: #133f58;">
+	<div id="mapContainer2"></div>
+	<!--//left地图块-->
+	<div class="centermap" style="top:0px;left:0px;height:56%;width:50%">
+    	<div style="width:100%;height:100%;position: relative;">
+    		<div class="lefttop"></div>
+	        <div class="righttop"></div>
+	        <div class="leftbot"></div>
+	        <div class="rightbot"></div>
+	        <div class="bigtitle">
+				<h6 style="color:#cae5fb;letter-spacing:4px">太仓市公安局交通警察大队</h6>
+			</div>
+	        <div class="conmain"  style="padding:4px;width:100%;height:100%;">
+	        	<div style="width:100%;height:100%;" id="mapContainer"></div>
+			</div>
+	    </div>
+	</div>
+	<div id="imptDiv" >
+		<!--//2-->
+		<div class="threecentervideotable">
+			<div style="width:100%;height:100%;position: relative;">
+	    		<div class="lefttop"></div>
+		        <div class="righttop"></div>
+		        <div class="leftbot"></div>
+		        <div class="rightbot"></div>
+	  			<div class="rightone">
+	   				<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">视频窗口</span>
+					</div>
+					<div class="equipfont" style="position:absolute;top:4%;width:100%;height:45%;">
+						<object classid="clsid:D5E14042-7BF6-4E24-8B01-2F453E8154D7" id="PlayViewOCX" name="ocx">
+          							    </object>
+					</div>
+	  			</div>
+		       
+		  	</div>
+		</div>
+	<!--//2 end-->
+	
+	<!--//底部视频 start-->
+		<div id="countpannel" class="bottomtable">
+	    	<div style="width:100%;height:100%;position: relative;">
+	    		<div class="lefttop"></div>
+		        <div class="righttop"></div>
+		        <div class="leftbot"></div>
+		        <div class="rightbot"></div>
+		        <table style="width:100%;height:100%;">
+		        	<tr>
+		        		<td style="width:50%">
+		        			<div class="bottomtableborder">
+		        				<div class="equipfont">
+									<span style="font-weight: bold;">视频列表</span>
+									<!-- <object classid="clsid:D5E14042-7BF6-4E24-8B01-2F453E8154D7" id="PlayViewOCX" name="ocx">
+          							    </object> -->
+          						</div>
+								<div id="jwtDevDiv" class="equipfont" style="position:absolute;top:4%;width:50%;height:100%;">
+          							<ul class="list-group">
+										<li class="list-group-item" style="height:50px;background-color: #033447;" v-for="(item,index) in relatedVideos " @mouseenter="deventer(item.video)"
+											@mouseleave="devleave(item.video)"><span style="float:left;">{{index+1}}</span> 
+											<div :title="item.video.deviceName" style="overflow: hidden;width: 170px;display: block;text-overflow: ellipsis;white-space: nowrap;float: left;">{{item.video.deviceName}}</div>
+											<button type="button" class="btn btn-link btn-sm" @click="removeFromVideoList(index)" style="float: right;">
+												<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+											</button>
+											<button type='button' class='btn btn-link btn-sm' style="float: right;"
+												@click="openOneVideo(index,item)">
+												<span class='glyphicon glyphicon-play' aria-hidden='true'></span>
+											</button></li>
+									</ul>
+								</div>
+								</div>
+		       				</div>
+		        		</td>
+		        		<td style="width:50%">
+		        			<div class="bottomtableborder">
+		        				<div class="equipfont">
+									<span style="font-weight: bold;">警力列表</span>
+								</div>
+								<div id="videoDiv" class="equipfont" style="position:absolute;top:4%;width:50%;height:100%;">
+									<table class="table table-hover" style="height:90%;">
+										<thead>
+											<tr>
+												<th width="40%">警员编号</th>
+												<th width="40%">警员姓名</th>
+												<th width="20%">状态</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr v-for="item in allGpsDevList" class="pconcent">
+												<td>{{item.policeNo}}</td>
+												<td>{{item.policeName}}</td>
+												<td>{{item.status=='0'?'在线':'离线'}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								</div>
+		       				</div>
+		        		</td>
+		        	</tr>
+		        </table>
+			</div>
+		</div>
+		<!--//底部视频 end-->
+	</div>
+	
+	<script type="text/javascript" src="securityGuardScene.js"></script>
+	<!--//滚动条-->
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.min_1.js"></script>
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.jquery.min_1.js"></script>
+	<link rel="stylesheet" href="../../../../plugins/jQuery/perfect-scrollbar.min_1.css" />
+	<script>
+		$('#jwtDevDiv').perfectScrollbar();
+		$('#videoDiv').perfectScrollbar();
+	</script>
+</body>
+
+</html>

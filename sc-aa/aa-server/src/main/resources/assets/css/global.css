@@ -1,0 +1,35 @@
+@CHARSET "UTF-8";
+.display-none, .display-hide {
+	display: none; 
+ }
+
+.asterisk-red {
+	color: red;
+	font-size: 150%;
+ }
+ 
+.error {
+	color: red;
+ }
+.ui-pg-selbox {
+    width: 40px !important;
+    }
+    
+select, select.form-control {
+    font-size: 14px !important;
+}
+/*.ui-jqgrid-hdiv{
+	width:1016px !important;
+}
+.ui-jqgrid-view{
+	width:1018px !important;
+}
+.ui-jqgrid-bdiv{
+	width:1018px !important;
+}
+.ui-corner-bottom{
+	width:1016px !important;
+}
+.ui-corner-all{
+	width:1018px !important;
+}*/

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.its.aa.server.model.repo.AaUserRepo">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.its.aa.common.model.entity.AaUser">
+        <id column="ID" property="id" />
+        <result column="CREATE_DT" property="createDt" />
+        <result column="CREATE_BY" property="createBy" />
+        <result column="UPDATE_DT" property="updateDt" />
+        <result column="UPDATE_BY" property="updateBy" />
+        <result column="DEL_FLAG" property="delFlag" />
+        <result column="USER_ID" property="userId" />
+        <result column="USER_NAME" property="userName" />
+        <result column="PASSWORD" property="password" />
+        <result column="GROUP_ID" property="groupId" />
+        <result column="TYPE" property="type" />
+        <result column="SEX" property="sex" />
+        <result column="POLICE_NO" property="policeNo" />
+        <result column="EMAIL" property="email" />
+        <result column="PHONE_NUM" property="phoneNum" />
+        <result column="ACTIVE" property="active" />
+        <result column="LAST_LOGIN_DT" property="lastLoginDt" />
+        <result column="LAST_LOGIN_IP" property="lastLoginIp" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, CREATE_DT, CREATE_BY, UPDATE_DT, UPDATE_BY, DEL_FLAG, USER_ID, USER_NAME, PASSWORD, GROUP_ID, TYPE, SEX, POLICE_NO, EMAIL, PHONE_NUM, ACTIVE, LAST_LOGIN_DT, LAST_LOGIN_IP
+    </sql>
+    <update id="addGroupUser" parameterType="com.its.aa.common.model.entity.AaGroup">
+        update t_aa_user T1
+        <set>
+            T1.group_id = #{groupId,jdbcType=VARCHAR}
+        </set>
+        where 1=1
+        and T1.user_id in
+        <foreach item="user" index="index" collection="userList" open="(" separator="," close=")">
+            #{user.userId, jdbcType=VARCHAR}
+        </foreach>
+    </update>
+    <delete id="deleteGroupUser" parameterType="com.its.aa.common.model.entity.AaGroup">
+        update t_aa_user T1 SET group_id = null
+        where 1=1
+            and group_id = #{groupId,jdbcType=VARCHAR}
+    </delete>
+
+    <!--<delete id="deleteaaa">-->
+        <!--DELETE FROM aa_user t1-->
+        <!--WHERE t1.ID = #{id}-->
+    <!--</delete>-->
+
+    <select id="getByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from t_aa_user where user_name=#{username}
+    </select>
+    <select id="findTreeNodeList" resultType="com.its.aa.common.model.vo.TreeNode">
+        SELECT  user_id as id, user_name as name, group_id as pId
+        FROM t_aa_user t1
+        WHERE 1=1
+        <if test="groupId != null and groupId !=''">
+            AND t1.group_id = #{groupId}
+        </if>
+        AND t1.del_flag = '0'
+    </select>
+
+    <select id="findGroupUser" resultType="com.its.aa.common.model.entity.AaUser" parameterType="com.its.aa.common.model.entity.AaGroup">
+        select
+            T1.ID, T1.CREATE_DT, T1.CREATE_BY, T1.UPDATE_DT,T1.UPDATE_BY, T1.DEL_FLAG, T1.USER_ID, T1.USER_NAME, T1.PASSWORD, T1.GROUP_ID, T1.TYPE, T1.SEX, T1.POLICE_NO,T1.EMAIL, T1.PHONE_NUM, T1.ACTIVE, T1.LAST_LOGIN_DT, T1.LAST_LOGIN_IP
+        from t_aa_user T1, t_aa_group T2
+        where 1=1
+        AND T1.GROUP_ID = T2.GROUP_ID
+        AND T2.GROUP_ID = #{groupId,jdbcType=VARCHAR}
+    </select>
+    <select id="findUserList" resultType="com.its.aa.common.model.entity.AaUser">
+        SELECT
+        T1.ID as id, T1.CREATE_DT as createDt, T1.CREATE_BY as createBy, T1.UPDATE_DT as updateDt,T1.UPDATE_BY as updateBy, T1.DEL_FLAG as delFlag, T1.USER_ID as userId, T1.USER_NAME as userName, T1.PASSWORD as password, T1.GROUP_ID as groupId, T1.TYPE as type, T1.SEX as sex, T1.POLICE_NO as policeNo,T1.EMAIL as email, T1.PHONE_NUM as phoneNum , T1.ACTIVE as active, T1.LAST_LOGIN_DT as lastLoginDt, T1.LAST_LOGIN_IP as lastLoginIp,
+               (select m.group_name from t_aa_group m where m.group_id = t1.group_id) as "group.groupName"
+        FROM t_aa_user t1
+        WHERE 1=1
+        <if test="userId != null and userId !=''">
+            AND t1.user_id like '%${userId}%'
+        </if>
+        <if test="userName != null and userName !=''">
+            AND t1.user_name like '%${userName}%'
+        </if>
+        <if test="policeNo != null and policeNo !=''">
+            AND t1.police_no like '%${policeNo}%'
+        </if>
+        <if test="type != null and type !=''">
+            AND t1.type = #{type}
+        </if>
+        <if test="group!= null and group.groupId != null and group.groupId !=''">
+            AND t1.group_id = #{group.groupId}
+        </if>
+        AND t1.del_flag = 0
+    </select>
+
+</mapper>

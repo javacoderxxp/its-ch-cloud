@@ -1,0 +1,89 @@
+<div id="jtsg-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通事故监测
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">事故编号</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="jtsgQ.sgbh" placeholder="事故编号" htmlEscape="false" />
+					</div>
+					<div class="col-sm-2 control-label">事故地点</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="jtsgQ.fadd" placeholder="事故地点" htmlEscape="false" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">办案单位</div>
+					<div class="column col-sm-4">
+						<select class="form-control selectpicker" id="vBadwQ" v-model="jtsgQ.vBadw">
+							<option v-for="vBadw in vBadwList" v-bind:value="vBadw" data-icon="fa fa-sitemap">
+								{{vBadw}}
+							</option>
+						</select>
+					</div>
+					<div class="col-sm-2 control-label">经办人</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="jtsgQ.jbr" placeholder="经办人" htmlEscape="false" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">开始时间</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="startDtQ" v-model="jtsgQ.startDt" 
+							@click="init97DateStart" 
+							placeholder="开始时间" readonly="readonly" required="required">
+					</div>
+					<div class="col-sm-2 control-label">结束时间</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control form_datetime Wdate" id="endDtQ" v-model="jtsgQ.endDt" 
+							@click="init97DateEnd" 
+							placeholder="结束时间" readonly="readonly" required="required">
+					</div>
+				</div>
+				<!-- <div class="form-group">
+					<div  class="col-sm-2 control-label"></div>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-xs btn-success" @click="areaSearch"><i class="fa fa-pencil"></i>绘制区域</button>
+						<button type="button" class="btn btn-xs btn-danger" @click="resetSearchArea"><i class="fa fa-close"></i>清除区域</button>
+					</div>
+					<div  class="col-sm-2 control-label"></div>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-xs btn-success" @click="addShape"><i class="fa fa-pencil"></i>绘制线条</button>
+						<button type="button" class="btn btn-xs btn-danger" @click="resetSearchArea"><i class="fa fa-close"></i>清除线条</button>
+					</div>
+				</div> -->
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询数据</a>
+				&nbsp;
+				 <a class="btn btn-sm" @click="areaSearch"><i class="fa fa-search"></i>&nbsp;区域查询</a>
+				&nbsp;
+				 <a class="btn btn-sm" @click="addShape"><i class="fa fa-search"></i>&nbsp;划线查询</a>
+				&nbsp;
+				<!-- 
+				<a class="btn btn-sm" @click="queryBlackCross"><i class="fa fa-road"></i>&nbsp;路口黑点</a>
+				&nbsp;
+				<br/>
+				<span class="help-inline" style="margin-left:20px"><font color="red">*路口事故,查询路口半径100米内的事故;主城区范围有效</font> </span>
+				 -->
+				<!-- 事故黑点功能暂时不开放
+				
+				<a class="btn btn-sm" @click="queryBlackCross"><i class="fa fa-search"></i>&nbsp;事故黑点</a>
+				&nbsp;
+				<br/>
+				<span class="help-inline" style="margin-left:20px"><font color="red">*黑点,查询事故高发的前十个路口(只允许按照日期和办案单位查询);只有主城区范围有效</font> </span>
+				 -->
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+	</div>
+</div>

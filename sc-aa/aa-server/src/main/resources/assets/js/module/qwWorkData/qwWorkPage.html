@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../css/app.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+	<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+	<link rel="stylesheet" href="../../../css/account.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+<style type="text/css"> 
+	.error {
+		color: red;
+    }
+    .nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 25px;}
+    .tablescrollbar{
+    	height: 500px;
+    	overflow-y: scroll;
+    }
+    .imgsize{
+    	width:60px;
+    	height:60px;
+    	    margin-left: 15%;
+    }	
+     .imgsizeon{
+    	width:60px;
+    	height:60px;
+    }	
+</style>
+
+<script type="text/javascript" src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<title>警务工作汇总</title>
+</head>
+
+<body>
+	<header>
+		<div class="headerfont">
+			<div class="backgroundimg onerow"></div>
+			<div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+				<p>太仓市公安局交通警察大队</p>
+				<p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</header>
+		
+<div id="vue-app" class="content-wrapper" style="margin-left: 0px;margin-top: 50px;background-color: #fff;">
+	
+	<!-- Main content -->
+	<div class="panel panel-primary" style="width: 100%; margin-bottom: 0px">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				警务工作汇总
+			</h3>
+		</div>
+		<div class="panel-body" >
+			<div id="queryDate" class="panel panel-default">
+				<div class="form-horizontal" style="width: auto;">
+					<div class="form-group">
+						<div class="col-sm-1 control-label" style="margin-top: 8px;">开始时间</div>
+						<div class="column col-sm-2">
+							<input type="text" class="form-control form_datetime Wdate" id="startDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+						</div>
+						<div class="col-sm-1 control-label" style="margin-top: 8px;">结束时间</div>
+						<div class="column col-sm-2">
+							<input type="text" class="form-control form_datetime Wdate" id="endDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+						</div>
+						<div class="col-sm-8" style="width:140px; padding-top:5px;" >
+							<a class="btn btn-success btn-sm" @click="query()"><i class="fa fa-search"></i>&nbsp;查询</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="panel-group">
+			<div class="tab-pane active">
+				<!-- 大队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">交警大队</h4>
+					</div>
+					<div class="panel-body">
+						<div style="max-height: 500px; overflow-y: auto;">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th width="10%">中队</th>
+										<th width="10%">现场处罚</th>
+										<th width="10%">记分处罚</th>
+										<th width="10%">非机</th>
+										<th width="10%">行人</th>
+										<th width="10%">不记分处罚</th>
+										<th width="10%">强制凭证</th>
+										<th width="10%">违停拍照</th>
+										<th width="10%">处警</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="item in ddList">
+										<td>{{item.groupName}}</td>
+										<td>{{item.xcCount}}</td>
+										<td>{{item.jfCount}}</td>
+										<td>{{item.fjCount}}</td>
+										<td>{{item.xrCount}}</td>
+										<td>{{item.bjfCount}}</td>
+										<td>{{item.qzpzCount}}</td>
+										<td>{{item.wtpzCount}}</td>
+										<td>{{item.cjCount}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<!-- 城厢中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="cxzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#cxzd" id="cxzdLink">
+								城厢中队
+							</a>
+						</h4>
+					</div>
+					<div id="cxzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in cxzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<!-- 港区中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="gqzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#gqzd" id="gqzdLink">
+								港区中队
+							</a>
+						</h4>
+					</div>
+					<div id="gqzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in gqzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- 璜泾中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="hjzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#hjzd" id="hjzdLink">
+								璜泾中队
+							</a>
+						</h4>
+					</div>
+					<div id="hjzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in hjzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- 开发区中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="kfqzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#kfqzd" id="kfqzdLink">
+								开发区中队
+							</a>
+						</h4>
+					</div>
+					<div id="kfqzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in kfqzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+					<!-- 浏河中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="lhzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#lhzd" id="lhzdLink">
+								浏河中队
+							</a>
+						</h4>
+					</div>
+					<div id="lhzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in lhzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+					<!-- 南郊中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="njzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#njzd" id="njzdLink">
+								南郊中队
+							</a>
+						</h4>
+					</div>
+					<div id="njzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in njzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+					<!-- 沙溪中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="sxzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#sxzd" id="sxzdLink">
+								沙溪中队
+							</a>
+						</h4>
+					</div>
+					<div id="sxzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in sxzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+					<!-- 双凤中队 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="sfzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#sfzd" id="sfzdLink">
+								双凤中队
+							</a>
+						</h4>
+					</div>
+					<div id="sfzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="10%">民警姓名</th>
+											<th width="10%">民警部门</th>
+											<th width="10%">现场处罚</th>
+											<th width="10%">记分处罚</th>
+											<th width="10%">非机</th>
+											<th width="10%">行人</th>
+											<th width="10%">不记分处罚</th>
+											<th width="10%">强制凭证</th>
+											<th width="10%">违停拍照</th>
+											<th width="10%">处警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in sfzdList">
+											<td>{{item.userName}}</td>
+											<td>{{item.groupName}}</td>
+											<td>{{item.xcCount}}</td>
+											<td>{{item.jfCount}}</td>
+											<td>{{item.fjCount}}</td>
+											<td>{{item.xrCount}}</td>
+											<td>{{item.bjfCount}}</td>
+											<td>{{item.qzpzCount}}</td>
+											<td>{{item.wtpzCount}}</td>
+											<td>{{item.cjCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../../js/module/qwWorkData/qwWorkPage.js"></script>
+</html>

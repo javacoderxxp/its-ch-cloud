@@ -1,0 +1,46 @@
+<div id="linkJam-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">交通拥堵查询
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="linkJamQuery" >
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">道路类型</div>
+						<div class="column col-sm-4">
+							<select class="form-control" id="typeId" name="typeId"  htmlEscape="false" >
+								<option value="">所有</option>
+								<option value="10">高速</option> 	                
+								<option value="1">非高速</option> 	                
+								<option value="2">轮渡</option> 	                
+								<option value="3">桥梁</option> 	                
+								<option value="4">隧道</option>
+							</select>
+						</div>
+						<div class="col-sm-2 control-label">发生时间</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="startTime" name="startTime" 
+								@click="init97DateStart" 
+								readonly="readonly">
+						</div>
+						
+					</div>
+					<div class="form-group">
+						
+						<div class="col-sm-6">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						</div>
+					</div>
+				</div>
+			    <table id="jqGrid"></table>
+			    <div id="jqGridPager"></div>
+			</div>
+		</div>
+	</div>
+</div>

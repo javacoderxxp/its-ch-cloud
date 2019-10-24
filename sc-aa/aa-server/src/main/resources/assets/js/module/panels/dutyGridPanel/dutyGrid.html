@@ -1,0 +1,129 @@
+<div id="dutyGrid-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">勤务社区管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="dutyGridQuery" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-6">
+						<select v-if="currentUser.jjddUser" class="form-control selectpicker" id="groupIdQ" v-model="dutyGridQ.groupId">
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select>
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupIdQ" v-model="dutyGridQ.groupId"/>
+						</template>
+					</div>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-xs btn-default" @click="toggleZdLayer"><i class="fa fa-adjust"></i>&nbsp;中队辖区</button>
+						<button type="button" class="btn btn-xs btn-default" @click="toggleGroupGrids(1)"><i class="fa fa-th"></i>&nbsp;勤务社区</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-10">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						<a class="btn btn-sm" @click="add" v-show="isZdAdmin"><i class="fa fa-plus"></i>&nbsp;新增</a>
+						<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+						<a class="btn btn-sm" @click="purge" v-show="isZdAdmin"><i class="fa fa-times"></i>&nbsp;删除</a>
+					</div>
+				</div>
+			</div>
+		    <table id="jqGrid"></table>
+		    <div id="jqGridPager"></div>
+		</div>
+		<div id="dutyGridDetail" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">所属中队</label>
+					<div class="column col-sm-6">
+						<select v-if="currentUser.jjddUser" class="form-control selectpicker" id="groupId" v-model="dutyGrid.group.groupId" required="required">
+							<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+								{{group.groupName}}
+							</option>
+						</select> 
+						<template v-if="currentUser.jjzdUser">
+							<span>{{currentUser.group.groupName}}</span>
+							<input type="hidden" id="groupId" v-model="dutyGrid.group.groupId"/>
+						</template>
+					</div>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-xs btn-default" @click="toggleZdLayer"><i class="fa fa-adjust"></i>&nbsp;中队辖区</button>
+						<button type="button" class="btn btn-xs btn-default" @click="toggleGroupGrids(2)"><i class="fa fa-th"></i>&nbsp;勤务社区</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="userIds" class="col-sm-2 control-label">社区民警</label>
+					<div class="col-sm-6">
+						<select class="form-control selectpickerU" id="userIds" multiple>
+							<option v-for="(user,index) in groupUserList"  v-bind:value="user.userId" data-icon="fa fa-user">
+							{{user.userName}} ({{(user.type == 'MJ')?'民警':'警辅'}})</option>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label">定位</label>
+					<div class="col-sm-2">
+						<button type="button" class="btn btn-xs btn-default" @click="highlightDutyGrid"><i class="fa fa-map-marker"></i>&nbsp;</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="gridId" class="col-sm-2 control-label">社区编号</label>
+					<div class="col-sm-4">
+						<!-- 
+						<input type="text" class="form-control" id="gridId" name="gridId" v-model="dutyGrid.gridId" placeholder="社区编号" 
+							required="required" maxlength="10">
+						<span class="help-inline"><font color="red">*</font> </span>
+						-->
+						{{dutyGrid.gridId}}
+					</div> 
+					<label for="gridName" class="col-sm-2 control-label">社区名称</label>
+					<div class="col-sm-4 onelinedis">
+						<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control oneline" id="gridName" name="gridName" v-model="dutyGrid.gridName" placeholder="社区名称" 
+							required="required" maxlength="20">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">添加社区</label>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-xs btn-default" @click="addDutyGrid">绘制</button>
+						<button type="button" class="btn btn-xs btn-danger" @click="clearDutyGrid">清除</button>
+					</div>
+					<div class="col-sm-6 onelinedis">
+						<span class="help-inline"><font color="red">*</font></span>
+						<input type="text" class="form-control oneline" id="shape" v-model="dutyGrid.shape" placeholder="社区点位" readonly="readonly" 
+							required="required">
+						<span v-if="false">锚点数{{pointCnt}}</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">描述</label>
+					<div class="col-sm-10">
+						<textarea rows="2" cols="" class="form-control" id="description" name="description" v-model="dutyGrid.description" placeholder="描述"
+							maxlength="200"></textarea>
+					</div>
+				</div>
+                <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">责任区详情</label>
+                    <div class="col-sm-10">
+                        <textarea rows="5" cols="" class="form-control" id="detailInfo" name="detailInfo" v-model="dutyGrid.detailInfo" placeholder="责任区详情"
+                            maxlength="1000"></textarea>
+                    </div>
+                </div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" class="btn btn-sm btn-primary" @click="save" v-show="isZdAdmin">提交</button>
+						<button type="button" class="btn btn-sm btn-warning" @click="reload">返回</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

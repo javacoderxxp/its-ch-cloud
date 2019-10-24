@@ -1,0 +1,153 @@
+<div id="alarmTask-panel" class="panel panel-primary" style="width: 600px;">
+	<div class="panel-heading">
+		<h3 class="panel-title" style="font-size:16px;">
+			警情信息一览
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="myTab" class="nav nav-tabs">
+			<li class="active">
+				<a href="#home" data-toggle="tab" style="font-size:14px;">
+					警情信息
+				</a>
+			</li>
+			<li>
+				<a href="#alarmStatistics" data-toggle="tab" style="font-size:14px;">
+					警情统计
+				</a>
+			</li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="home">
+				<div class="panel panel-default">
+					<div class="form-horizontal" style="width: auto;">
+						<div class="form-group" style="margin-top: 5px">
+							<div class="col-sm-2 control-label" style="font-size:12px;">开始时间</div>
+							<div class="column col-sm-4"  style="">
+								<input type="text" class="form-control form_datetime Wdate" id="startDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+							</div>
+							<div class="col-sm-2 control-label" style="font-size:12px;">结束时间</div>
+							<div class="col-sm-4" style="">
+								<input type="text" class="form-control form_datetime Wdate" id="endDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+							</div>
+						</div>
+					</div>
+					<div class="form-horizontal" style="width: auto;">
+						<div class="form-group" style="margin-top: 5px">
+							<div class="col-sm-2 control-label" style="font-size:12px;">处警结果</div>
+							<div class="column col-sm-4" style="">
+								<select class="form-control" id="eventRstCode" style="font-size:12px;">
+									<option value="" selected="selected" class="normalfont">全部</option>
+									<option v-for="dict in alarmTaskRstType" v-bind:value="dict.value" class="normalfont">
+										{{dict.label}}
+									</option>
+								</select>
+						    </div>
+						    <div class="col-sm-2 control-label" style="font-size:12px;" v-show="isddUser">所属中队</div>
+							<div class="column col-sm-4" style=""  v-show="isddUser">
+								<select class="form-control" id="teamId" style="font-size:12px;">
+									<option value="" selected="selected" class="normalfont">全部</option>
+									<option v-for="team in teamList" v-bind:value="team.groupId" class="normalfont">
+										{{team.groupName}}
+									</option>
+								</select>
+						    </div>
+						</div>
+						<div class="form-group" style="margin-top: 5px">
+							<div class="col-sm-2 control-label">修正状态</div>
+							<div class="column col-sm-4">
+								<label><input type="radio" v-model="manualFlag" value="0">未修正</label>
+								<label><input type="radio" v-model="manualFlag" value="1">已修正</label>
+							</div>
+							<div class="col-sm-2">
+								<a class="btn btn-success btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+								<!-- <a id="export_pass" class="btn btn-success btn-sm" @click="exportExcel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a> -->
+							</div>
+							
+							<div class="col-sm-3">
+								<div class="custom-control custom-checkbox" >
+							      <input type="checkbox" class="custom-control-input" @click="drawHeatmap" id="customCheck1" name="customCheck">
+							      <label class="custom-control-label" for="customCheck1">显示点位</label>
+							    </div>
+						    </div>
+						</div>
+					</div>
+				</div>
+				<div class="jqGrid_wrapper" style="margin-top: 10px;margin-left: -5px;margin-right: -5px;">
+					<table id="alarmTaskTb" class="layui-table"></table>
+					<div id="alarmPager"></div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="alarmStatistics">
+				<!-- 条件部分 -->
+				<div class="form-horizontal">
+					<div class="form-group"  style="margin-bottom: 0px;margin-top: 15px;">
+						<div class="col-sm-12">
+							<a class="btn btn-sm" @click="byMonth"><i class="fa fa-calendar-times-o"></i>&nbsp;月</a> 
+							<a class="btn btn-sm" @click="byWeek"><i class="fa fa-calendar-check-o"></i>&nbsp;周</a>
+							<a class="btn btn-sm" @click="byDay"><i class="fa fa-calendar-o"></i>&nbsp;日</a>
+							<span class="help-inline" style="margin-left:20px"><font color="red">当前时刻减去30、7、1天为月、周、日的周期</font> </span>
+						</div>
+					</div>
+				</div>
+				<!-- start summary chart -->
+				<div class="panel-body">
+					<!--<h5>基本信息</h5>-->
+					<ul class="nav nav-tabs" style="height: 40px;">
+						<li class="active"><a href="#alarmStatsTab" data-toggle="tab">警情状态统计</a></li>
+						<li><a href="#modifyTab" data-toggle="tab">警情修正率统计</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane fade in active" id="alarmStatsTab">
+							<div id="echarts-div" style="height:370px;margin-top:30px;"></div>
+						</div>
+						<div class="tab-pane fade" id="modifyTab">
+							<!-- 警情修正图表部分  start -->
+							<table style="width:100%;">
+								<tr v-for="item in modifyPercent">
+									<td width="25%">{{item.teamDesc}}</td>
+									<td>
+										<div class="progress progress-striped active" style="margin-right: 5px;height:23px;">
+											<div class="progress-bar progress-bar-success" role="progressbar"
+												 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+												 v-bind:style="'width:' + item.modifyPercent">
+												<span >{{item.modifyPercent}}</span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+							<!-- <div class="form-horizontal" style="width: auto;">
+								<div style="width: 530px;height:50px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-3 control-label" style="margin-top: 10px; width:100px;">刘桥中队</div>
+										<div class="column col-sm-9" style="height:50px;">
+											<div class="progress progress-striped active" style="margin-top: 18px;margin-right: 5px;height:23px;">
+												<div id="modifyAlarmPosDiv" class="progress-bar progress-bar-success" role="progressbar"
+													 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+													 v-bind:style="'width:' + modifyPercent">
+													<span id="modifyAlarmPosSpan">{{modifyPercent}}</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div> -->
+							
+						</div>
+					</div>
+				</div>
+				<!-- end summary chart -->
+			</div>
+		</div>
+	</div>
+	<!-- <div class="panel-body" style="padding-top:0px">
+		<table id="alarmTaskTb" class="layui-table"></table>
+		<div id="alarmPager"></div>
+	</div> -->
+
+</div>

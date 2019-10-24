@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../css/app.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+	<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+	<link rel="stylesheet" href="../../../css/account.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+<style type="text/css"> 
+	.error {
+		color: red;
+    }
+    .nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 25px;}
+    .tablescrollbar{
+    	height: 500px;
+    	overflow-y: scroll;
+    }
+    .imgsize{
+    	width:60px;
+    	height:60px;
+    	    margin-left: 15%;
+    }	
+     .imgsizeon{
+    	width:60px;
+    	height:60px;
+    }	
+</style>
+
+<!-- <script type="text/javascript">
+var itsEnv = window.itsEnv = 'sit'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script> -->
+
+<script type="text/javascript" src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<title>基础数据汇总</title>
+</head>
+
+<body>
+	<header>
+		<div class="headerfont">
+			<div class="backgroundimg onerow"></div>
+			<div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+				<p>太仓市公安局交通警察大队</p>
+				<p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</header>
+		
+<div id="vue-app" class="content-wrapper" style="margin-left: 0px;margin-top: 50px;background-color: #fff;height:100%;overflow:auto;">
+	
+	<!-- Main content -->
+	<div class="panel panel-primary" style="width: 100%; margin-bottom: 0px">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				勤务管理督察表
+				<div class="btn-group pull-right">
+					<!-- <button type="button" class="btn btn-default btn-xs" @click="outputWord"><i class="fa fa-file-word-o"></i>导出word</button>  -->
+					<!-- <a style="margin-right: 1000; /* display:none; */" id="test" @click="download">下载</a> -->
+					<a class="btn btn-sm" @click="outputWord" style="height:23px;"><i class="fa fa-file-word-o"></i>&nbsp;生成word</a> 
+					<a class="btn btn-sm" @click="download" style="height:23px;" v-show="isShowDownload"><i class="fa fa-file-word-o"></i>&nbsp;下载word</a> 
+				</div>
+			</h3>
+		</div>
+		<!--<div style="margin: auto;width: 90%;">
+			<table style="text-align: center;" cellspacing=30>
+				<tr>
+					<td style="padding:6px"><div style="width:150px;height:150px;background:#DDDDDD"></div>
+						<div><h6>勤务社区汇总</h6></div>
+					</td>
+					<td style="padding:6px"><div style="width:150px;height:150px;background:#DDDDDD"></div>
+						<div><h6>早晚高峰岗位</h6></div>
+					</td>
+					<td style="padding:6px"><div style="width:150px;height:150px;background:#DDDDDD"></div>
+						<div><h6>交通违法处罚</h6></div>
+					</td>
+					<td style="padding:6px"><div style="width:150px;height:150px;background:#DDDDDD"></div>
+						<div><h6>拥堵治理</h6></div>
+					</td>
+					<td style="padding:6px"><div style="width:150px;height:150px;background:#DDDDDD"></div>
+						<div><h6>15次未检排查</h6></div>
+					</td>
+					<td style="padding:6px"><div style="width:150px;height:150px;background:#DDDDDD"></div>
+						<div><h6>安全隐患排查</h6></div>
+					</td>
+				</tr>
+			</table>
+		</div>-->
+		<div style="margin: auto;width: 95%;">
+			<ul id="myTab" class="nav nav-tabs" style="text-align: center;">
+				<li class="active">
+					<a href="#qwsqhz" data-toggle="tab" @click="query('qwsqhz')">
+						<div class="imgsize" style="background:url('../../../images/shequ.png') no-repeat;background-size:100%"></div>
+						<div><h6>勤务社区汇总</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#zwgfgw" data-toggle="tab" @click="query('zwgfgw')">
+						<div class="imgsize" style="background:url('../../../images/zwgf.png') no-repeat;background-size:100%"></div>
+						<div><h6>早晚高峰岗位</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#jtwfcf" data-toggle="tab" @click="query('jtwfcf')">
+						<div class="imgsize" style="background:url('../../../images/weifa.png') no-repeat;background-size:100%"></div>
+						<div><h6>交通违法处罚</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#wjpc" data-toggle="tab" @click="query('wjpc')">
+						<div class="imgsize" style="background:url('../../../images/15ci.png') no-repeat;background-size:100%"></div>
+						<div><h6>15次违法未处理</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#aqyhpc" data-toggle="tab" @click="query('aqyhpc')">
+						<div class="imgsize" style="background:url('../../../images/aqyhpc.png') no-repeat;background-size:100%"></div>
+						<div><h6>安全隐患排查</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#ptrw" data-toggle="tab" @click="query('ptrw')">
+						<div class="imgsizeon" style="background:url('../../../images/pticon.png') no-repeat;background-size:100%"></div>
+						<div><h6>任务指令</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#jsz" data-toggle="tab" @click="query('jsz')">
+						<div class="imgsizeon" style="background:url('../../../images/jsz.png') no-repeat;background-size:100%"></div>
+						<div><h6>驾驶证</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#clgl" data-toggle="tab" @click="query('clgl')">
+						<div class="imgsizeon" style="background:url('../../../images/qiche.png') no-repeat;background-size:100%"></div>
+						<div><h6>车辆管理</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#zdqy" data-toggle="tab" @click="query('zdqy')">
+						<div class="imgsizeon" style="background:url('../../../images/zdqy.png') no-repeat;background-size:100%"></div>
+						<div><h6>重点企业</h6></div>
+					</a>
+				</li>
+				<li>
+					<a href="#aqxc" data-toggle="tab" @click="query('aqxc')">
+						<div class="imgsize" style="background:url('../../../images/qwaqxc.png') no-repeat;background-size:100%"></div>
+						<div><h6>交通安全宣传</h6></div>
+					</a>
+				</li>
+			</ul>
+			
+		</div>
+		<div class="panel-body" >
+			<div id="queryDate" class="panel panel-default" style="display:none;">
+				<div class="form-horizontal" style="width: auto;">
+					<div class="form-group">
+						<div class="col-sm-1 control-label" style="margin-top: 8px;">开始时间</div>
+						<div class="column col-sm-2">
+							<input type="text" class="form-control form_datetime Wdate" id="startDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+						</div>
+						<div class="col-sm-1 control-label" style="margin-top: 8px;">结束时间</div>
+						<div class="col-sm-2">
+							<input type="text" class="form-control form_datetime Wdate" id="endDt" style="font-size:12px;" @click="init97DateStart" readonly/>
+						</div>
+						<div class="col-sm-8" style="width:140px; padding-top:5px;" >
+							<a class="btn btn-success btn-sm" @click="query(ts)"><i class="fa fa-search"></i>&nbsp;查询</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel-group" id="accordion">
+			<!--------------->
+			<!-- 勤务网格区 -->
+			<div id="myTabContent" class="tab-content">
+				<div class="tab-pane fade in active" id="qwsqhz">
+					<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-down" id="collapseOneLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseOne" id="collapseOneLink">
+								勤务社区汇总
+							</a>
+						</h4>
+					</div>
+					<div id="collapseOne" class="panel-collapse collapse in">
+						<div class="panel-body">
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:150px;font-size:13px;margin-left: -7px;"><b>网格责任区总数：</b></div>
+										<div class="column col-sm-1">
+											{{dutyGridTotal}}
+										</div>
+										<div class="col-sm-1 control-label" style="width:80px;font-size:13px;"><b>民警：</b></div>
+										<div class="column col-sm-1" >
+											{{policeTotal}}
+										</div>
+										<div class="col-sm-1 control-label" style="width:80px;font-size:13px;"><b>辅警：</b></div>
+										<div class="col-sm-1" >
+											{{assistantPoliceTotal}}
+										</div>
+										<div class="col-sm-5"></div>
+									</div>
+								</div>
+							</div>
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="20%">中队名称</th>
+											<th width="20%">网格责任区</th>
+											<th width="20%">民警</th>
+											<th width="20%">辅警</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in dutyGridList">
+											<td>{{item.groupName}}</td>
+											<td>{{item.dutyGridCnt}}</td>
+											<td>{{item.policeCnt}}</td>
+											<td>{{item.assistantPoliceCnt}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+				<!-- 早晚高峰岗位统计 -->
+				<div class="tab-pane fade" id="zwgfgw">
+					<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-down" id="collapseTwoLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseTwo" id="collapseTwoLink">
+								早晚高峰岗位
+							</a>
+						</h4>
+					</div>
+					<div id="collapseTwo" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:130px;font-size:13px;margin-left: -7px;"><b>执勤岗点总数：</b></div>
+										<div class="column col-sm-1">
+											{{rhPointTotal}}
+										</div>
+										<div class="col-sm-2 control-label" style="width:150px;font-size:13px;"><b>执勤警力总数：</b></div>
+										<div class="column col-sm-1" >
+											{{rhPoliceTotal}}
+										</div>
+										<div class="col-sm-6"></div>
+									</div>
+								</div>
+							</div>
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="20%">中队名称</th>
+											<th width="20%">执勤警力数</th>
+											<th width="20%">早岗点执勤人数</th>
+											<th width="20%">晚岗点执勤人数</th>
+											<th width="15%">岗点总数</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in rhPostList">
+											<td>{{item.groupName}}</td>
+											<td>{{item.policeCnt}}</td>
+											<td>{{item.zgfCnt}}</td>
+											<td>{{item.wgfCnt}}</td>
+											<td>{{item.pointCnt}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- 
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:160px;font-size:13px;margin-left: -7px;"><b>执勤岗点总数：</b></div>
+										<div class="column col-sm-1">
+											{{rhPointTotal}}
+										</div>
+										<div class="col-sm-2 control-label" style="width:160px;font-size:13px;margin-left: -7px;"><b>执勤警力总数：</b></div>
+										<div class="column col-sm-1">
+											{{rhPoliceTotal}}
+										</div>
+										<div class="col-sm-6"></div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="row" style="margin-left: 1px;margin-right: 1px;margin-top: 4px;"  v-for="item in rhPostList">
+							      	<div class="col-sm-1">
+							            {{item.groupName}}
+							        </div>
+							        <div class="col-sm-2">
+							             	执勤警力数：
+							        </div>
+							        <div class="col-sm-1">
+							            {{item.policeCnt}}
+							        </div>
+							        <div class="col-sm-2">
+							            	早岗点执勤人数：
+							        </div>
+							        <div class="col-sm-1">
+							            {{item.zgfCnt}}
+							        </div>
+							        <div class="col-sm-2">
+							            	晚岗点执勤人数：
+							        </div>
+							        <div class="col-sm-1">
+							            {{item.wgfCnt}}
+							        </div>
+							        <div class="col-sm-1">
+							            	岗点总数：
+							        </div>
+							        <div class="col-sm-1">
+							            {{item.pointCnt}}
+							        </div>
+							    </div>
+							</div> -->
+						</div>
+					</div>
+				</div>
+				</div>
+			<!--------------->
+			<div class="tab-pane fade" id="jtwfcf">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-down" id="collapseThreeLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseThree" id="collapseThreeLink">
+								交通违法处罚
+							</a>
+						</h4>
+					</div>
+					<div id="collapseThree" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:160px;font-size:13px;margin-left: -7px;"><b>交通违法处罚总数：</b></div>
+										<div class="column col-sm-1">
+											{{violatedTotal}}
+										</div>
+										<div class="col-sm-9"></div>
+									</div>
+								</div>
+							</div>
+							<div class="tablescrollbar">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in violateList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in violateList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.dutyGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.violateCnt:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<!-- 
+								<div class="row" style="margin-left: 1px;margin-right: 1px;margin-top: 4px;"  v-for="item in violateList">
+							      	<div class="col-sm-1">
+							            {{item.groupName}}
+							        </div>
+							        <div class="col-sm-2" v-for="sub in item.dutyGridList">
+							            <div class="row">
+								            <div class="col-sm-9">
+								            	{{sub.gridName?sub.gridName+':':'-'}}
+								        	</div>
+								        	<div class="col-sm-3">
+								            	{{sub.gridName?sub.violateCnt:'-'}}
+								        	</div>
+								        </div>
+							        </div>
+							    </div> -->
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+				
+				<!-- 交通治理统计 -->
+				<!-------------------->
+				<div class="tab-pane fade" id="wjpc">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-down" id="collapseFiveLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseFive" id="collapseFiveLink">
+								15次违法未处理(逾期未检)
+							</a>
+						</h4>
+					</div>
+					<div id="collapseFive" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:110px;font-size:13px;margin-left: -7px;"><b>排查总数：</b></div>
+										<div class="column col-sm-1">
+											{{djwfTotalCnt}}
+										</div>
+										<div class="col-sm-9"></div>
+									</div>
+								</div>
+							</div>
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="20%">中队名称</th>
+											<th width="15%">排查总数</th>
+											<th width="15%">已分配</th>
+											<th width="15%">未分配</th>
+											<th width="15%">已排查</th>
+											<th width="15%">未排查</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in qwList_djwf">
+											<td>{{item.groupName}}</td>
+											<td v-show="item.totalCnt==0">{{item.totalCnt}}</td>
+											<td v-show="item.totalCnt!=0"><a
+												@click="djwfswList(item.groupId,'1',item.groupName,'排查总数')"
+												style="height: 23px; cursor: pointer; color: #000000;">{{item.totalCnt}}</a>
+											</td>
+											
+											<td v-show="item.fromPeopleCnt==0" style="color: #05c3d8;">{{item.fromPeopleCnt}}</td>
+											<td v-show="item.fromPeopleCnt!=0"><a
+												@click="djwfswList(item.groupId,'2',item.groupName,'已分配')"
+												style="height: 23px; cursor: pointer; color: #05c3d8;">{{item.fromPeopleCnt}}</a></td>
+											
+											<td v-show="item.fromGovCnt==0" style="color: #e0b203;">{{item.fromGovCnt}}</td>
+											<td v-show="item.fromGovCnt!=0"><a
+												@click="djwfswList(item.groupId,'3',item.groupName,'未分配')"
+												style="height: 23px; cursor: pointer; color: #e0b203;">{{item.fromGovCnt}}</a></td>
+											
+											<td v-show="item.processCnt==0" style="color: #05c3d8;">{{item.processCnt}}</td>
+											<td v-show="item.processCnt!=0"><a
+												@click="djwfswList(item.groupId,'5',item.groupName,'已排查')"
+												style="height: 23px; cursor: pointer; color: #05c3d8;">{{item.processCnt}}</a></td>
+											
+											<td v-show="item.unprocessCnt==0" style="color: #E66300;">{{item.unprocessCnt}}</td>
+											<td v-show="item.unprocessCnt!=0"><a
+												@click="djwfswList(item.groupId,'4',item.groupName,'未排查')"
+												style="height: 23px; cursor: pointer; color: #E66300;">{{item.unprocessCnt}}</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- 
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:160px;font-size:13px;margin-left: -7px;"><b>排查总数：</b></div>
+										<div class="column col-sm-1">
+											{{djwfTotalCnt}}
+										</div>
+										<div class="col-sm-9"></div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="row" style="margin-left: 1px;margin-right: 1px;margin-top: 4px;"  v-for="item in qwList_djwf">
+							      	<div class="col-sm-1">
+							            {{item.groupName}}
+							        </div>
+							        <div class="col-sm-2">
+							             	排查总数：
+							        </div>
+							        <div class="col-sm-1">
+							            {{item.totalCnt}}
+							        </div>
+							        <div class="col-sm-2">
+							             	已排查：
+							        </div>
+							        <div class="col-sm-1">
+							            {{item.processCnt}}
+							        </div>
+							        <div class="col-sm-2">
+							            	未排查：
+							        </div>
+							        <div class="col-sm-1">
+							            {{item.unprocessCnt}}
+							        </div>
+							        <div class="col-sm-2">
+							        </div>
+							    </div>
+							</div> -->
+						</div>
+					</div>
+				</div>
+				</div>
+				
+				<div class="tab-pane fade" id="aqyhpc">
+				<!-- 安全隐患排查统计 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-down" id="collapseSixLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseSix" id="collapseSixLink">
+								安全隐患排查
+							</a>
+						</h4>
+					</div>
+					<div id="collapseSix" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="font-size:13px;margin-left: 5px; text-align: left"><b>安全隐患排查总数(起)：</b></div>
+										<div class="column col-sm-1">
+											{{hiddenTotal}}
+										</div>
+										<div class="col-sm-6"></div>
+									</div>
+								</div>
+							</div>
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="20%">中队名称</th>
+											<th width="15%">总数(起)</th>
+											<th width="15%">群众上报(起)</th>
+											<th width="15%">已处理(起)</th>
+											<th width="15%">未处理(起)</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in hiddenDangerList">
+											<td>{{item.groupName}}</td>
+											<td>{{item.totalCnt}}</td>
+											<td>{{item.fromPeopleCnt}}</td>
+											<td style="color: #05c3d8;">{{item.processCnt}}</td>
+											<td style="color: #e0b203;">{{item.unprocessCnt}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+				
+				<div class="tab-pane fade" id="ptrw">
+				<!-- 平台任务统计 -->
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-down" id="collapseSevenLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseSeven" id="collapseSevenLink">
+								任务指令
+							</a>
+						</h4>
+					</div>
+					<div id="collapseSeven" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>任务指令总数：</b></div>
+										<div class="column col-sm-1">
+											{{missionFinished+missionUnfinish+missionUnsign}}
+										</div>
+										<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>未签收总数：</b></div>
+										<div class="column col-sm-1">
+											{{missionUnsign}}
+										</div>
+										<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>已签收未完成总数：</b></div>
+										<div class="column col-sm-1">
+											{{missionUnfinish}}
+										</div>
+										<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>已完成总数：</b></div>
+										<div class="column col-sm-1">
+											{{missionFinished}}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="tablescrollbar">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th width="20%">中队名称</th>
+											<th width="15%">总数</th>
+											<th width="15%">未签收</th>
+											<th width="15%">已签收未完成</th>
+											<th width="15%">已完成</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in missionList">
+											<td>{{item.group.groupName}}</td>
+											<td>{{item.totalCnt}}</td>
+											<td style="color: #e0b203;">{{item.unSignCnt}}</td>
+											<td style="color: #E14F1C;">{{item.unFinishCnt}}</td>
+											<td style="color: #05c3d8;">{{item.finishedCnt}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+				
+				<!--start驾驶证状态统计 -->
+				<div class="tab-pane fade" id="jsz">
+				
+				<div class="panel panel-default">
+					<div class="form-horizontal" style="width: auto; margin-left:4px;">
+						<div class="form-group" style="margin-top: 5px">
+							<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>满12分总数：</b></div>
+							<div class="column col-sm-1">
+								{{jszCf}}
+							</div>
+							<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>吊销总数：</b></div>
+							<div class="column col-sm-1">
+								{{jszDx}}
+							</div>
+							<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>暂扣总数：</b></div>
+							<div class="column col-sm-1">
+								{{jszZk}}
+							</div>
+							<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>涉毒总数：</b></div>
+							<div class="column col-sm-1">
+								{{jszSd}}
+							</div>
+						</div>
+					</div>
+				</div>
+							
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="collapseEightLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseEight" id="collapseEightLink">
+								驾驶证满12分状态统计
+							</a>
+						</h4>
+					</div>
+					<div id="collapseEight" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in jszRankList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in jszRankList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.jszGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.cf:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="collapseNineLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseNine" id="collapseNineLink">
+								驾驶证吊销状态统计
+							</a>
+						</h4>
+					</div>
+					<div id="collapseNine" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in jszRankList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in jszRankList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.jszGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.dx:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="collapseTenLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseTen" id="collapseTenLink">
+								驾驶证暂扣状态统计
+							</a>
+						</h4>
+					</div>
+					<div id="collapseTen" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in jszRankList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in jszRankList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.jszGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.zk:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="jszSdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#jszSd" id="jszSdLink">
+								涉毒
+							</a>
+						</h4>
+					</div>
+					<div id="jszSd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in jszSdList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in jszSdList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.dutyGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.violateCnt:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				</div>
+				<!--end 驾驶证状态统计 -->
+				
+				<!------交通安全宣传--------->
+			<div class="tab-pane fade" id="aqxc">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-down" id="collapseAqxcLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseAqxc" id="collapseAqxcLink">
+								交通安全宣传
+							</a>
+						</h4>
+					</div>
+					<div id="collapseAqxc" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="panel panel-default">
+								<div class="form-horizontal" style="width: auto; margin-left:4px;">
+									<div class="form-group" style="margin-top: 5px">
+										<div class="col-sm-2 control-label" style="width:160px;font-size:13px;margin-left: -7px;"><b>交通安全宣传总数：</b></div>
+										<div class="column col-sm-1">
+											{{aqxcTotal}}
+										</div>
+										<div class="col-sm-9"></div>
+									</div>
+								</div>
+							</div>
+							<div class="tablescrollbar">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in aqxcList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in aqxcList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.dutyGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.violateCnt:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+				
+				<!--start 车辆状态统计 -->
+				<div class="tab-pane fade" id="clgl">
+				
+				<div class="panel panel-default">
+					<div class="form-horizontal" style="width: auto; margin-left:4px;">
+						<div class="form-group" style="margin-top: 5px">
+							<div class="col-sm-2 control-label" style="width:200px;font-size:13px;margin-left: 5px;"><b>违法未处理重点车辆总数：</b></div>
+							<div class="column col-sm-1">
+								{{wfzdTotal}}
+							</div>
+							<div class="col-sm-2 control-label" style="width:200px;font-size:13px;margin-left: 5px;"><b>逾期未年检重点车辆总数：</b></div>
+							<div class="column col-sm-1">
+								{{wnjzdTotal}}
+							</div>
+							<div class="col-sm-2 control-label" style="width:200px;font-size:13px;margin-left: 5px;"><b>超一周期未年检车辆总数：</b></div>
+							<div class="column col-sm-1">
+								{{cyzqwnjTotal}}
+							</div>
+						</div>
+					</div>
+				</div>
+							
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="wfwclzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#wfwclzd" id="wfwclzdLink">
+								违法未处理重点车辆
+							</a>
+						</h4>
+					</div>
+					<div id="wfwclzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in wfzdList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in wfzdList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.dutyGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.violateCnt:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="wnjzdLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#wnjzd" id="wnjzdLink">
+								逾期未年检重点车辆
+							</a>
+						</h4>
+					</div>
+					<div id="wnjzd" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in wnjzdList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in wnjzdList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.dutyGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.violateCnt:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="cyzqwnjLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#cyzqwnj" id="cyzqwnjLink">
+								超一周期未年检车辆
+							</a>
+						</h4>
+					</div>
+					<div id="cyzqwnj" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in cyzqwnjList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in cyzqwnjList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.dutyGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.violateCnt:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				</div>
+				<!--end 车辆状态统计 -->
+				
+				<div class="tab-pane fade" id="zdqy">
+				
+				<div class="panel panel-default">
+					<div class="form-horizontal" style="width: auto; margin-left:4px;">
+						<div class="form-group" style="margin-top: 5px">
+							<div class="col-sm-2 control-label" style="width:170px;font-size:13px;margin-left: 5px;"><b>重点企业总数：</b></div>
+							<div class="column col-sm-1">
+								{{zdqyCnt}}
+							</div>
+						</div>
+					</div>
+				</div>
+							
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<i class="fa fa-caret-right" id="collapseZdqyLabel"></i>
+							<a data-toggle="collapse" data-parent="#accordion" 
+							   href="#collapseZdqy" id="collapseZdqyLink">
+								重点企业统计
+							</a>
+						</h4>
+					</div>
+					<div id="collapseZdqy" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div style="max-height: 500px;overflow-y: auto;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th v-for="item in zdqyList">{{item.groupName}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td v-for="item in zdqyList">
+												<table class="table table-hover">
+													<tr v-for="sub in item.dutyGridList">
+														<td>{{sub.gridName?sub.gridName+':':'-'}}</td>
+														<td>{{sub.gridName?sub.constCnt:'-'}}</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				</div>
+			</div>
+		</div>
+		
+		<!-- 15次未检排查DIV start -->
+		<div id="postAlarmTaskDiv" v-show='false'>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+			<div style="margin-left: 65%; margin-top: 20px;">
+			<a id='xzExecl' class="btn btn-sm" href="" style="height:23px;">&nbsp;点击下载Excel表格</a> </div>
+		</div>
+		<!-- 15次未检排查DIV end -->
+		
+	</div>
+</body>
+<script type="text/javascript" src="../../../js/module/qwInspect/qwInspectSummary.js"></script>
+</html>

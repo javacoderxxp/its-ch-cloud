@@ -1,0 +1,114 @@
+body input {
+		margin: 0;
+		padding: 0;
+	}
+	body{
+		height: 100%;
+	}
+.tduser{
+	height:50px;
+	text-align: right;
+	color:#2196F3;
+	font-size: 14px;
+	font-family: "microsoft yahei";
+	width:38%;
+}
+.tdinput{
+    border: 1px solid #2196F3;
+    height: 30px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    font-size: 16px;
+    color:#555555;
+    width:80%;
+    
+}
+.loginbtn{
+    border: 0;
+    height:30px;
+    background: #2196f3;
+    color: #ffffff;
+    border-radius: 2px;
+    text-align: center;
+    box-shadow: 0 0 4px 2px #cccccc;
+    font-size: 14px;
+        width: 80%;
+}
+#userId  #password{
+    background-color: #fffffff !important;
+    background-image: none;
+    color: #666666 !important;
+}
+.form-group {
+    margin-bottom: 0px !important;
+}
+.alert {
+    padding: 15px;
+    margin-bottom: 0px !important;
+    }
+/*.bodycolor{
+	FILTER: Alpha( style=1,opacity=25,finishOpacity=100,   
+	startX=50,finishX= 100,startY=50,finishY=100);   
+	background-color: #2196F3;   
+}
+.bulepannel{
+	margin: 15% auto;width:40%;height:100%;background-color: #1775bf;border-radius: 30px;padding: 0.1% 1% 0.5% 1%;
+}
+.titlecss{
+	font-size: 0.6em;display: block;margin-top: 2%;font-family: monospace;
+}
+.loginimg{
+	
+    margin-left: 10%;
+    width: 40%;
+    padding: 9% 30% 9% 0%;;
+}
+.imgimg{
+    width: 40%;
+    height: 310px;
+    float: left;
+    margin: 10% 6% 5% 10%;
+}
+#rememberMe{
+	 content: "";
+    display: block;
+    width: 14px;
+    height: 14px;
+    margin-top: 0px;
+    margin-right: 5px;
+    border: 2px solid #666666;
+    border-radius: 2px;
+    -webkit-transition: 240ms;
+    -o-transition: 240ms;
+    transition: 240ms;
+}
+.inputloginbtn{
+	border-radius: 4px;
+    border: 1px solid #fff;
+}
+
+.login-box, .register-box {
+  
+    width: 70%;
+    margin: 5% auto;
+
+
+}
+.logoimg {
+    width: 30%;
+    height: 30%;
+    border-radius: 60px;
+}
+.whitepannel{
+	border-radius: 4px;
+       box-shadow: 0px 2px 20px #c7c8ca;
+}
+.login-box-body, .register-box-body {
+    padding: 1.5em !important;
+}
+.login-box-msg, .register-box-msg {
+    padding: 0 1.5em 1.5em 1.5em !important;
+}
+.form-group {
+    margin-bottom: 1em !important;
+}*/

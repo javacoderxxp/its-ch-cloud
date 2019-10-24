@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../css/app.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+	<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+	<link rel="stylesheet" href="../../../css/account.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap-duallistbox/bootstrap-duallistbox.min.css" />
+	<link rel="stylesheet" href="../../../plugins/contextjs/context.standalone.css" />
+<style type="text/css"> 
+	table{border-collapse:collapse;border-spacing:0}
+		td{
+			border:1px solid #ababab;
+			height: 30px;
+			text-align: center;
+		}
+		td input{
+			border:none;
+			width:100%;
+			height:100%;
+		}
+		.lasttr{
+			border:0px;
+			text-align: left;
+		}
+</style>
+
+<!-- <script type="text/javascript">
+var itsEnv = window.itsEnv = 'sit'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script> -->
+
+<script type="text/javascript" src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<script type="text/javascript" src='../../../plugins/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js'></script>
+<script type="text/javascript" src='../../../plugins/contextjs/context.js'></script>
+<title>勤务安排</title>
+</head>
+
+<body>
+	<header>
+		<div class="headerfont">
+			<div class="backgroundimg onerow"></div>
+			<div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+				<p>太仓市公安局交通警察大队</p>
+				<p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</header>
+		
+<div id="vue-app" class="content-wrapper" style="margin-left: 0px;margin-top: 50px;background-color: #fff;overflow:auto;height:100%;">
+	
+	<!-- Main content -->
+	<div class="panel panel-primary" style="width: 100%; margin-bottom: 0px">
+		<div class="panel-heading" style="text-align:center;cursor:pointer">
+			<h3 class="panel-title" >
+				<select id="groupIdQ" name="groupId" v-model="gId" v-if="currentUser.jjddUser" @change="query">
+					<option v-for="group in groupList" v-bind:value="group.groupId" data-icon="fa fa-sitemap">
+						{{group.groupName}}
+					</option>
+				</select>
+				<template v-if="currentUser.jjzdUser">
+					<span style="font-size:15px">{{currentUser.group.groupName}}&nbsp;&nbsp;&nbsp;</span>
+				</template>
+				<!-- <span id="scheduleDt" v-if="currentUser.jjddUser" style="font-size:15px">{{qwab}}</span> --> 
+				<span id="scheduleDt" v-if="currentUser.jjzdUser" @click="init97DateStart" style="font-size:15px">{{qwab}}</span> 
+				&nbsp;&nbsp;&nbsp;勤务安排
+			</h3>
+		</div>
+		<div class="panel-body" >
+				<table width="100%">
+				    <thead>
+                        <tr>
+                            <td class="lasttr" colspan="5">填表说明：1、民警可以多选；2、辅警必须是数字。<b>(双击民警表格打开民警选择列表)</b><!-- ——<span id="trGn" style="font-size:15px">{{gName}}</span> --></td>
+                            <td class="lasttr" colspan="4" style="text-align:right;">
+                                <template v-if="currentUser.jjddUser" >
+	                                <a class="btn btn-sm" @click="nextWeek(-1)">&nbsp;上一周</a>
+                                     &nbsp;&nbsp;
+	                                <a class="btn btn-sm" @click="thisWeek(0)">&nbsp;当周</a>
+                                     &nbsp;&nbsp;
+	                                <a class="btn btn-sm" @click="lastWeek(1)">&nbsp;下一周</a>
+                                </template>
+                                <template v-if="currentUser.jjzdUser" >
+	                                <a id="frButton" class="btn btn-sm" v-show="isZdAdmin" @click="save">提交</a>
+	                                 &nbsp;&nbsp;&nbsp;&nbsp;
+	                                <a class="btn btn-sm" v-show="isZdAdmin" @click="cloneLastMonth"><i class="fa fa-copy"></i>&nbsp;复制上月</a>
+	                                &nbsp;
+	                                <a class="btn btn-sm btn-danger" v-show="isZdAdmin" @click="clearCurMonth"><i class="fa fa-times"></i>&nbsp;清空当月</a>
+                                </template>
+                            </td>
+                            <td class="lasttr" colspan="3" style="text-align:center;">
+                            	<a class="btn btn-sm" @click="qwGroup">&nbsp;中队勤务</a>
+                                &nbsp;&nbsp;
+                                <a class="btn btn-sm" @click="exportExcel"><i class="fa fa-file"></i>&nbsp;导出</a>
+                                &nbsp;&nbsp;
+                                <a class="btn btn-sm" @click="downloadExcel" v-if="fileName !=''"><i class="fa fa-download"></i>&nbsp;下载</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" width="5%">日期</td>
+                            <td colspan="2" width="15%">早班</td>
+                            <td colspan="2" width="15%">晚班</td>
+                            <td colspan="2" width="15%">日班</td>
+                            <td colspan="2" width="15%">窗口</td>
+                            <td colspan="2" width="15%">事故处理</td>
+                            <td colspan="2" width="15%">值班</td>
+                        </tr>
+                        <tr>
+                            <td width="12%">民警</td>
+                            <td width="4%">辅警</td>
+                            <td width="12%">民警</td>
+                            <td width="4%">辅警</td>
+                            <td width="12%">民警</td>
+                            <td width="4%">辅警</td>
+                            <td width="12%">民警</td>
+                            <td width="4%">辅警</td>
+                            <td width="12%">民警</td>
+                            <td width="4%">辅警</td>
+                            <td width="12%">民警</td>
+                            <td width="4%">辅警</td>
+                        </tr>
+				    </thead>
+					<tbody id="qwScheduleTable">
+						<tr v-for="(item, index) in scheduleList" >
+							<td :style="item.currentWeek?'background-color: #9AFF9A':''">{{item.scheduleDt}}</td>
+							<td width="11%">
+								<input type=text :id="'mPolice'+index" v-model="item.mPolice" @dblclick="relation(index,'mPolice')" @mousedown="trclick(item.scheduleDt,'早班')" maxlength="200" :style="item.currentWeek?'background-color: #9AFF9A':''">
+							</td>
+							<td width="4%"><input type=text :id="'mAuxiliary'+index" v-model="item.mAuxiliary"
+								style="text-align:center;"
+								 onkeyup="value=value.replace(/[^\d]/g,'') " ng-pattern="/[^a-zA-Z]/" maxlength="3" :style="item.currentWeek?'background-color: #9AFF9A':''"></td>
+							<td width="11%">
+								<input type=text :id="'nPolice'+index"  v-model="item.nPolice" @dblclick="relation(index,'nPolice')" @mousedown="trclick(item.scheduleDt,'晚班')" maxlength="200" :style="item.currentWeek?'background-color: #9AFF9A':''">
+							</td>
+							<td width="4%"><input type=text :id="'nAuxiliary'+index" v-model="item.nAuxiliary"
+								style="text-align:center;"
+							 	onkeyup="value=value.replace(/[^\d]/g,'') " ng-pattern="/[^a-zA-Z]/" maxlength="3" :style="item.currentWeek?'background-color: #9AFF9A':''"></td>
+							<td width="11%">
+								<input type=text :id="'tPolice'+index"  v-model="item.tPolice" @dblclick="relation(index,'tPolice')" @mousedown="trclick(item.scheduleDt,'日班')" maxlength="200" :style="item.currentWeek?'background-color: #9AFF9A':''">
+							</td>
+							<td width="4%"><input type=text :id="'tAuxiliary'+index" v-model="item.tAuxiliary"
+								style="text-align:center;"
+								 onkeyup="value=value.replace(/[^\d]/g,'') " ng-pattern="/[^a-zA-Z]/" maxlength="3" :style="item.currentWeek?'background-color: #9AFF9A':''"></td>
+							<td width="11%">
+								<input type=text :id="'cPolice'+index"  v-model="item.cPolice" @dblclick="relation(index,'cPolice')" @mousedown="trclick(item.scheduleDt,'窗口')" maxlength="200" :style="item.currentWeek?'background-color: #9AFF9A':''">
+							</td>
+							<td width="4%"><input type=text :id="'cAuxiliary'+index" v-model="item.cAuxiliary"
+								style="text-align:center;"
+								onkeyup="value=value.replace(/[^\d]/g,'') " ng-pattern="/[^a-zA-Z]/" maxlength="3" :style="item.currentWeek?'background-color: #9AFF9A':''"></td>
+							<td width="11%">
+								<input type=text :id="'sPolice'+index" v-model="item.sPolice" @dblclick="relation(index,'sPolice')" @mousedown="trclick(item.scheduleDt,'事故处理')" maxlength="200" :style="item.currentWeek?'background-color: #9AFF9A':''">
+							</td>
+							<td width="4%"><input type=text :id="'sAuxiliary'+index" v-model="item.sAuxiliary"
+								style="text-align:center;"
+								onkeyup="value=value.replace(/[^\d]/g,'') " ng-pattern="/[^a-zA-Z]/" maxlength="3" :style="item.currentWeek?'background-color: #9AFF9A':''"></td>
+							<td width="11%">
+								<input type=text :id="'zPolice'+index"  v-model="item.zPolice" @dblclick="relation(index,'zPolice')" @mousedown="trclick(item.scheduleDt,'值班')" maxlength="200" :style="item.currentWeek?'background-color: #9AFF9A':''">
+							</td>
+							<td width="4%"><input type=text :id="'zAuxiliary'+index" v-model="item.zAuxiliary"
+								style="text-align:center;"
+								onkeyup="value=value.replace(/[^\d]/g,'') " ng-pattern="/[^a-zA-Z]/" maxlength="3" :style="item.currentWeek?'background-color: #9AFF9A':''"> </td>
+						</tr>
+						<tr>
+							<td>时间</td>
+							<td colspan="2">7:00-14:30</td>
+							<td colspan="2">14:30-22:00</td>
+							<td colspan="6">8:30-17:00</td>
+							<td colspan="2"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="shebeiRelation" style="display: none;width: 520px;">
+				<div class="form-group">
+					<label for="groupUsers" class="col-sm-4 control-label">警员列表</label>
+				   	<div class="col-sm-1">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="groupUsers" class="col-sm-1 control-label"></label>
+				   	<div class="col-sm-10" id="groupUserListCol" style="width: 480px;">
+					</div>
+				</div>	
+				<div class="form-group">	
+					<div class="col-sm-10" style="margin-top:25px;">
+						<button id="frButton" type="submit" class="btn btn-sm btn-primary pull-right"  @click="relationSave">确定</button>
+					</div>
+				</div>
+			</div>	
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../../js/module/qwSchedule/qwSchedule.js"></script>
+</html>

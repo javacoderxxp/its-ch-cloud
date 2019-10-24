@@ -1,0 +1,267 @@
+<div id="zxjgTask-panel" class="panel panel-primary" style="width: 650px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">勤务现场任务
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+                    <div class="col-sm-2 control-label">所属中队</div>
+                    <div class="column col-sm-4">
+                        <select v-if="currentUser.jjddUser" class="form-control" id="groupIdQ" v-model="zxjgTaskQ.groupId" @change="loadGridsByChangeGroup">
+                            <option v-for="group in groupList" v-bind:value="group.groupId">
+                                {{group.groupName}}
+                            </option>
+                        </select>
+                        <template v-if="currentUser.jjzdUser">
+                            <span>{{currentUser.group.groupName}}</span>
+                            <input type="hidden" id="groupIdQ" v-model="zxjgTaskQ.groupId"/>
+                        </template>
+                    </div>
+                    <div class="col-sm-2 control-label">责任区</div>
+                    <div class="column col-sm-4">
+                        <select name="type" class="form-control" v-model="zxjgTaskQ.gridId">
+                            <option v-for="dutyGrid in dutyGridList" v-bind:value="dutyGrid.gridId" data-icon="fa fa-sitemap">
+                                {{dutyGrid.gridName}}
+                            </option>
+                        </select>
+                    </div>
+				</div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">任务类型</div>
+                    <div class="column col-sm-4">
+                        <select class="form-control " v-model="zxjgTaskQ.taskType">
+                            <option value="">所有</option>
+                            <option value="15GQ">15次违法未处理(逾期未检)</option>
+                            <option value="15G">15次违法未处理(无逾期未检)</option>
+                            <!-- <option value="5G">5次违法未处理</option> -->
+                            <option value="Q">未年检重点车辆</option>
+                            <option value="G">违法未处理重点车辆</option>
+                            <option value="C">超一个周期未年检车辆</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2 control-label">车牌号</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control" id="plateNoQ" v-model="zxjgTaskQ.plateNo" placeholder="车牌号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">开始时间</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control form_datetime Wdate" id="startDtQ" v-model="zxjgTaskQ.startDt" 
+                            @click="init97DateStart" placeholder="开始时间" readonly="readonly" required="required">
+                    </div>
+                    <div class="col-sm-2 control-label">结束时间</div>
+                    <div class="column col-sm-4">
+                        <input type="text" class="form-control form_datetime Wdate" id="endDtQ" v-model="zxjgTaskQ.endDt" 
+                            @click="init97DateEnd" placeholder="结束时间" readonly="readonly" required="required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">是否超期</div>
+                    <div class="col-sm-4">
+                        <select class="form-control " v-model="zxjgTaskQ.overdue">
+                            <option value="">所有</option>
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2 control-label">完成状态</div>
+                    <div class="column col-sm-4">
+                        <select class="form-control " v-model="zxjgTaskQ.completeStatus">
+                            <option value="">所有</option>
+                            <option value="0">未完成</option>
+                            <option value="1">已完成</option>
+                        </select>
+                    </div>
+                    <!-- <div class="col-sm-2 control-label">审核状态</div>
+                    <div class="column col-sm-4">
+                        <select class="form-control " v-model="zxjgTaskQ.approveStatus">
+                            <option value="">所有</option>
+                            <option value="0">未审核</option>
+                            <option value="1">审核通过</option>
+                            <option value="2">审核不通过</option>
+                        </select>
+                    </div> -->
+                </div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<!-- <a class="btn btn-sm" @click="generateTask"><i class="fa fa-tasks"></i>&nbsp;生成</a> 
+                <a class="btn btn-sm" @click="statistic"><i class="fa fa-bar-chart"></i>&nbsp;统计</a>
+                -->
+			</div>
+            <div v-show='!showStat'>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+            <div v-show='showStat'>
+                <div id="echartDiv" style="width: 600px; height:400px;"></div>
+            </div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					<label for="taskTitle" class="col-sm-2 control-label">任务标题</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="taskTitle" name="taskTitle" v-model="zxjgTask.taskTitle" placeholder="任务标题" 
+							htmlEscape="false" maxlength="200"/>
+					</div>
+                    <label for="taskType" class="col-sm-2 control-label">任务类型</label>
+                    <div class="col-sm-4">
+                        <select class="form-control " v-model="zxjgTask.taskType" disabled="disabled">
+                            <option value="">所有</option>
+                            <option value="15GQ">15次违法未处理(逾期未检)</option>
+                            <option value="15G">15次违法未处理(无逾期未检)</option>
+                            <!-- <option value="5G">5次违法未处理</option> -->
+                            <option value="Q">未年检重点车辆</option>
+                            <option value="G">违法未处理重点车辆</option>
+                            <option value="C">超一个周期未年检车辆</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+					<label for="groupId" class="col-sm-2 control-label">中队</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="groupName" name="groupName" v-model="zxjgTask.groupName" placeholder="中队" 
+							htmlEscape="false" maxlength="20" readonly="readonly"/>
+					</div>
+					<label for="gridId" class="col-sm-2 control-label">责任区</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="gridName" name="gridName" v-model="zxjgTask.gridName" placeholder="责任区" 
+							htmlEscape="false" maxlength="20" readonly="readonly"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="policeIds" class="col-sm-2 control-label">警员编号</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="policeIds" name="policeIds" v-model="zxjgTask.policeIds" placeholder="警员编号" 
+							htmlEscape="false" maxlength="200" readonly="readonly"/>
+					</div>
+				</div>
+                <div class="form-group">
+                    <label for="plateNo" class="col-sm-2 control-label">车牌号码</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="plateNo" name="plateNo" v-model="zxjgTask.plateNo" placeholder="车牌号码" 
+                            htmlEscape="false" maxlength="20" readonly="readonly"/>
+                    </div>
+                    <label for="plateType" class="col-sm-2 control-label">车牌种类</label>
+                    <div class="col-sm-4">
+                        <select class="form-control " v-model="zxjgTask.plateType" disabled="disabled">
+                            <option v-for="dict in plateTypeDicts" v-bind:value="dict.value">
+                                {{dict.label}}
+                            </option>
+                        </select>
+                        <!-- <input type="text" class="form-control" id="plateType" name="plateType" v-model="zxjgTask.plateType" placeholder="车牌号码" 
+                            htmlEscape="false" maxlength="20" readonly="readonly"/> -->
+                    </div>
+                </div>
+				<div class="form-group">
+					<label for="startDt" class="col-sm-2 control-label">开始时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="startDt" name="startDt" v-model="zxjgTask.startDt" placeholder="任务开始时间" readonly
+							htmlEscape="false"/>
+					</div>
+					<label for="endDt" class="col-sm-2 control-label">截止时间</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control form_datetime" id="endDt" name="endDt" v-model="zxjgTask.endDt" placeholder="任务截止时间" readonly
+							htmlEscape="false"/>
+					</div>
+				</div>
+                <div class="form-group">
+                    <label for="additionInfo" class="col-sm-2 control-label">附加信息</label>
+                    <div class="col-sm-10">
+                        <textarea type="text" class="form-control" id="additionInfo" name="additionInfo" v-model="zxjgTask.additionInfo" placeholder="附加信息" readonly
+                            htmlEscape="false"></textarea>
+                    </div>
+                </div>
+				<hr style=" height:2px;border:none;border-top:2px dotted #185598;"/>
+				<div class="form-group">
+					<label for="inUse" class="col-sm-2 control-label">是否在使用</label>
+					<div class="col-sm-4 " style="padding-top: 7px">
+					   {{zxjgTask.inUse == '0'?'不在用':(zxjgTask.inUse == '1'?'在用':(zxjgTask.inUse == '2'?'未知':''))}}
+						<!-- <input type="text" class="form-control" id="inUse" name="inUse" v-model="zxjgTask.inUse" placeholder="0 不在用,1 在用中, 2未知" 
+							htmlEscape="false" maxlength="1"/> -->
+					</div>
+					<label for="ownerUse" class="col-sm-2 control-label">是否本人使用</label>
+					<div class="col-sm-4" style="padding-top: 7px">
+                       {{zxjgTask.ownerUse == '0'?'否':(zxjgTask.ownerUse == '1'?'是':(zxjgTask.ownerUse == '2'?'私下转卖':''))}}
+						<!-- <input type="text" class="form-control" id="ownerUse" name="ownerUse" v-model="zxjgTask.ownerUse" placeholder="0 否,1 是,2 私下转卖" 
+							htmlEscape="false" maxlength="1"/> -->
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="localTrace" class="col-sm-2 control-label">本市是否有行驶轨迹</label>
+					<div class="col-sm-4" style="padding-top: 7px">
+                       {{zxjgTask.localTrace == '0'?'无':(zxjgTask.localTrace == '1'?'有':(zxjgTask.localTrace == '2'?'未知':''))}}
+						<!-- <input type="text" class="form-control" id="localTrace" name="localTrace" v-model="zxjgTask.localTrace" placeholder="0 无,1 有, 2 未知" 
+							htmlEscape="false" maxlength="1"/> -->
+					</div>
+					<label for="phoneNum" class="col-sm-2 control-label">联系电话</label>
+					<div class="col-sm-4" style="padding-top: 7px">
+                       {{zxjgTask.phoneNum}}
+						<!-- <input type="text" class="form-control" id="phoneNum" name="phoneNum" v-model="zxjgTask.phoneNum" placeholder="联系电话" 
+							htmlEscape="false" maxlength="20" readonly="readonly"/> -->
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="informType" class="col-sm-2 control-label">告知方式</label>
+					<div class="col-sm-4" style="padding-top: 7px">
+                       {{zxjgTask.informType == '0'?'电话告知':(zxjgTask.informType == '1'?'上门通知':(zxjgTask.informType == '2'?'其他':''))}}
+						<!-- <input type="text" class="form-control" id="informType" name="informType" v-model="zxjgTask.informType" placeholder="0 电话告知, 1 上门通知, 2 其他" 
+							htmlEscape="false" maxlength="1"/> -->
+					</div>
+					<label for="checkPolice" class="col-sm-2 control-label">检查人警号</label>
+					<div class="col-sm-4" style="padding-top: 7px">
+					   {{zxjgTask.checkPolice}}
+						<!-- <input type="text" class="form-control" id="checkPolice" name="checkPolice" v-model="zxjgTask.checkPolice" placeholder="检查人警号" 
+							htmlEscape="false" maxlength="20" readonly="readonly"/> -->
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="checkDt" class="col-sm-2 control-label">检查日期</label>
+					<div class="col-sm-4" style="padding-top: 7px">
+                       {{zxjgTask.checkDt}}
+						<!-- <input type="text" class="form-control form_datetime" id="checkDt" name="checkDt" v-model="zxjgTask.checkDt" placeholder="检查日期" readonly
+							htmlEscape="false" readonly="readonly"/> -->
+					</div>
+					<label for="checkGps" class="col-sm-2 control-label">检查时定位</label>
+					<div class="col-sm-4" style="padding-top: 7px">
+                       {{zxjgTask.checkGps}}
+						<!-- <input type="text" class="form-control" id="checkGps" name="checkGps" v-model="zxjgTask.checkGps" placeholder="检查时定位" 
+							htmlEscape="false" maxlength="50" readonly="readonly"/> -->
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="checkDesc" class="col-sm-2 control-label">检查情况说明</label>
+					<div class="col-sm-10" style="padding-top: 7px">
+					   {{zxjgTask.checkDesc}}
+						<!-- <textarea type="text" class="form-control" id="checkDesc" name="checkDesc" v-model="zxjgTask.checkDesc" placeholder="检查情况说明" 
+							htmlEscape="false" maxlength="500" readonly="readonly"></textarea> -->
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<input type="button" class="btn btn-warning btn-sm" @click="cancelBack" value="返回"/>
+						<!-- &nbsp;&nbsp;
+                        <input type="button" class="btn btn-success btn-sm" v-show="zxjgTask.checkPolice != null" @click="approve(1)" value="通过"/>
+                        &nbsp;&nbsp;
+                        <input type="button" class="btn btn-danger btn-sm" v-show="zxjgTask.checkPolice != null" @click="approve(2)" value="不通过"/> -->
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+<style>
+.layui-layer-tab div {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+</style>
+</div>

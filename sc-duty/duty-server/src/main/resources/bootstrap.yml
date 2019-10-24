@@ -1,0 +1,41 @@
+server:
+  port: 10022
+
+spring:
+  application:
+    name: duty
+
+  profiles:
+    active: dev
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml
+        timeout: 30000
+        shared-dataids: all-service-common.yaml
+    sentinel:
+      log:
+        dir: ./logs/csp/
+      transport:
+        dashboard: localhost:10009
+
+  redis:
+    redisson:
+      config: classpath:redisson.yml
+
+#***************************启用sentinel作熔断, 配置ribbon的超时时间********************************#
+feign:
+  sentinel:
+    enabled: true
+
+ribbon:
+  ReadTimeout: 100000
+  ConnectTimeout: 30000
+
+
+swagger:
+  enabled: true

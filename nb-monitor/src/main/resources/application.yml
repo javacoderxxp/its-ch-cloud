@@ -1,0 +1,36 @@
+server:
+  port: 10000
+
+spring:
+  application:
+    name: monitor
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  rabbitmq:
+    username:
+
+
+  boot:
+    admin:
+      ui:
+        title: 'ITS 应用监控'
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 30000
+  MaxAutoRetries: 0 #对第一次请求的服务的重试次数
+  MaxAutoRetriesNextServer: 1 #要重试的下一个服务的最大数量（不包含第一个服务）
+  OkToRetryOnAllOperations: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  # 配置日志级别，方便调试
+logging:
+  level:
+    root: INFO
+

@@ -1,0 +1,152 @@
+<div id="videoCamera-app" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">监控设备管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="myTab" class="nav nav-tabs">
+			<li id="liQuery" class="active"><a href="#videoCameraQuery"
+				data-toggle="tab">设备信息</a></li>
+			<li id="liDetail"><a href="#videoCameraDetail" data-toggle="tab"  v-show="isZdAdmin">信息维护</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div id="videoCameraQuery" class="tab-pane fade in active">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备名称</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" id="deviceName"
+								name="deviceName" v-model="videoCameraQ.deviceName"
+								placeholder="设备名称">
+						</div>
+
+						<div class="col-sm-6">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i
+								class="fa fa-pencil-square-o"></i>&nbsp;修改</a> <a class="btn btn-sm"
+								@click="purge" v-show="isZdAdmin"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+						</div>
+					</div>
+				</div>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+			<div id="videoCameraDetail" class="tab-pane fade">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">设备编号</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="deviceId"
+								name="deviceId" v-model="videoCamera.deviceId"
+								placeholder="设备编号" required="required" maxlength="50">
+						</div>
+						<label class="col-sm-2 control-label">设备名称</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="deviceName"
+								name="deviceName" v-model="videoCamera.deviceName"
+								placeholder="设备名称" required="required" maxlength="50">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">通道号</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="tunnel" name="tunnel"
+								v-model="videoCamera.tunnel" placeholder="通道号" maxlength="50">
+						</div>
+						<label class="col-sm-2 control-label">点位坐标</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="shape" name="shape"
+								v-model="videoCamera.shape" placeholder="点位坐标" maxlength="50">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">位置描述</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="location"
+								name="location" v-model="videoCamera.location"
+								placeholder="位置描述" required="required" maxlength="50">
+						</div>
+						<label class="col-sm-2 control-label">相机IP</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="ipAddress"
+								name="ipAddress" v-model="videoCamera.ipAddress"
+								placeholder="相机IP" required="required" maxlength="20">
+						</div>
+
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">厂家</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="manuId" name="manuId"
+								v-model="videoCamera.manuId" placeholder="厂家" maxlength="20">
+						</div>
+						<label class="col-sm-2 control-label">设备状态</label>
+						<div class="col-sm-4">
+							<select name="status" class="form-control"
+								v-model="videoCamera.status" required="required">
+								<option value="">请选择</option>
+								<option value="1">正常使用</option>
+								<option value="2">拆除</option>
+								<option value="3">维护中</option>
+								<option value="8">其他</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">相机类型</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="type" name="type" maxlength="20"
+								v-model="videoCamera.type" placeholder="相机类型" required="required">
+						</div>
+						<label class="col-sm-2 control-label">是否可控</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="controllable"
+								name="controllable" v-model="videoCamera.controllable"
+								placeholder="是否可控" required="required" maxlength="20">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">设备作用</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="usedFor"
+								name="usedFor" v-model="videoCamera.usedFor" placeholder="设备作用" maxlength="20">
+						</div>
+						<label class="col-sm-2 control-label">安装阶段</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="installPhase"
+								name="installPhase" v-model="videoCamera.installPhase"
+								placeholder="安装阶段" maxlength="20">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所属单位</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="orgnization"
+								name="orgnization" v-model="videoCamera.orgnization"
+								placeholder="所属单位" maxlength="20">
+						</div>
+						<label class="col-sm-2 control-label" style="display:none">描述</label>
+						<div class="col-sm-4" style="display:none">
+							<input type="text" class="form-control" id="description"
+								name="description" v-model="videoCamera.description"
+								placeholder="描述" maxlength="200">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="sButton" type="submit" class="btn btn-sm btn-primary"
+								@click="save" v-show="isZdAdmin">提交</button>
+							<input id="editB" type="button"
+								class="btn btn-warning btn-sm pull-right" @click="reload"
+								value="返回" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

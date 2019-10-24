@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>视频播放</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="/sc-itsweb/assets/plugins/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/sc-itsweb/assets/plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/sc-itsweb/assets/dist/css/AdminLTE.min.css">
+        <link rel="stylesheet" href="/sc-itsweb/assets/dist/css/skins/skin-blue.min.css">
+        <link rel="stylesheet" href="/sc-itsweb/assets/plugins/jQueryTab/css/style.css" />
+        <link rel="stylesheet" href="/sc-itsweb/assets/dist/css/videoLeftSlider.css" />
+        <link rel="stylesheet" href="/sc-itsweb/assets/dist/css/sidebar-menu.css" />
+        
+        <link rel="stylesheet" href="/sc-itsweb/assets/plugins/jQuery/perfect-scrollbar.min_1.css" />
+    </head>
+    <body>
+        <header>
+            <div class="headerfont">
+                <div class="backgroundimg onerow"></div>
+                <div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+                    <p>太仓市公安局交通警察大队</p>
+                    <p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+        </header>
+        <aside class="main-sidebar">
+            <section class="sidebar">
+        <div class="input-group">
+          <input type="text" id="searchName" class="form-control" placeholder="搜索">
+          <span class="input-group-btn">
+                <button type="button" name="search" onclick="searchVideo()" class="btn btn-flat">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
+        </div>
+            <ul class="sidebar-menu" id="left-menu"
+                style="max-height: 600px; overflow-y: scroll;margin-top:10px">
+                <li class="treeview active" id="searchResTree" style="display:none"><a href="#" class="levelLi"
+                    data-index-id="1"> <i class="fa fa-search"></i> <span>搜索结果</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwoSearch"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="1" onclick="showdata(1)"> <i class="fa fa-laptop"></i> <span>交警大队</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo1"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="10" onclick="showdata(10)"> <i class="fa fa-laptop"></i> <span>高空监控</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo10"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="9" onclick="showdata(9)"> <i class="fa fa-laptop"></i> <span>4G车载</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo9"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="21" onclick="showdata(21)"> <i class="fa fa-laptop"></i> <span>板桥派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo21"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="22" onclick="showdata(22)"> <i class="fa fa-laptop"></i> <span>城西派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo22"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="23" onclick="showdata(23)"> <i class="fa fa-laptop"></i> <span>城中派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo23"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="24" onclick="showdata(24)"> <i class="fa fa-laptop"></i> <span>港区派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo24"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="25" onclick="showdata(25)"> <i class="fa fa-laptop"></i> <span>公交派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo25"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="26" onclick="showdata(26)"> <i class="fa fa-laptop"></i> <span>璜泾派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo26"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="27" onclick="showdata(27)"> <i class="fa fa-laptop"></i> <span>金仓湖派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo27"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="28" onclick="showdata(28)"> <i class="fa fa-laptop"></i> <span>金浪派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo28"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="29" onclick="showdata(29)"> <i class="fa fa-laptop"></i> <span>开发区派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo29"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="210" onclick="showdata(210)"> <i class="fa fa-laptop"></i> <span>科教新城派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo210"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="211" onclick="showdata(211)"> <i class="fa fa-laptop"></i> <span>浏河派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo211"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="212" onclick="showdata(212)"> <i class="fa fa-laptop"></i> <span>浏家港派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo212"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="213" onclick="showdata(213)"> <i class="fa fa-laptop"></i> <span>陆渡派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo213"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="214" onclick="showdata(214)"> <i class="fa fa-laptop"></i> <span>沙溪派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo214"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="215" onclick="showdata(215)"> <i class="fa fa-laptop"></i> <span>双凤派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo215"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="216" onclick="showdata(216)"> <i class="fa fa-laptop"></i> <span>岳王派出所</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo216"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="3" onclick="showdata(3)"> <i class="fa fa-laptop"></i> <span>治安监控</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo3"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="4" onclick="showdata(4)"> <i class="fa fa-laptop"></i> <span>学校</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo4"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="5" onclick="showdata(5)"> <i class="fa fa-laptop"></i> <span>城管局</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo5"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="6" onclick="showdata(6)"> <i class="fa fa-laptop"></i> <span>社会面</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo6"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="7" onclick="showdata(7)"> <i class="fa fa-laptop"></i> <span>科信大队</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo7"></ul></li>
+                <li class="treeview"><a href="#" class="levelLi"
+                    data-index-id="8" onclick="showdata(8)"> <i class="fa fa-laptop"></i> <span>其他</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                    <ul class="treeview-menu ultwo" id="ultwo8"></ul></li>
+            </ul>
+            <div class="videobtn">
+                    <table>
+                        <tr style="text-align:center;vertical-align: center;">
+                            <td class="maxwidth">
+                                <font color="whitesmoke">摄像机</font>
+                            </td>
+                            <td><input id="txt_camName" class="cramainp" type="text" /></td>
+                            <td class="minwidth1">
+                                <font color="whitesmoke">转速</font>
+                            </td>
+                            <td>
+                                <select id="ptzSpeed" class="seleczs">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3" selected>3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr class="locktr">
+                                        <td id="td_lock" class="minwidth"><img alt="锁定云台" title="锁定云台" src="imgs/video/PTZ_lock.gif" />
+                                        </td>
+                                        <td class="minwidth">
+                                            <font color="whitesmoke">锁定</font>
+                                        </td>
+                                        <td id="td_unlock" class="minwidth"><img alt="解锁云台" title="解锁云台" src="imgs/video/PTZ_unlock.gif" />
+                                        </td>
+                                    </tr>
+                                    <tr class="locktr">
+                                        <td id="td_lightFar" class="minwidth"><img alt="增加关圈" title="增加关圈" src="imgs/video/PTZ_focus_far.gif" style="vertical-align:middle;" onmousedown="PTZLargeAperture()" onmouseup="PTZLargeApertureStop()" />
+                                        </td>
+                                        <td class="minwidth">
+                                            <font color="whitesmoke">光圈</font>
+                                        </td>
+                                        <td id="td_lightNear" class="minwidth"><img alt="缩小光圈" title="缩小关圈" src="imgs/video/PTZ_focus_near.gif" style="vertical-align:middle;" onmousedown="PTZSmallAperture()" onmouseup="PTZSmallApertureStop()" />
+                                        </td>
+                                    </tr>
+                                    <tr class="locktr">
+                                        <td id="td_focusFar" class="minwidth"><img alt="增加聚焦" title="增加聚焦" src="imgs/video/PTZ_focus_far.gif" style="vertical-align:middle;" onmousedown="PTZFarFocus()" onmouseup="PTZFarFocusStop()" />
+                                        </td>
+                                        <td class="minwidth" >
+                                            <font color="whitesmoke">聚焦</font>
+                                        </td>
+                                        <td id="td_focusNear" class="minwidth"><img alt="缩小聚焦" title="缩小聚焦" src="imgs/video/PTZ_focus_near.gif" style="vertical-align:middle;" onmousedown="PTZNearFocus()" onmouseup="PTZNearFocusStop()" />
+                                        </td>
+                                    </tr>
+                                    <tr class="locktr">
+                                        <td id="td_zoomFar" class="minwidth"><img alt="增加变倍" title="增加变倍" src="imgs/video/PTZ_focus_far.gif" style="vertical-align:middle;" onmousedown="PTZAddTimes()" onmouseup="PTZAddTimesStop()" />
+                                        </td>
+                                        <td class="minwidth">
+                                            <font color="whitesmoke">变倍</font>
+                                        </td>
+                                        <td id="td_zoomNear" class="minwidth"><img alt="缩小变倍" title="缩小变倍" src="imgs/video/PTZ_focus_near.gif" style="vertical-align:middle;" onmousedown="PTZMinusTimes()" onmouseup="PTZMinusTimesStop()" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td></td>
+                            <td>
+                                <table>
+                                    <tr class="locktr">
+                                        <td id="td_leftUp"><img alt="左上" title="左上" src="imgs/video/PTZ_left_up.gif" class="arrow" onmousedown="PTZLeftUp()" onmouseup="PTZLeftUpStop()" />
+                                        </td>
+                                        <td id="td_up" class="minwidth"><img alt="向上" title="向上" src="imgs/video/PTZ_up.gif" class="arrow" onmousedown="PTZUp()" onmouseup="PTZUpStop()" /></td>
+                                        <td id="td_rightUp" class="minwidth"><img alt="右上" title="右上" src="imgs/video/PTZ_right_up.gif" class="arrow" onmousedown="PTZRightUp()" onmouseup="PTZRightUpStop()" />
+                                        </td>
+                                    </tr>
+                                    <tr class="locktr">
+                                        <td id="td_left" class="minwidth"><img alt="向左" title="向左" src="imgs/video/PTZ_left.gif" class="arrow" onmousedown="PTZLeft()" onmouseup="PTZLeftStop()" /></td>
+                                        <td id="td_stop" class="minwidth"><img alt="停止" title="停止" src="imgs/video/PTZ_stop.gif" class="arrow" /></td>
+                                        <td id="td_right" class="minwidth"><img alt="向右" title="向右" src="imgs/video/PTZ_right.gif" class="arrow" onmousedown="PTZRight()" onmouseup="PTZRightStop()" />
+                                        </td>
+                                    </tr>
+                                    <tr class="locktr">
+                                        <td id="td_leftDown" class="minwidth"><img alt="左下" title="左下" src="imgs/video/PTZ_left_down.gif" class="arrow" onmousedown="PTZLeftDown()" onmouseup="PTZLeftDownStop()" />
+                                        </td>
+                                        <td id="td_down" class="minwidth"><img alt="向下" title="向下" src="imgs/video/PTZ_down.gif" class="arrow" onmousedown="PTZDown()" onmouseup="PTZDownStop()" /></td>
+                                        <td id="td_rightDown" class="minwidth"><img alt="右下" title="右下" src="imgs/video/PTZ_right_down.gif" class="arrow" onmousedown="PTZRightDown()" onmouseup="PTZRightDownStop()" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr class="locktr">
+                            <td class="maxwidth">
+                                <font color="whitesmoke">预置位</font>
+                            </td>
+                            <td>
+                                <select id="sel_preset" class="sel_preset" style="">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                </select>
+                            </td>
+                            <td id="td_presetSel" style="width: 25px;"><img alt="调用预置位" title="调用预置位" src="imgs/video/PTZ_preset_use.gif" onclick="GetPt()" />
+                            </td>
+                            <td id="td_presetAdd" style="width: 25px;"><img id="img_addPreset" alt="添加预置位" title="添加预置位" src="imgs/video/PTZ_preset_insert.gif" onclick="SetPt()" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+        </aside>
+
+        <div class="content-wrapper" id="content" style="margin-top:50px; height:100%">
+            <span style="text-align: center; padding-top: 25%; font-size: 30px; display: block;">视频插件初始化中，请稍等</span>
+        </div>
+        <script type="text/javascript" src="/sc-itsweb/assets/plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <script type="text/javascript" src="/sc-itsweb/assets/plugins/layer/layer.js"></script>
+        <script src="left-menu.js"></script>
+        <script src="sidebar-menu.js"></script>
+        <script type="text/javascript" src="videoPlay.js"></script>
+        <script>
+            $.sidebarMenu($('.sidebar-menu'))
+        </script>
+        <script>
+            (function($) {
+                $.getUrlParam = function(name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if(r != null) return unescape(r[2]);
+                    return null;
+                }
+            })(jQuery);
+
+            function getParentClosePage(e) {
+                this.closeP = e;
+            }
+
+            function destory_activex(){  
+                var active_object_id='PlayViewOCX'; //activex的控件id  
+                var activex_obj=document.getElementById(active_object_id);  
+                var parent_element=activex_obj.parentElement; //找到控件的父元素  
+                 //删除activex父元素的所有子元素   
+                 while (parent_element.children.length>0){  
+                    parent_element.removeChild(parent_element.children[0]);  
+                 }  
+                   
+            }  
+            window.onbeforeunload = function(event) {  
+                StopPlayView();
+                destory_activex();
+                window.opener.closeVideoWin();
+            };
+            function closePage(e) {
+                StopPlayView();
+                destory_activex();
+                window.opener.closeVideoWin();
+                return "no";
+            }
+        </script>
+        <!-- 以下是事件触发函数接口 -->
+        <script language="javascript" for="PlayViewOCX" event="FireWindowsNumber(iSel)">
+            szMsg = "窗口分割消息,窗口数" + iSel;
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireSelectWindow(iSel)">
+            szMsg = "窗口选择消息,窗口" + iSel;
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireStartRealPlay(iSel)">
+            var obj = win_tunnel_map.get(iSel);
+            if(obj && obj.prePos && "" != obj.prePos){
+                var OCXobj = document.getElementById("PlayViewOCX");
+                var rsel = OCXobj.SelWindow(iSel);
+                if(null == rsel || rsel == -1){
+                    return -2; //设置窗口选中失败
+                }
+                var ret = OCXobj.PTZCtrlGotoPreset(obj.prePos);
+                if(ret == -1){
+                    return -1; //设置预置位失败
+                }else if(ret == 0){
+                    return 0; //设置预置位成功
+                }
+            }
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireStopRealPlay(iSel)">
+            if(win_tunnel_map.remove){
+                win_tunnel_map.remove(iSel);
+            }else{
+                win_tunnel_map.delete(iSel);
+            }
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireStopPreviewAll()">
+            win_tunnel_map.clear();
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireOpenSound(iSel)">
+            szMsg = "打开声音消息";
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireCloseSound(iSel)">
+            szMsg = "关闭声音消息";
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireChangeWindow(iFrom,iTo)">
+            szMsg = "互换窗口消息" + "从" + iFrom + "到" + iTo;
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FirePTZCtrl(iWindowID,iCtrlID,iSpeed)">
+            szMsg = "云台控制消息:" + "窗口:" + iWindowID + "控制:" + iCtrlID + "速度:" + iSpeed;
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireStartRecord(iWindowID)">
+            szMsg = "开始录像" + iWindowID;
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireStopRecord(iWindowID)">
+            szMsg = "停止录像" + iWindowID;
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireCatchPic(szPath,iWindowID)">
+            szMsg = "抓图" + "路径" + szPath + "窗口" + iWindowID;
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireStartPlayBack(lWindowID)">
+        </script>
+
+        <script language="javascript" for="PlayViewOCX" event="FireStopPlayBack(lWindowID)">
+        </script>
+        
+        <script language="javascript" for="PlayViewOCX" event="FireStartRealPlayFailed(lWindowID)">
+            var OCXobj = document.getElementById("PlayViewOCX");
+            var r=confirm("窗口"+parseInt(lWindowID+1)+"预览失败，是否重连？");
+            if (r==true){
+            }else{
+                OCXobj.StopRealPlay(lWindowID);
+            }
+            
+        </script>
+        <script src="/sc-itsweb/assets/plugins/jQuery/perfect-scrollbar.min_1.js"></script>
+        <script src="/sc-itsweb/assets/plugins/jQuery/perfect-scrollbar.jquery.min_1.js"></script>
+        <script>
+            $('.sidebar-menu').perfectScrollbar();
+        </script>
+        <script type="text/javascript" src="/sc-itsweb/assets/plugins/loadMap.js"></script>
+        <script type="text/javascript">
+            var win_tunnel_map = new Map();
+            var isIE9Browser = function(){
+                var isIE = false;
+                var userAgent = navigator.userAgent.toLowerCase();
+                if(!!window.ActiveXObject || "ActiveXObject" in window){
+                    var reIE = new RegExp("msie (\\d+\\.\\d+);");
+                    reIE.test(userAgent);
+                    var fIEVersion = parseFloat(RegExp["$1"]);
+                    if(fIEVersion == 9) {
+                        isIE = true;
+                    }  
+                }
+                return isIE;
+            }
+            
+        </script>
+    </body>
+
+</html>

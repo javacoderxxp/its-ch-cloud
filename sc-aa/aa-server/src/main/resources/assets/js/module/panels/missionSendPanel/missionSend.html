@@ -1,0 +1,130 @@
+<div id="missionSend-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">任务指令管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul id="mission_nav" class="nav nav-tabs">
+			<li id="liQuery"><a href="#queryTab" data-toggle="tab">查询</a></li>
+			<li id="liDetail" class="active"><a href="#detailTab" data-toggle="tab">登记</a></li>
+			<li id="liEdit" style="display:none" ><a href="#constOccupDetail" data-toggle="tab">修改</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade" id="queryTab">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">主题</div>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" placeholder="" v-model="queryObj.title" required="required">
+						</div>
+						<label for='designatedZd' class="col-sm-2 control-label">指定中队</label>
+						<div class="column col-sm-4">
+							<select name="designatedZdQ" class="form-control" v-model="queryObj.designatedZd" @change="loadUsers(1)" required="required">
+								<option value="">所有</option>
+								<option v-for="group in groupList" v-bind:value="group.groupId">
+									{{group.groupName}}
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+                		<label for="startDt" class="col-sm-2 control-label">开始时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="startTime" v-model="queryObj.startTime" name="startTime"
+							@click="setDateStart" placeholder="开始时间" readonly="readonly" required="required">
+						</div>
+                		<label for="endDt" class="col-sm-2 control-label">结束时间</label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control form_datetime Wdate" id="endTime" v-model="queryObj.endTime" name="endTime"
+							@click="setDateEnd" placeholder="结束时间" readonly="readonly" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for='designatedZd' class="col-sm-2 control-label">指定民警</label>
+						<div class="column col-sm-4">
+							<select id="pNQ" name="pNQ" class="form-control" v-model="queryObj.designatedPn" required="required">
+								<option value="">所有</option>
+								<option v-for="sue in userListQ" :value="sue.policeNo" >
+									{{sue.userName}}
+								</option>
+						 	</select>
+					 	</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-6 col-sm-offset-1">
+							<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+							<a class="btn btn-sm" @click="edit" v-show="isZdAdmin"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+							<a class="btn btn-sm" v-show="isZdAdmin" @click="deleteMission"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+						</div>
+					</div>
+				</div>
+			    <table id="jqGrid"></table>
+			    <div id="jqGridPager"></div>
+			</div>
+			<div class="tab-pane fade in active" id="detailTab">
+				<form class="form-horizontal" id="detailForm" role="form">
+					<div class="form-group">
+						<label for='publisher' class="col-sm-2 control-label">创建人<span class="help-inline"><font color="red">*</font> </span></label>
+						<div class="column col-sm-4">
+							<input type="text" class="form-control" name="publisher" v-model="mission.publisher" placeholder="创建人" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for='designatedZd' class="col-sm-2 control-label">指定中队<span class="help-inline"><font color="red">*</font> </span></label>
+						<div class="column col-sm-4">
+							<select id="designatedZd" name="designatedZd" class="form-control" v-model="mission.designatedZd" @change="loadUsers(2)" required="required">
+								<option value="">请选择</option>
+								<option v-for="group in groupList" v-bind:value="group.groupId">
+									{{group.groupName}}
+								</option>
+							</select>
+						</div>
+						<label for='designatedZd' class="col-sm-2 control-label">指定民警<span class="help-inline"><font color="red">*</font> </span></label>
+						<div class="column col-sm-4">
+							<select id="pN" name="pN" class="form-control" v-model="mission.designatedPn" required="required">
+								<option value="">请选择</option>
+								<option v-for="sue in userList" :value="sue.policeNo" >
+									{{sue.userName}}
+								</option>
+						 	</select>
+					 	</div>
+					</div>
+					<div class="form-group">
+						<label for='topic' class="col-sm-2 control-label">任务主题<span class="help-inline"><font color="red">*</font> </span></label>
+						<div class="column col-sm-10">
+							<input type="text" style="font-size: 12px !important;" class="form-control" name="title" v-model="mission.title" placeholder="主题" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for='content' class="col-sm-2 control-label">任务详情<span class="help-inline"><font color="red">*</font> </span></label>
+						<div class="col-sm-10">
+							<textarea rows="3" style="font-size: 12px !important;" cols="25" class="form-control" name="content" v-model="mission.content" placeholder="任务详情" htmlEscape="false" required="required"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for='fkDesc' class="col-sm-2 control-label">任务反馈</label>
+						<div class="col-sm-10">
+							<textarea id="fkDesc" rows="3" style="font-size: 12px !important;" cols="25" class="form-control" name="content" v-model="mission.fkDesc" placeholder="任务反馈" htmlEscape="false" readonly></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for='shape' class="col-sm-2 control-label">空间位置</label>
+						<div class="column col-sm-5">
+							<input type="text" style="font-size: 12px !important;" class="form-control" name="shape" v-model="mission.shape" required="required" readonly>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="missionSubmitBtn" type="submit" class="btn btn-sm btn-primary" @click="submitMission">提交</button>
+							<input id="editB" type="button" class="btn btn-warning btn-sm" style="display:none"  @click="reload" value="返回"/>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,447 @@
+<div id="vms-app" class="panel panel-primary" style="width: 800px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">{{title}}
+    		<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+	<div style="width:400px;float:left">
+		<div class="form-group">
+			<div>
+				<div class="form-inline">
+					<select class="form-control" style="width:200px" id="programSelectedId" @change="programChange">
+						<option v-for="(item,index) in programList"  v-bind:value="item.id">{{ item.programName }}</option>
+					</select>
+					<a href="#" style="float: right;margin-right:80px" @click="addProgram" class="btn btn-primary" v-show="showBtn">添加节目单</a>
+				</div>
+				<div style="margin-top:30px">
+					 <table class="table" style="width:350px;" v-if="programItemList && programItemList.length">  
+	           			<tr>            
+	            			<td style="width:60px; overflow:hidden;white-space:nowrap;">顺序</td>  
+	              			<td style="width:60px; overflow:hidden;white-space:nowrap;">类型</td>  
+	               		   	<td style="width:60px; overflow:hidden;white-space:nowrap;">内容</td>  
+	                        <td style="width:60px; overflow:hidden;white-space:nowrap;">时长</td>  
+	              			<td style="width:60px; overflow:hidden;white-space:nowrap;">编辑</td>                  
+	                    </tr>  
+	                    <tr v-for="(item,index) in programItemList ">   
+	               		   <td>{{item.sequence}}</td>   
+	                       <td v-if="item.type=='1'">文字</td>  
+	                       <td v-else-if="item.type=='2'">图片</td>  
+	                       <td v-if="item.type=='1'"><div style="width:60px; overflow:hidden;white-space:nowrap;">{{item.content}}</div></td>   
+	                       <td v-else-if="item.type=='2'">图片</td>  
+	                       <td>{{item.time}}</td>   
+	                       <td>  
+	                  			<button v-bind:data-item-id="item.id" class="btn btn-success btn-sm" @click='detail'>编辑</button>  
+	               		   </td>   
+	          			</tr>  
+	       			</table>  
+				</div>
+			</div>
+		</div>
+		<div class="form-inline">
+		<div class="form-group">
+			<select class="form-control" style="width:100px" id="screenBrightnessVal">
+					<option value="1">1</option>
+					<option value="3">2</option>
+					<option value="6">3</option>
+					<option value="9">4</option>
+					<option value="12">5</option>
+					<option value="15">6</option>
+			</select>
+			<button type="button" @click="setBrightness" class="btn btn-success btn-sm">设置亮度</button>
+			<button @click="playProgram"  style="margin-left:100px" v-if="programList && programList.length && programItemList && programItemList.length" class="btn btn-primary btn-sm">发布</button>
+		</div>
+		</div>
+		</div>
+		<div style="width:350px;float:left">
+		<div v-if="editWordContent">
+			<form id="editWordForm" role="form">
+			 <div class="box-body">
+			 				<input type="hidden"  v-bind:value="editWordProgramItem.id" v-model="editWordProgramItem.id"/>
+			 				<div class="form-horizontal">
+			 				<div class="form-group">
+			 					<div for="fontColor" class="col-sm-4 control-label">颜色</div>
+			 					<div class="column col-sm-8  onelinedis">
+			 					<span class="help-inline"><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="editWordColor" id="editWordColor" v-bind:value="editWordProgramItem.fontColor" v-model="editWordProgramItem.fontColor" htmlEscape="false" required="required">
+										<option value="0">红</option>
+										<option value="1">绿</option>
+										<option value="2">黄</option>
+								</select>
+								
+								</div>
+							</div>
+				  			    <div class="form-group">
+				  			    <div for="inStyle" class="col-sm-4 control-label">入场特技</div>
+				  			    <div class="column col-sm-8 onelinedis">
+				  			    <span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="editWordInStyle" id="editWordInStyle" v-bind:value="editWordProgramItem.inStyle" v-model="editWordProgramItem.inStyle"  htmlEscape="false"  value="0" required="required">
+										<option value="0">立即显示</option>
+										<option value="1">随机</option>
+										<option value="2">左移</option>
+										<option value="2">右移</option>
+										<option value="2">上移</option>
+										<option value="2">下移</option>
+									</select>
+									
+								</div>
+							</div>
+							<div class="form-group">
+							<div for="nAlignment" class="col-sm-4 control-label">对齐方式</div>
+				  			    <div class="column col-sm-8 onelinedis">
+				  			    <span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="editWordNAlignment" id="editWordNAlignmente" v-bind:value="editWordProgramItem.nAlignment" v-model="editWordProgramItem.nAlignment"  htmlEscape="false"  value="0" required="required">
+										<option value="0">居左</option>
+										<option value="1">居右</option>
+										<option value="2">居中</option>
+									</select>
+									
+								</div>
+							</div>
+				  			    <div class="form-group">
+				  			    <div for="fontSize" class="col-sm-4 control-label">字体大小</div>
+				  			    <div class="column col-sm-8 onelinedis">
+				  			    <span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="editWordFontSize" id="editWordFontSize" v-bind:value="editWordProgramItem.fontSize" v-model="editWordProgramItem.fontSize"  htmlEscape="false" value="8" required="required">
+										<option value="8" >8</option>
+										<option value="12">12</option>
+										<option value="14">14</option>
+										<option value="16">16</option>
+										<option value="18">18</option>
+										<option value="20">20</option>
+										<option value="22">22</option>
+										<option value="24">24</option>
+										<option value="26">26</option>
+										<option value="28">28</option>
+										<option value="30">30</option>
+										<option value="32">32</option>
+										<option value="34">34</option>
+										<option value="36">36</option>
+										<option value="48">48</option>
+										<option value="72">72</option>
+										<option value="100">100</option>
+									</select>
+									
+									</div>
+							</div>
+				  			    <div class="form-group">
+				  			    <div for="time" class="col-sm-4 control-label">播放时长</div>
+				  			    <div class="column col-sm-8 onelinedis">
+				  			    <span class="help-inline" ><font color="red">*</font> </span>
+                				<input type="text" class="form-control oneline" name="editWordTime" id="editWordTime" v-bind:value="editWordProgramItem.time" v-model="editWordProgramItem.time" htmlEscape="false" required="required" digits="true" min=0/>
+								
+								</div>
+							</div> 
+				  			    <div class="form-group">
+				  			    <div for="content" class="col-sm-4 control-label">内容</div>
+				  			    <div class="column col-sm-8 onelinedis">
+				  			    <span class="help-inline"><font color="red">*</font> </span>
+								<textarea class="form-control oneline" name="editWordContent" id="editWordContent" rows="2" v-bind:value="editWordProgramItem.content" v-model="editWordProgramItem.content" htmlEscape="false" required="required"></textarea>
+								
+								</div>
+							</div>
+				  			<div class="form-group">
+				  			<div for="sequence" class="col-sm-4 control-label">顺序</div>
+				  			<div class="column col-sm-8 onelinedis">
+				  			    <span class="help-inline"><font color="red">*</font> </span>
+                				<input type="text" class="form-control oneline" name="editWordSequence" id="editWordSequence" placeholder="顺序" v-bind:value="editWordProgramItem.sequence" v-model="editWordProgramItem.sequence" htmlEscape="false" required="required" digits="true" min=1 />
+								
+							</div>
+							</div>
+							</div>	
+						</div>
+						<div class="box-footer">
+							<button type="submit" class="btn btn-primary btn-sm" @click="updateWordItem">提交</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-danger btn-sm"  @click="delWord">删除</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-default btn-sm" @click="cancelItem">取消</button>
+						</div>
+						</form>
+		</div>
+		<div v-if="editPicContent">
+			 	<form id="editUploadForm" enctype="multipart/form-data">
+			 	<div class="box-body">
+			 	<div class="form-horizontal">
+							<input type="hidden" id="editItemId" name="editItemId"/>	
+							<input type="hidden" id="editPicProgramId" name="editPicProgramId"/>	
+				  			    <div class="form-group">
+					    	    <div for="inStyle" class="col-sm-4 control-label">入场特技</div>
+					    	    <div class="column col-sm-8 onelinedis">
+					    	    <span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="editPicInstyle" id="editPicInstyle" v-bind:value="editPicProgramItem.inStyle" v-model="editPicProgramItem.inStyle" htmlEscape="false" required="required">
+										<option value="0">立即显示</option>
+										<option value="1">随机</option>
+										<option value="2">左移</option>
+										<option value="2">右移</option>
+										<option value="2">上移</option>
+										<option value="2">下移</option>
+									</select>
+									
+									</div>
+							</div>
+				  			<div class="form-group">
+				  			<div for="time" class="col-sm-4 control-label">播放时长</div>
+				  			 <div class="column col-sm-8 onelinedis">
+				  			 <span class="help-inline" ><font color="red">*</font> </span>
+                				<input type="text" class="form-control oneline" name="editPicTime" id="editPicTime" v-bind:value="editPicProgramItem.time" v-model="editPicProgramItem.time" htmlEscape="false" required="required" digits="true" min=0/>
+								
+								</div>
+							</div>
+							<div class="form-group">
+							<div for="file" class="col-sm-4 control-label">已选图片</div>
+							<div class="column col-sm-8">
+				  			<img v-bind:src="editPicUrl" id="npcImg" width="125" height="148"/>
+				  			</div>  
+				  			</div>
+							<div class="form-group">
+								<div for="file" class="col-sm-4 control-label">选择文件</div>
+								<div class="column col-sm-8" id="_updateFile">
+                				<input type="file" class="form-control file-loading" accept="image/png,image/jpeg" name="editUploadPic" id="editUploadPicBtn" @change="uploadFileChange($event)" />
+								</div>
+							</div>
+							<!-- <div class="form-group">
+							<div for="file" class="col-sm-4 control-label">    </div>
+			    			<div class="column col-sm-8" style="width:150px;height:150px">
+			    				<img id="updatePreview" alt="" name="pic"  height="148" width="125" />
+			    			</div>
+			    			</div> -->
+			    			<div class="form-group">
+			    				<div for="picType" class="col-sm-4 control-label">图片类型</div>
+                				<div class="radio column col-sm-8">
+									<label>
+										<input type="radio" name="picType" id="editOptionsRadios1" value="0" :checked="editPicProgramItem.picTypeFlag0"> 路况图片
+									</label>
+									<label>
+										<input type="radio" name="picType" id="editOptionsRadios2" value="1" :checked="editPicProgramItem.picTypeFlag1"> 自定义图片
+									</label>
+									<div>
+									<span class="help-inline" style="padding-left:30px;"><font color="red">默认发布路况图片</font> </span>
+									</div>
+								</div>
+							</div>
+				  			    <div class="form-group">
+				  			    <div for="swquence" class="col-sm-4 control-label">顺序</div>
+				  			    <div class="column col-sm-8 onelinedis">
+				  			    <span class="help-inline"><font color="red">*</font> </span>
+                				<input type="text" class="form-control oneline" name="editSequence" id="editSequence" v-bind:value="editPicProgramItem.sequence" v-model="editPicProgramItem.sequence" placeholder="顺序" htmlEscape="false" required="required" digits="true" min=1 />
+								
+								</div>
+							</div>
+							</div>
+						</div>
+						<div class="box-footer">
+							<button type="submit" @click="updatePicItem" class="btn btn-success btn-sm">修改</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" @click="delPic" class="btn btn-danger btn-sm">删除</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" @click="cancelItem" class="btn btn-default btn-sm">取消</button>
+						</div>
+						</form>
+		</div>
+		<div v-if="addNewContent">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#vms-new-content-word" data-toggle="tab" aria-expanded="true">文字</a>
+					</li>
+					<li class="">
+						<a href="#vms-new-content-pic" data-toggle="tab" aria-expanded="false">图片</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade active in" id="vms-new-content-word">
+			<form id="addWordForm" role="form">
+			<div class="box-body">
+			<div class="form-horizontal">
+				<input type="hidden" v-bind:value="programId" v-model="programItemWord.programId"/>
+				<div class="form-group">
+						<div for="fontColor" class="col-sm-4 control-label">颜色</div>
+						<div class="column col-sm-8 onelinedis">
+						<span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="addWordColor" id="addWordColor" v-model="programItemWord.fontColor" htmlEscape="false" value="0" required="required">
+										<option value="0">红</option>
+										<option value="1">绿</option>
+										<option value="2">黄</option>
+								</select>
+								
+					     </div>
+				</div>
+				<div class="form-group">
+						<div for="inStyle" class="col-sm-4 control-label">入场特技</div>
+							<div class="column col-sm-8 onelinedis">
+							<span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="addWordInStyle" id="addWordInStyle" v-model="programItemWord.inStyle"  htmlEscape="false"  value="0" required="required">
+										<option value="0">立即显示</option>
+										<option value="1">随机</option>
+										<option value="2">左移</option>
+										<option value="2">右移</option>
+										<option value="2">上移</option>
+										<option value="2">下移</option>
+									</select>
+									
+							</div>
+							</div>
+				<div class="form-group">
+						<div for="nAlignment" class="col-sm-4 control-label">对齐方式</div>
+							<div class="column col-sm-8 onelinedis">
+							<span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="addWordNAlignment" id="addWordNAlignment" v-model="programItemWord.nAlignment"  htmlEscape="false"  value="0" required="required">
+										<option value="0">居左</option>
+										<option value="1">居右</option>
+										<option value="2">居中</option>
+									</select>
+									
+							</div>
+							</div>
+				<div class="form-group">
+						<div for="fontSize" class="col-sm-4 control-label">字体大小</div>
+                			<div class="column col-sm-8 onelinedis">
+                			<span class="help-inline" ><font color="red">*</font> </span>
+                				<select class="form-control oneline" style="width:200px" name="addWordFontSize" id="addWordFontSize" v-model="programItemWord.fontSize"   htmlEscape="false" value="8" required="required">
+										<option value="8" >8</option>
+										<option value="12">12</option>
+										<option value="14">14</option>
+										<option value="16">16</option>
+										<option value="18">18</option>
+										<option value="20">20</option>
+										<option value="22">22</option>
+										<option value="24">24</option>
+										<option value="26">26</option>
+										<option value="28">28</option>
+										<option value="30">30</option>
+										<option value="32">32</option>
+										<option value="34">34</option>
+										<option value="36">36</option>
+										<option value="48">48</option>
+										<option value="72">72</option>
+										<option value="100">100</option>
+									</select>
+									
+							</div> 
+							</div>
+				<div class="form-group">
+					<div for="time" class="col-sm-4 control-label">播放时长</div>
+						<div class="column col-sm-8 onelinedis">
+						<span class="help-inline" ><font color="red">*</font> </span>
+                				<input type="text" class="form-control oneline" name="addWordTime" id="addWordTime" v-model="programItemWord.time" placeholder="播放时长" htmlEscape="false" required="required" digits="true" min=0/>
+								
+							</div> 
+							</div>
+				<div class="form-group">
+					<div for="content" class="col-sm-4 control-label">内容</div>
+					<div class="column col-sm-8 onelinedis">
+					<span class="help-inline"><font color="red">*</font> </span>
+								<textarea class="form-control oneline" name="addWordContent" id="addWordContent" rows="2" v-model="programItemWord.content" placeholder="播放内容" htmlEscape="false" required="required"></textarea>
+								
+							</div> 
+							</div>
+                <div class="form-group">
+                	<div for="sequence" class="col-sm-4 control-label">顺序</div>
+                	<div class="column col-sm-8 onelinedis">
+                		<span class="help-inline"><font color="red">*</font> </span>
+                				<input type="text" class="form-control oneline" name="addWordSequence" id="addWordSequence" placeholder="播放顺序" v-model="programItemWord.sequence" htmlEscape="false" required="required" digits="true" min=1 />
+							
+								</div>
+				</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button type="submit" class="btn btn-primary btn-sm" @click="addWord">提交</button>
+				&nbsp;&nbsp;&nbsp;
+				<button type="button" class="btn btn-default btn-sm" @click="cancelItem">取消</button>
+			</div>
+		</form>
+					</div>
+					<div class="tab-pane fade" id="vms-new-content-pic">
+						<form id="uploadForm" enctype="multipart/form-data">
+						<div class="box-body">
+							<input type="hidden" id="picProgramId" name="picProgramId"/>
+							<div class="form-horizontal">
+							<div class="form-group">
+								<div for="inStyle" class="col-sm-4 control-label">入场特技</div>
+								<div class="column col-sm-8 onelinedis">
+								<span class="help-inline" ><font color="red">*</font></span>
+                				<select class="form-control oneline" style="width:200px" name="picInstyle" id="picInstyle"  htmlEscape="false" required="required">
+										<option value="0">立即显示</option>
+										<option value="1">随机</option>
+										<option value="2">左移</option>
+										<option value="2">右移</option>
+										<option value="2">上移</option>
+										<option value="2">下移</option>
+									</select>
+									
+									</div>
+							</div>	
+				  			    <div class="form-group">
+				  			    <div for="time" class="col-sm-4 control-label">播放时长</div>
+				  			    <div class="column col-sm-8">
+                				<input type="text" class="form-control" name="picTime" id="picTime" htmlEscape="false" required="required" digits="true" min=0/>
+								<span class="help-inline" ><font color="red">*</font> </span>
+								</div>
+							</div>
+				  			<div class="form-group">
+				  				<div for="file" class="col-sm-4 control-label">选择文件</div>
+				  				<div class="column col-sm-8">
+                				<input type="file" class="form-control file-loading" accept="image/png,image/jpeg" name="uploadPic" id="uploadPicBtn" required="required" @change="fileChange($event)"/>
+								<span class="help-inline"><font color="red">*</font> </span>
+								</div>
+							</div>
+						<!-- 	<div class="form-group">
+							<div for="file" class="col-sm-4 control-label">图片路径</div>
+							<div class="column col-sm-8">
+			    					<span id="uploadLocalPath" />
+			    			</div>
+			    			</div> -->
+				  			 <div class="form-group">
+				  			 	<div for="picType" class="col-sm-4 control-label">图片类型</div>
+                				<div class="radio column col-sm-8">
+									<label>
+										<input type="radio" name="picType" id="optionsRadios1" value="0" checked> 路况图片
+									</label>
+									<label>
+										<input type="radio" name="picType" id="optionsRadios2" value="1"> 自定义图片
+									</label>
+									<div>
+									<span class="help-inline" style="padding-left:30px;"><font color="red">默认发布路况图片</font> </span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div for="sequence" class="col-sm-4 control-label">顺序</div>
+								<div class="column col-sm-8">
+                				<input type="text" class="form-control" name="sequence" id="sequence" placeholder="顺序" htmlEscape="false" required="required" digits="true" min=1 />
+								<span class="help-inline"><font color="red">*</font> </span>
+								</div>
+							</div>
+							</div>
+							</div>
+							<div class="box-footer">
+								<button type="submit" class="btn btn-primary btn-sm" @click="addPic">提交</button>
+								&nbsp;&nbsp;&nbsp;
+								<button type="button" class="btn btn-default btn-sm" @click="cancelItem">取消</button>
+							</div>
+					</form>
+					</div>
+				</div>
+			</div>
+			<a class="btn btn-default btn-lg btn-block" v-if="newBtn && programList && programList.length" @click="clickToAddNewCont">添加播放内容</a>
+			<form id="programForm" role="form" v-if="addProgramForm">
+			<div class="box-body">
+                <div class="form-group">
+                	<label for="programName">节目单名称</label>
+					<input type="text" class="form-control" id="programName" name="programName"  placeholder="节目单名称" htmlEscape="false" required="required"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+			<div class="box-footer">
+				<button type="submit" class="btn btn-primary btn-sm" @click="saveProgram">提交</button>
+				&nbsp;&nbsp;&nbsp;
+				<button type="button" class="btn btn-default btn-sm" @click="cancelItem">取消</button>
+			</div>
+		</form>
+		</div>
+	</div>
+</div>

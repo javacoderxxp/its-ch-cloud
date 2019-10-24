@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../../css/app.css" />
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../../css/sceneStyle.css">
+	<link rel="stylesheet" href="../../../../css/jindustyle.css">
+	<link rel="stylesheet" href="../../../../plugins/font-awesome/css/font-awesome.min.css">
+<style type="text/css"> 
+	.error {
+		color: red;
+    }
+    .centermap {
+       top: 0; 
+    }
+    .mapbottom {
+       top: 69%;
+  	   height: 31%;
+ 	}	
+	.alarmpennel {
+	    top: 0;
+	    height: 33.3%;
+    }
+    .equipmentpannel {
+	    top: 34%;
+	    height: 34%;
+    }
+    .countpanne1 {
+	    top: 69%;
+	    height: 31%;
+    }
+    .WorkstatisCarpannel {
+   		height: 33.3%;
+    }
+    .policestatisCarpannel {
+	    height: 34%;
+	    top: 34%;
+    }
+    .countpannel{
+    	 height: 31%;
+    }
+    .margin-left-30{
+    	margin-left: 30px;
+    }
+</style>
+
+<script type="text/javascript">
+var itsEnv = window.itsEnv = 'prod'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script>
+<!-- SIT 
+<script src="http://114.215.146.210:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=a38637152661536811426544710c5a2c"></script>
+-->
+<script src="http://192.168.15.4:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=96afef81bcb8de97f2687b41d6f4d07a"></script>
+<!-- PROD 
+-->
+
+<!--[if lt IE 9]> 
+	<script type="text/javascript" src="../../../../plugins/loadMap.js"/> 
+<![endif]-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../../../../plugins/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/echarts/theme/walden.js"></script>
+<script type="text/javascript" src="../../../../js/module/signal/js/loadMap.js"></script>
+<!--//进度条左2-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jindujquery.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/index.js"></script>
+<!--//数字动画-->
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.waypoints.min.js"></script>
+<script type="text/javascript" src="../../../../plugins/jQuery/jquery.countup.min.js"></script>
+<title>执法信息预警</title>
+</head>
+
+<body style="background: #133f58;">
+	<div id="mapContainer2"></div>
+	<!--//中间地图块-->
+	<div class="centermap">
+    	<div style="width:100%;height:100%;position: relative;">
+    		<div class="lefttop"></div>
+	        <div class="righttop"></div>
+	        <div class="leftbot"></div>
+	        <div class="rightbot"></div>
+	        <div class="conmain"  style="padding:4px;width:100%;height:100%;">
+	        	<div style="width:100%;height:100%;" id="mapContainer"></div>
+			</div>
+			
+	    </div>
+	</div>
+	<!--//下面1条重点消息-->
+	<div class="mapbottom">
+		<div style="width:100%;height:100%;position: relative;">
+    		<div class="lefttop"></div>
+	        <div class="righttop"></div>
+	        <div class="leftbot"></div>
+	        <div class="rightbot"></div>
+	        <div class="equipfont">
+				<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">事故路段预警</span>
+				<div id="roadBadge" class="badge" style="background-color: #ff9800;margin-left: 5px;"></div>
+			</div>
+			<div class="imporalarm">
+				<table id="accidentRoadTB"></table>
+				<div id="noAccidentRoadAlarmDiv" style="font-size: 24px;">无事故路段报警</div>
+			</div>
+	    </div>
+	</div>
+
+	
+	<div id="imptDiv" >
+		<div id="leftpannel" class="left">
+			<!--1111-->
+		    <div id="alarmpennel" class="alarmpennel">
+		    	<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">流量预警</span>
+						<div id="flowBadge" class="badge" style="background-color: #ff9800;margin-left: 5px;"></div>
+					</div>
+					<div class="imporalarm">
+						<table id="realTimeAlarmTB"></table>
+						<div id="noflowAlarmDiv" style="font-size: 24px;">无流量报警</div>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<!--警情结束-->
+
+			<!--start part3-->
+			<div id="countpannel" class="countpannel">
+		    	<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont">
+						<i style="color:#2196F3" class="fa fa-area-chart"></i><span style="font-weight: bold;">单日处罚超100起</span>
+						<div id="more80Badge" class="badge" style="background-color: #ff9800;margin-left: 5px;"></div>
+					</div>
+					<div class="imporalarm">
+						<table id="dayMoreThan80TB"></table>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			
+			<!--start part2-->
+			<div id="equipmentpannel" class="equipmentpannel">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+					<div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span>5 分钟处理违法超 3 起</span>
+					<div id="more3Badge" class="badge" style="background-color: #ff9800;margin-left: 5px;"></div>
+					</div>
+					<div class="imporalarm">
+						<table id="fiveMinMoreThan3TB"></table>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<!--end part3-->
+		<!--start right-->
+		<div id="rightpannel" class="right">
+			<!--part1-->
+			<div class="WorkstatisCarpannel" style="height: 100%;">
+				<div style="width:100%;height:100%;position: relative;">
+		    		<div class="lefttop"></div>
+			        <div class="righttop"></div>
+			        <div class="leftbot"></div>
+			        <div class="rightbot"></div>
+			        <div class="equipfont"><i style="color:#2196F3" class="fa  fa-area-chart"></i><span>重点车辆违法未处理</span>
+			        <div id="notifyBadge" class="badge" style="background-color: #ff9800;margin-left: 5px;"></div>
+			        </div>
+					<div class="imporalarm" style="top: 5%;">
+						<table id="keyVehUnhandleTB"></table>
+					</div>
+			  	</div>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<!--end right-->
+	<!-- 
+	<div id="lnglatWidgetPanel">
+		<input id="mapLevel" type="text" class="rightcoordinate" style="border-radius: 3px;"/>
+		<input id="mapLngLat" type="text" class="coordinate" style="border-radius: 3px;"/>
+	</div> -->
+	<!-- <div id="posindaPanel">
+		<a href="http://www.posinda.com"><img alt="ponsinda" src="../../../../images/posinda.png" width="60px" height="15px">
+		&nbsp;江苏普信达智能交通有限公司&nbsp;</a>
+	</div> -->
+	
+	<script type="text/javascript" src="zfxxyjScene.js"></script>
+	<!--//滚动条-->
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.min_1.js"></script>
+	<script src="../../../../plugins/jQuery/perfect-scrollbar.jquery.min_1.js"></script>
+	<link rel="stylesheet" href="../../../../plugins/jQuery/perfect-scrollbar.min_1.css" />
+	<script>
+//		$('.tabfont').perfectScrollbar();
+//		$('.equipmentpannel').perfectScrollbar();
+		$('#timealarm').perfectScrollbar();
+		$('#imporalarm').perfectScrollbar();
+		$('.countup').countUp();	
+	</script>
+</body>
+
+</html>

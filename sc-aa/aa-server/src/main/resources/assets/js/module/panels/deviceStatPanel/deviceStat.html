@@ -1,0 +1,45 @@
+<div id="deviceStat-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">设备统计
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">设备类型</div>
+					<div class="column col-sm-4">
+						<select class="form-control" v-model="deviceTypeQ" htmlEscape="false" >
+							<option value="">所有</option>
+							<option value="SIGNAL">信号机</option>
+							<option value="VIDEO">监控视频</option>
+							<option value="EP">卡口电警</option>
+							<option value="VMS">诱导屏</option>
+						</select>
+					</div>
+					<div class="col-sm-2 control-label">设备状态</div>
+					<div class="column col-sm-4">
+						<select class="form-control" v-model="deviceTypeQ" htmlEscape="false" >
+							<option value="">所有</option>
+							<option value="SIGNAL">信号机</option>
+							<option value="VIDEO">监控视频</option>
+							<option value="EP">卡口电警</option>
+							<option value="VMS">诱导屏</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-6">
+						<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+					</div>
+				</div>
+			</div>
+		    <div style="height: 300px; width: 520px; " v-show='showList' id="echarts-div">
+		    </div>
+		</div>
+	</div>
+</div>

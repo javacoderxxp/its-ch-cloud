@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../css/app.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+	<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+	<link rel="stylesheet" href="../../../css/account.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap-duallistbox/bootstrap-duallistbox.min.css" />
+	<link rel="stylesheet" href="../../../plugins/contextjs/context.standalone.css" />
+<style type="text/css"> 
+	table{border-collapse:collapse;border-spacing:0}
+		td{
+			border:1px solid #ababab;
+			height: 30px;
+			text-align: center;
+		}
+		td input{
+			border:none;
+			width:100%;
+			height:100%;
+		}
+		.lasttr{
+			border:0px;
+			text-align: left;
+		}
+</style>
+
+<!-- <script type="text/javascript">
+var itsEnv = window.itsEnv = 'sit'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script> -->
+
+<script type="text/javascript" src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<script type="text/javascript" src='../../../plugins/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js'></script>
+<script type="text/javascript" src='../../../plugins/contextjs/context.js'></script>
+<title>太仓大队国省道执勤排班表</title>
+</head>
+
+<body>
+	<header>
+		<div class="headerfont">
+			<div class="backgroundimg onerow"></div>
+			<div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+				<p>太仓市公安局交通警察大队</p>
+				<p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</header>
+		
+<div id="vue-app" class="content-wrapper" style="margin-left: 0px;margin-top: 50px;background-color: #fff;overflow:auto;height:100%;">
+	<div class="panel panel-primary" style="width: 100%; margin-bottom: 0px">
+		<div class="panel-title text-center">
+			<span style="font-size: 26px;font-weight: bold;">太仓大队国省道执勤排班表</span>
+		</div>
+		<div class="panel-body" >
+				<table width="100%">
+				    <thead>
+                        <tr style="border-top: black 2px solid;">
+                        	<td width="9%">日期</td>
+                        	<td width="13%">执勤时间</td>
+                            <td width="13%">南郊中队</td>
+                            <td width="13%">双凤中队</td>
+                            <td width="13%">沙溪中队</td>
+                            <td width="13%">浏河中队</td>
+                            <td width="13%">港区中队</td>
+                            <td width="13%">璜泾中队</td>
+                        </tr>
+				    </thead>
+					<tbody id="qwScheduleTable">
+						<template v-for="(item, index) in items">
+						<tr style="border-top: black 2px solid;">
+                            <td rowspan='8'  v-show="item.dt.indexOf('周') < 0" >{{item.dt}}</td>
+                            <td rowspan='6'  v-show="item.dt.indexOf('周') >= 0" >{{item.dt}}</td>
+                            <td rowspan='2' v-show="item.dt.indexOf('周') < 0" >07：30-10：00</td>
+                            <td rowspan='2' v-show="item.dt.indexOf('周') >= 0" >09：00-11：30</td> <!-- @mousedown="trclick(item.dt,0)" -->
+							<td ><input type=text maxlength="200" v-model="item.data.njzd.am1.location"></td>
+							<td ><input type=text maxlength="200" v-model="item.data.sfzd.am1.location"></td>
+							<td ><input type=text maxlength="200" v-model="item.data.sxzd.am1.location"></td>
+							<td ><input type=text maxlength="200" v-model="item.data.lhzd.am1.location"></td>
+							<td ><input type=text maxlength="200" v-model="item.data.gqzd.am1.location"></td>
+							<td ><input type=text maxlength="200" v-model="item.data.hjzd.am1.location"></td>
+						</tr>
+						<tr>
+							<td><input type=text maxlength="200" v-model="item.data.njzd.am1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sfzd.am1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sxzd.am1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.lhzd.am1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.gqzd.am1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.hjzd.am1.police"></td>
+						</tr>
+						<tr v-show="item.dt.indexOf('周') < 0">
+							<td rowspan='2'>10：00-12：00</td>
+							<td><input type=text maxlength="200" v-model="item.data.njzd.am2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sfzd.am2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sxzd.am2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.lhzd.am2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.gqzd.am2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.hjzd.am2.location"></td>
+						</tr>
+                        <tr v-show="item.dt.indexOf('周') < 0">
+							<td><input type=text maxlength="200" v-model="item.data.njzd.am2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sfzd.am2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sxzd.am2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.lhzd.am2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.gqzd.am2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.hjzd.am2.police"></td>
+						</tr>
+						<tr>
+							<td rowspan='2'>12：00-14：30</td>
+							<td><input type=text maxlength="200" v-model="item.data.njzd.pm1.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sfzd.pm1.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sxzd.pm1.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.lhzd.pm1.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.gqzd.pm1.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.hjzd.pm1.location"></td>
+						</tr>
+						<tr>
+							<td><input type=text maxlength="200" v-model="item.data.njzd.pm1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sfzd.pm1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sxzd.pm1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.lhzd.pm1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.gqzd.pm1.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.hjzd.pm1.police"></td>
+						</tr>
+						<tr>
+							<td rowspan='2'>14：30-17：30</td>
+							<td><input type=text maxlength="200" v-model="item.data.njzd.pm2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sfzd.pm2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sxzd.pm2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.lhzd.pm2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.gqzd.pm2.location"></td>
+							<td><input type=text maxlength="200" v-model="item.data.hjzd.pm2.location"></td>
+						</tr>
+						<tr>
+							<td><input type=text maxlength="200" v-model="item.data.njzd.pm2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sfzd.pm2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.sxzd.pm2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.lhzd.pm2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.gqzd.pm2.police"></td>
+							<td><input type=text maxlength="200" v-model="item.data.hjzd.pm2.police"></td>
+						</tr>
+						</template>
+						<tr>
+							<td colspan="12">
+								<div style="text-align: left;">
+								注：根据上级工作要求，请上表中涉及到的6个执勤中队填写国省道执勤安排警力（地点+姓名）。执勤时间可以再细分，如细分为7：30-9：30、9：30-12：00。执勤地点应为国省道上的路口节点，<b>请各执勤中队结合责任区警力（民警）安排填报，勿安排跨区执勤</b>。每个执勤点上警力要求为一警三辅。本表一周一报，每周五15点前通过蓝信上报下周的排班表至政秘科沈惠彬处。
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+//右键菜单事件，查询选中的中队、人员、时间的一日工作轨迹
+/* context.init({
+    fadeSpeed: 100,
+    filter: function ($obj){},
+    above: 'auto',
+    preventDoubleContext: true,
+    compress: false
+});
+context.settings({compress: true});
+context.attach('#qwScheduleTable', [
+	{text: '查询警员勤务', action: function(e){
+	    e.preventDefault();
+	    var policeName;
+	    var groupId ;
+	    var sd = qwInspectApp.selectedRowDate;
+	    if( window.getSelection){
+	    	var selection = window.getSelection();
+	    	policeName = selection.toString();//TODO ie下文本框无法获取值
+	    	var reg = /^[\u4E00-\u9FA5]+$/; 
+	    	if(!reg.test(policeName)){ 
+	    	alert("请选择正确的警员姓名！"); 
+	    	return false; 
+	    	} 
+	    	groupId = qwInspectApp.gId;
+	    	window.opener.itsGlobal.qwComdScene(policeName,groupId, qwInspectApp.selectedRowDate);
+	    }else{
+	    	var selection = document.selection.createRange();
+	    	policeName = selection.text;
+	    	var reg = /^[\u4E00-\u9FA5]+$/; 
+	    	if(!reg.test(policeName)){ 
+	    	alert("请选择正确的警员姓名！"); 
+	    	return false; 
+	    	} 
+	    	groupId = qwInspectApp.gId;
+	    	window.opener.itsGlobal.qwComdScene(policeName,groupId, qwInspectApp.selectedRowDate);
+	    }
+	   
+	}}
+]); */
+var app = new Vue({
+
+	  el: '#qwScheduleTable',
+	  data: {
+	    items: [
+	            {dt: '1月21日',data:{
+	                njzd:{
+	                    am1:{location:"G204太蓬路口", police:"史蕴强"}, 
+	                    am2:{location:"G204太蓬路口", police:"史蕴强"}, 
+	                    pm1:{location:"G204太蓬路口", police:"冯君"}, 
+	                    pm2:{location:"G204太蓬路口", police:"冯君"}}, 
+	                sfzd:{
+	                    am1:{location:"G204-凤林路", police:"朱永林"}, 
+	                    am2:{location:"S339-五洋路", police:"张东强"}, 
+	                    pm1:{location:"G204-凤林路", police:"朱永林"}, 
+	                    pm2:{location:"G204-广州路", police:"冯献"}}, 
+	                sxzd:{
+	                    am1:{location:"G204、S359口", police:"顾青"}, 
+	                    am2:{location:"S359镇东路口", police:"付杰"}, 
+	                    pm1:{location:"G204、S359口", police:"顾青"}, 
+	                    pm2:{location:"S359白云路口", police:"夏春键"}},
+	                lhzd:{
+	                    am1:{location:"G346S339", police:"田鹤"},
+	                    am2:{location:"G346S339", police:"曹志刚"},
+	                    pm1:{location:"G346S339", police:"朱海东"},
+	                    pm2:{location:"G346S339", police:"韩刚强"}},
+	                gqzd:{
+	                    am1:{location:"G346通港路", police:"董贤超"},
+	                    am2:{location:"G346通港路", police:"董贤超"},
+	                    pm1:{location:"G346通港路", police:"杨波"},
+	                    pm2:{location:"G346通港路", police:"杨波"}},   
+	                hjzd:{
+	                    am1:{location:"G346鹿河卡口", police:"金波"},
+	                    am2:{location:"G346岳鹿路口", police:"张锟"},
+	                    pm1:{location:"G346鹿河卡口", police:"金波"},
+	                    pm2:{location:"G346岳鹿路口", police:"孙家龙"}} 
+	                }},
+	            	    {dt: '1月22日',data:{
+	                njzd:{
+	                    am1:{location:"G204太蓬路口", police:"冯君"}, 
+	                    am2:{location:"G204太蓬路口", police:"冯君"}, 
+	                    pm1:{location:"G204良辅路口", police:"谢幼峰"}, 
+	                    pm2:{location:"G204良辅路口", police:"谢幼峰"}}, 
+	                sfzd:{
+	                    am1:{location:"G204-飞凤路", police:"王翔哲"}, 
+	                    am2:{location:"G204-凤林路", police:"廖光瑜"}, 
+	                    pm1:{location:"G204-凤林路", police:"王翔哲"}, 
+	                    pm2:{location:"G204-建湖路", police:"徐伟"}}, 
+	                sxzd:{
+	                    am1:{location:"S359白云路口", police:"张利明"}, 
+	                    am2:{location:"S359白云路口", police:"夏春键"}, 
+	                    pm1:{location:"S359白云路口", police:"王心佳"}, 
+	                    pm2:{location:"G204S359口", police:"顾青"}},
+	                lhzd:{
+	                    am1:{location:"G346S339", police:"韩刚强"},
+	                    am2:{location:"G346S339", police:"王盛"},
+	                    pm1:{location:"G346S339", police:"曹志刚"},
+	                    pm2:{location:"G346S339", police:"曹志刚"}},
+	                gqzd:{
+	                    am1:{location:"G346通港路", police:"董贤超"},
+	                    am2:{location:"G346通港路", police:"董贤超"},
+	                    pm1:{location:"G346通港路", police:"杨波"},
+	                    pm2:{location:"G346通港路", police:"杨波"}},   
+	                hjzd:{
+	                    am1:{location:"G346时璜路口", police:"游士杰"},
+	                    am2:{location:"G346园林路口", police:"徐洋"},
+	                    pm1:{location:"G346时璜路口", police:"游士杰"},
+	                    pm2:{location:"G346鹿河卡口", police:"金波"}} 
+	                }},
+	            	    {dt: '1月23日',data:{
+	                njzd:{
+	                    am1:{location:"G204良辅路口", police:"谢幼峰"}, 
+	                    am2:{location:"G204良辅路口", police:"谢幼峰"}, 
+	                    pm1:{location:"G204良辅路口", police:"郁峥"}, 
+	                    pm2:{location:"G204良辅路口", police:"郁峥"}}, 
+	                sfzd:{
+	                    am1:{location:"G204-瓯江路", police:"夏宏标"}, 
+	                    am2:{location:"G204-凤林路", police:"项兵"}, 
+	                    pm1:{location:"G204-凤林路", police:"夏宏标"}, 
+	                    pm2:{location:"S339-五洋路", police:"张东强"}}, 
+	                sxzd:{
+	                    am1:{location:"S359镇东路口", police:"付杰"}, 
+	                    am2:{location:"G204S359口", police:"顾青"}, 
+	                    pm1:{location:"S359镇东路口", police:"付杰"}, 
+	                    pm2:{location:"S359白云路口", police:"陆健"}},
+	                lhzd:{
+	                    am1:{location:"G346S339", police:"曹志刚"},
+	                    am2:{location:"G346S339", police:"曹志刚"},
+	                    pm1:{location:"G346S339", police:"王盛"},
+	                    pm2:{location:"G346S339", police:"王盛"}},
+	                gqzd:{
+	                    am1:{location:"G346通港路", police:"董贤超"},
+	                    am2:{location:"G346通港路", police:"董贤超"},
+	                    pm1:{location:"G346通港路", police:"尚国强"},
+	                    pm2:{location:"G346通港路", police:"尚国强"}},   
+	                hjzd:{
+	                    am1:{location:"G346岳鹿路口", police:"张锟"},
+	                    am2:{location:"G346园林路口", police:"丁楠"},
+	                    pm1:{location:"G346岳鹿路口", police:"张锟"},
+	                    pm2:{location:"G346时璜路口", police:"游士杰"}} 
+	                }},
+	            	{dt: '1月24日',data:{
+	                njzd:{
+	                    am1:{location:"G204良辅路口", police:"郁峥"}, 
+	                    am2:{location:"G204良辅路口", police:"郁峥"}, 
+	                    pm1:{location:"G204太蓬路口", police:"史蕴强"}, 
+	                    pm2:{location:"G204太蓬路口", police:"史蕴强"}}, 
+	                sfzd:{
+	                    am1:{location:"G204-瓯江路", police:"张俭"}, 
+	                    am2:{location:"G204-凤林路", police:"廖光瑜"}, 
+	                    pm1:{location:"G204-瓯江路", police:"张俭"}, 
+	                    pm2:{location:"G204-凤林路", police:"朱永林"}}, 
+	                sxzd:{
+	                    am1:{location:"S359白云路口", police:"夏春健"}, 
+	                    am2:{location:"G204S359口", police:"顾青"}, 
+	                    pm1:{location:"S359、白云路", police:"夏春健"}, 
+	                    pm2:{location:"S359、镇东路", police:"付杰"}},
+	                lhzd:{
+	                    am1:{location:"G346S339", police:"朱海东"},
+	                    am2:{location:"G346S339", police:"朱海东"},
+	                    pm1:{location:"G346S339", police:"田鹤"},
+	                    pm2:{location:"G346S339", police:"田鹤"}},
+	                gqzd:{
+	                    am1:{location:"G346通港路", police:"董贤超"},
+	                    am2:{location:"G346通港路", police:"董贤超"},
+	                    pm1:{location:"G346通港路", police:"杨波"},
+	                    pm2:{location:"G346通港路", police:"杨波"}},   
+	                hjzd:{
+	                    am1:{location:"G346岳鹿路口", police:"孙家龙"},
+	                    am2:{location:"G346园林路口", police:"唐亮亮"},
+	                    pm1:{location:"G346岳鹿路口", police:"孙家龙"},
+	                    pm2:{location:"G346岳鹿路口", police:"张锟"}} 
+	                }},
+	            	{dt: '1月25日',data:{
+	                njzd:{
+	                    am1:{location:"G204太蓬路口", police:"史蕴强"}, 
+	                    am2:{location:"G204太蓬路口", police:"史蕴强"}, 
+	                    pm1:{location:"G204太蓬路口", police:"冯君"}, 
+	                    pm2:{location:"G204太蓬路口", police:"冯君"}}, 
+	                sfzd:{
+	                    am1:{location:"G204-凤林路", police:"朱永林"}, 
+	                    am2:{location:"S339-五洋路", police:"张东强"}, 
+	                    pm1:{location:"G204-凤林路", police:"朱永林"}, 
+	                    pm2:{location:"G204-广州路", police:"冯献"}}, 
+	                sxzd:{
+	                    am1:{location:"G204、S359", police:"顾青"}, 
+	                    am2:{location:"S359镇东路口", police:"付杰"}, 
+	                    pm1:{location:"G204、S359", police:"顾青"}, 
+	                    pm2:{location:"S359白云路口", police:"夏春键"}},
+	                lhzd:{
+	                    am1:{location:"G346S339", police:"田鹤"},
+	                    am2:{location:"G346S339", police:"田鹤"},
+	                    pm1:{location:"G346S339", police:"韩刚强"},
+	                    pm2:{location:"G346S339", police:"韩刚强"}},
+	                gqzd:{
+	                    am1:{location:"G346通港路", police:"董贤超"},
+	                    am2:{location:"G346通港路", police:"董贤超"},
+	                    pm1:{location:"G346通港路", police:"杨波"},
+	                    pm2:{location:"G346通港路", police:"杨波"}},   
+	                hjzd:{
+	                    am1:{location:"G346鹿河卡口", police:"金波"},
+	                    am2:{location:"G346园林路口", police:"杨银锋"},
+	                    pm1:{location:"G346鹿河卡口", police:"金波"},
+	                    pm2:{location:"G346岳鹿路口", police:"孙家龙"}} 
+	                }},
+	            	{dt: '1月26日',data:{
+	                njzd:{
+	                    am1:{location:"G204太蓬路口", police:"冯君"}, 
+	                    am2:{location:"", police:""}, 
+	                    pm1:{location:"G204良辅路口", police:"谢幼峰"}, 
+	                    pm2:{location:"G204良辅路口", police:"谢幼峰"}}, 
+	                sfzd:{
+	                    am1:{location:"201凤林路", police:"徐伟"}, 
+	                    am2:{location:"", police:""}, 
+	                    pm1:{location:"G204-凤林路", police:"朱永林"}, 
+	                    pm2:{location:"G204-瓯江路", police:"张俭"}}, 
+	                sxzd:{
+	                    am1:{location:"S359镇东路口", police:"付杰"}, 
+	                    am2:{location:"", police:""}, 
+	                    pm1:{location:"S359白云路口", police:"刘秦麟"}, 
+	                    pm2:{location:"S359镇东路口", police:"付杰"}},
+	                lhzd:{
+	                    am1:{location:"G346S339", police:"曹志刚"},
+	                    am2:{location:"", police:""},
+	                    pm1:{location:"G346S339", police:"曹志刚"},
+	                    pm2:{location:"G346S339", police:"曹志刚"}},
+	                gqzd:{
+	                    am1:{location:"G346通港路", police:"杨波"},
+	                    am2:{location:"", police:""},
+	                    pm1:{location:"G346通港路", police:"杨波"},
+	                    pm2:{location:"G346通港路", police:"杨波"}},   
+	                hjzd:{
+	                    am1:{location:"G346园林路口", police:"丁楠"},
+	                    am2:{location:"", police:""},
+	                    pm1:{location:"G346鹿河卡口", police:"唐亮亮"},
+	                    pm2:{location:"G346园林路口", police:"丁楠"}} 
+	                }},
+	            	{dt: '1月27日',data:{
+	                njzd:{
+	                    am1:{location:"G204太蓬路口", police:"史蕴强"}, 
+	                    am2:{location:"", police:""}, 
+	                    pm1:{location:"G204良辅路口", police:"郁峥"}, 
+	                    pm2:{location:"G204良辅路口", police:"郁峥"}}, 
+	                sfzd:{
+	                    am1:{location:"S339-五洋路", police:"张东强"}, 
+	                    am2:{location:"", police:""}, 
+	                    pm1:{location:"G204-凤林路", police:"廖光瑜"}, 
+	                    pm2:{location:"G204-建湖路", police:"冯献"}}, 
+	                sxzd:{
+	                    am1:{location:"S359白云路口", police:"夏春键"}, 
+	                    am2:{location:"", police:""}, 
+	                    pm1:{location:"S359白云路口", police:"陆健"}, 
+	                    pm2:{location:"S359白云路口", police:"夏春键"}},
+	                lhzd:{
+	                    am1:{location:"G346S339", police:"王盛"},
+	                    am2:{location:"", police:""},
+	                    pm1:{location:"G346S339", police:"王盛"},
+	                    pm2:{location:"G346S339", police:"王盛"}},
+	                gqzd:{
+	                    am1:{location:"G346通港路", police:"尚国强"},
+	                    am2:{location:"", police:""},
+	                    pm1:{location:"G346通港路", police:"尚国强"},
+	                    pm2:{location:"G346通港路", police:"尚国强"}},   
+	                hjzd:{
+	                    am1:{location:"G346园林路口", police:"徐洋"},
+	                    am2:{location:"", police:""},
+	                    pm1:{location:"G346鹿河卡口", police:"杨银锋"},
+	                    pm2:{location:"G346园林路口", police:"徐洋"}} 
+	                }}
+	            ]
+	  }/* ,
+	  methods: {
+			trclick: function(data){
+		    	qwInspectApp.selectedRowDate = data.replace('.','-').replace('.','-');
+			}
+	  } */
+	})
+</script>
+</html>

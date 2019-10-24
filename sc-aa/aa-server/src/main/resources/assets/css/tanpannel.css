@@ -1,0 +1,44 @@
+.panel-body {
+    padding: 10px;
+}
+.nav-tabs > li {
+    float: left;
+    margin-bottom: 4px;
+}
+.form-group {
+    margin-bottom: 8px;
+}
+textarea, select, select.form-control {
+    font-size: 12px !important; 
+}
+
+.col-sm-4 input{
+		font-size: 12px !important; 
+}
+
+.col-sm-10 input{
+        font-size: 12px !important; 
+}
+
+.ui-pg-selbox{
+	width:40px;
+}
+.navbar-brand {
+    float: left;
+    padding: 10px 15px 2px 0px !important;
+    height: auto !important;
+ }
+ #mapToolPanel{
+ 	line-height: 2 !important;
+ }
+ 
+ .oneline{
+    display: initial;
+    display:inline-block;
+    width: 90% !important;
+ }
+ .onelinedis{
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+ }
+    

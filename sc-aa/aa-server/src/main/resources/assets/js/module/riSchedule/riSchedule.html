@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="图表" />
+	<meta name="keywords" content="图表" />
+	<link rel="stylesheet" href="../../../css/app.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../plugins/bootstrap/css/bootswatch.css" />
+	<link rel="stylesheet" href="../../../plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../../dist/css/videoLeftSlider.css" />
+	<link rel="stylesheet" href="../../../dist/css/sidebar-menu.css" />
+	<link rel="stylesheet" href="../../../css/account.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/ui.jqgrid.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/smoothness/jquery-ui.theme.css" />
+	<link rel="stylesheet" href="../../../plugins/jqgrid/css/theme/redmond/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" href="../../../plugins/bootstrap-duallistbox/bootstrap-duallistbox.min.css" />
+	<link rel="stylesheet" href="../../../plugins/contextjs/context.standalone.css" />
+<style type="text/css"> 
+	table{border-collapse:collapse;border-spacing:0}
+		td{
+			border:1px solid #ababab;
+			height: 30px;
+			text-align: center;
+		}
+		td input{
+			border:none;
+			width:100%;
+			height:100%;
+		}
+		.lasttr{
+			border:0px;
+			text-align: left;
+		}
+</style>
+
+<!-- <script type="text/javascript">
+var itsEnv = window.itsEnv = 'sit'; //sit, prod
+var host = "";
+if(itsEnv == 'prod'){
+	host = "192.168.15.4";
+}
+</script> -->
+
+<script type="text/javascript" src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../../../plugins/vue/vue.min.js"></script>
+<script type="text/javascript" src="../../../plugins/layer/layer.js"></script>
+<script type="text/javascript" src="../../../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../js/module/signal/js/loadMap.js"></script>
+<script type="text/javascript" src="../../../plugins/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/jquery.jqGrid.src.js'></script>
+<script type="text/javascript" src='../../../plugins/jqgrid/js/i18n/grid.locale-cn.js'></script>
+<script type="text/javascript" src='../../../plugins/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js'></script>
+<script type="text/javascript" src='../../../plugins/contextjs/context.js'></script>
+<title>事故压降表</title>
+</head>
+
+<body>
+	<header>
+		<div class="headerfont">
+			<div class="backgroundimg onerow"></div>
+			<div class="navbar-brand" style="color:#fff;margin-left: 10px;font-size: 16px;">
+				<p>太仓市公安局交通警察大队</p>
+				<p style="color:#fff;margin-left: 38px;font-size: 14px">交通服务管理平台</p>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</header>
+		
+<div id="vue-app" class="content-wrapper" style="margin-left: 0px;margin-top: 50px;background-color: #fff;overflow:auto;height:100%;">
+	<div class="panel-heading" style="text-align:center;cursor:pointer">
+		<a class="btn btn-sm" @click="nextWeek(-1)">&nbsp;上一周</a>
+               &nbsp;&nbsp;
+           <a class="btn btn-sm" @click="thisWeek(0)">&nbsp;当周</a>
+               &nbsp;&nbsp;
+           <a class="btn btn-sm" @click="lastWeek(1)">&nbsp;下一周</a>
+	</div>
+	<!-- Main content -->
+	<div class="panel panel-primary" style="width: 100%; margin-bottom: 0px">
+		<div class="panel-body" >
+				<table width="100%">
+				    <thead>
+                        <tr>
+                            <td width="5%">中队名称</td>
+                            <td v-for="(item, index) in riScList" width="10%">{{item.groupName}}</td>
+                        </tr>
+                        <tr>
+                            <td width="5%">路段名称</td>
+                            <td v-for="(item, index) in riScList" width="10%">
+                            	<template v-if="!item.rdList">
+                            		{{item.roadName}}
+                            	</template>
+                            	<select :id="'rId'+index" name="rId" v-if="item.rdList" @change="newQuery(item.groupName,index)">
+									<option v-for="rd in item.rdList" :value="rd.roadId" data-icon="fa fa-sitemap">
+										{{rd.roadName}}
+									</option>
+								</select>
+                            </td>
+                        </tr>
+                        <tr>
+                           
+                            <td width="5%">勤务时间</td>
+                            <td v-for="(item, index) in riScList" width="10%">{{item.qwTimes}}</td>
+                        </tr>
+                         
+				    </thead>
+					<tbody id="qwScheduleTable">
+						<tr @click="trclick">
+							<td>{{d1}}</td>
+							<td width="10%" v-for="(item, index) in riScList" @click="tdclick(index)">{{item.d1}}</td>
+						</tr>
+						<tr @click="trclick">
+							<td>{{d2}}</td>
+							<td width="10%" v-for="(item, index) in riScList"  @click="tdclick(index)">{{item.d2}}</td>
+						</tr>
+						<tr @click="trclick">
+							<td>{{d3}}</td>
+							<td width="10%" v-for="(item, index) in riScList"  @click="tdclick(index)">{{item.d3}}</td>
+						</tr>
+						<tr @click="trclick">
+							<td>{{d4}}</td>
+							<td width="10%" v-for="(item, index) in riScList"  @click="tdclick(index)">{{item.d4}}</td>
+						</tr>
+						<tr @click="trclick">
+							<td>{{d5}}</td>
+							<td width="10%" v-for="(item, index) in riScList"  @click="tdclick(index)">{{item.d5}}</td>
+						</tr>
+						<tr @click="trclick">
+							<td>{{d6}}</td>
+							<td width="10%" v-for="(item, index) in riScList"  @click="tdclick(index)">{{item.d6}}</td>
+						</tr>
+						<tr @click="trclick">
+							<td>{{d7}}</td>
+							<td width="10%" v-for="(item, index) in riScList"  @click="tdclick(index)">{{item.d7}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../../js/module/riSchedule/riSchedule.js"></script>
+</html>

@@ -1,0 +1,81 @@
+<div id="signalManage-app" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">设备编辑
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<form class="form-horizontal" id="detailForm" role="form">
+			<div class="form-group">
+				<label  class="col-sm-2 control-label">设备编号</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="deviceId" name="deviceId" v-model="signalManage.deviceId" placeholder="设备编号" required="required">
+				</div>
+				<label  class="col-sm-2 control-label">设备类型</label>
+				<div class="column col-sm-4">
+					<input type="text" class="form-control" id="type" name="type" v-model="signalManage.type" placeholder="设备状态">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">设备名称</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="deviceName" name="deviceName" v-model="signalManage.deviceName" placeholder="设备名称">
+				</div>
+				<label class="col-sm-2 control-label">安装路口</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="crossId" name="crossId" v-model="signalManage.crossId" placeholder="安装路口">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">位置描述</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="location" name="location" v-model="signalManage.location" placeholder="位置描述">
+				</div>
+				<label class="col-sm-2 control-label">点位坐标</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="shape" name="shape" v-model="signalManage.shape" placeholder="点位坐标">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">生产厂家</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="manuId" name="manuId" v-model="signalManage.manuId" placeholder="生产厂家">
+				</div>
+				<label class="col-sm-2 control-label">所属服务器IP</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="serverIp" name="serverIp" v-model="signalManage.serverIp" placeholder="所属服务器IP">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">中心信号机ID</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="serverCid" name="serverCid" v-model="signalManage.serverCid" placeholder="中心信号机ID">
+				</div>
+				<label class="col-sm-2 control-label">设备状态</label>
+				<div class="col-sm-4">
+					<select name="status" class="form-control" v-model="signalManage.status" required="required">
+						<option value="" >请选择</option>
+						<option value="1">正常使用</option>
+						<option value="2">拆除</option>
+						<option value="3">维护中</option>
+						<option value="8">其他</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">描述信息</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="description" name="description" v-model="signalManage.description" placeholder="描述信息">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button id="sButton" type="submit" class="btn btn-sm btn-primary" @click="save">提交</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

@@ -1,0 +1,134 @@
+<div id="pass-panel" class="panel panel-primary" style="width: 550px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">临时通行证管理
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default btn-xs" onclick="TUtils.togglePanelBody()"><i id="LEFT_PANEL_UD" class="fa fa-chevron-up"></i></button> 
+				<button type="button" class="btn btn-default btn-xs" @click="close"><i class="fa fa-close"></i></button>
+			</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div id="queryDiv" v-show='showList'>
+			<div class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">姓名</div>
+					<div class="column col-sm-4">
+						<input type="text" class="form-control" v-model="passQ.czxm" placeholder="" htmlEscape="false" />
+					</div>
+				</div>
+			</div>
+			<div class="grid-btn" style="margin-bottom: 10px">
+				<a class="btn btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-sm" @click="edit"><i class="fa fa-pencil-square-o"></i>&nbsp;审批</a>
+				<a class="btn btn-sm" @click="purge"><i class="fa fa-times"></i>&nbsp;删除</a>
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+		<div id="detailDiv" v-show='!showList'>
+			<form class="form-horizontal" id="detailForm" role="form">
+				<div class="form-group">
+					
+					<label for="sqrq" class="col-sm-2 control-label">通行日期</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control form_datetime Wdate oneline" 
+						id="sqrq" name="sqrq"  readonly="readonly"
+						onfocus="WdatePicker({lang:'zh-cn', dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+						placeholder="排查时间" htmlEscape="false" required="required"/>
+					</div>
+					<label for="czxm" class="col-sm-2 control-label">姓名</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control  oneline" id="czxm" name="czxm" v-model="pass.czxm" placeholder="车主姓名" 
+							htmlEscape="false" maxlength="800" required="required"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="hphm" class="col-sm-2 control-label">车牌号</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control  oneline" id="hphm" name="hphm" v-model="pass.hphm" placeholder="号牌号码" 
+							htmlEscape="false" maxlength="200" required="required"/>
+					</div>
+					<label for="jszhm" class="col-sm-2 control-label">驾驶证号</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control  oneline" id="jszhm" name="jszhm" v-model="pass.jszhm" placeholder="驾驶证" 
+							htmlEscape="false" maxlength="800" required="required"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="sjhm" class="col-sm-2 control-label">手机号码</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<input type="text" class="form-control" id="sjhm" name="sjhm" v-model="pass.sjhm" placeholder="手机号码" 
+							htmlEscape="false" maxlength="110" required="required"/>
+					</div>
+					<label for="hpzl" class="col-sm-2 control-label">车辆类别</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<select id="hpzl" name="hpzl" class="form-control oneline"
+							v-model="pass.hpzl" required="required">
+							<option value="">请选择</option>
+							<option value="1">小型车</option>
+							<option value="2">大型车</option>
+							<option value="3">挂车</option>
+						</select> 
+					</div>
+				</div>	
+				<div class="form-group">
+					<label for="isdanger" class="col-sm-2 control-label">危险车辆</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<select id="isdanger" name="isdanger" class="form-control oneline"
+						v-model="pass.isdanger" required="required">
+						<option value="">请选择</option>
+						<option value="1">是</option>
+						<option value="0">否</option>
+						</select> 
+					</div>
+					<div id="statusDiv"  style="display: none;">
+					<label for="status" class="col-sm-2 control-label">状态</label>
+					<div class="col-sm-4">
+					<span class="help-inline"><font color="red">*</font> </span>
+						<select id="status" name="status" class="form-control oneline"
+						v-model="pass.status" required="required">
+						<option value="">请选择</option>
+						<option value="2">通过</option>
+						<option value="3">拒绝</option>
+						<option value="4">取消</option>
+						</select> 
+					</div>
+					</div>
+				</div>
+				<div  id="imgDiv" class="form-group" style="display: none;">
+					<label class="col-sm-2 control-label">图片上传(最多三张)</label>
+					<div id='image-list' style="margin-left: 5px; float:left;">
+					
+					 <!-- <input type="button" @click="uploadImage();"value="提交"/> -->
+					 </div>
+					 <img id="shizi" src="./assets/images/shizitu.png" @click="openFileUpload"
+							style="margin-left: 25px; width: 88px; height: 88px;cursor:pointer;"/>
+					 <input id="fileupload" type="file" name="multiFiles"  class="hide"/>
+				</div>
+				<div id="ptDiv" class="form-group" style="display: none;">
+					<label class="col-sm-2 control-label">图片</label>
+					<div id='newImage'>
+						<template v-for="repairs in hPaths"> <img
+							style="margin-left: 25px; width: 88px; height: 88px;cursor:pointer;"
+							:src="repairs" @click="imgOnclick(repairs)"> </template>
+					</div>
+				</div>
+				<div class="form-group">
+				   	<div class="col-sm-11 col-sm-offset-1 ">
+						<button type="submit" class="btn btn-primary btn-sm" @click="save">提交</button>
+						&nbsp;&nbsp;
+						<input type="button" class="btn btn-warning btn-sm" @click="reload" value="返回"/>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
