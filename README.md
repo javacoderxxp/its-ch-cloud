@@ -14,7 +14,7 @@
 &nbsp;
 
 ## 2. 项目总体架构图
-
+![Alt text](https://github.com/javacoderxxp/-_-_-/blob/master/springcloud%20%E5%BE%AE%E6%9C%8D%E5%8A%A1%20%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg "optional title")
 &nbsp;
 
 ## 3. 功能介绍
