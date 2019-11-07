@@ -38,9 +38,9 @@
   - 服务调用链监控、应用拓扑图 -- SkyWalking
   - 慢查询SQL监控 🚀
   - 应用吞吐量监控(qps、rt)
-  - 服务降级、熔断监控 -- Sentinal
+  - 服务降级、熔断监控 -- Sentinal 🚀
   - 微服务服务监控 -- Springboot Admin 🚀
-  - 服务器监控 
+  - 服务器监控 🚀
   - redis监控
   - mysql监控
   - oracle监控
