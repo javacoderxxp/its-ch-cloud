@@ -26,12 +26,12 @@
   - 服务注册发现、配置中心 -- Nacos 🚀
   - 路由与负载均衡、限流 -- Spring Cloud Gateway 🚀
   - 服务降级与熔断 -- Sentinal 🚀
-  - 统一日志中心 -- GrayLog  😢
+  - 统一日志中心 -- GrayLog  🚀
   - 统一分布式缓存、分布式锁 -- Redission 🚀
   - 分布式任务调度器 -- Elastic-job + Elastic-job-manager 🚀
   - 分布式Id生成器 -- IdGenerator 🚀
-  - 分布式事务 -- Seata 😢 
-  - 链路追踪 -- SkyWalking 😢 
+  - 分布式事务 -- Seata 🚀
+  - 链路追踪 -- SkyWalking 🚀 
   - 消息队列 -- kafka 🚀
   
 * **系统监控功能** 😢
